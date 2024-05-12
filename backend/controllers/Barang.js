@@ -342,7 +342,7 @@ const BarangList = async (req, res) => {
             include: [{
                 model: JenisBarang,
                 as: 'jenis_barang',
-                attributes: ['id']
+                attributes: ['id','jenis_barang']
             }],
             attributes: [
                 'id_barang',

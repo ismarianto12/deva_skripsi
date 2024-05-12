@@ -97,6 +97,7 @@ const List = () => {
   const [action, setAction] = useState('tambah')
   const [sort, setSort] = useState('asc')
   const [rows, setRows] = useState([])
+  const [jenisbarang, setJenisBarang] = useState([])
   const [role, setRole] = useState('')
   const [plan, setPlan] = useState('')
   const [value, setValue] = useState('')
@@ -147,16 +148,14 @@ const List = () => {
   )
 
 
-
-
   useEffect(() => {
     const calltahun = async () => {
-      await axios.get(`${process.env.APP_API}tahunakademik/list`, {
+      await axios.get(`${process.env.APP_API}master/jenis?q=&sort=asc&column=created_at`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`
         },
       }).then((res) => {
-        setTahunakademik(res.data)
+        setJenisBarang(res.data.data)
       }).catch((err) => {
         console.log('gagal mengabil data tahun akademik', err)
       })
@@ -200,7 +199,7 @@ const List = () => {
       } else if (params === 'view') {
         router.push(`/barang/edit/${id}`)
       } else if (params === 'confirm') {
-      router.push(`/barang/confirm/${id}`)
+        router.push(`/barang/confirm/${id}`)
       } else if (params === 'delete') {
         // router.push(`/barang/edit/${id}`)
       }
@@ -468,7 +467,7 @@ const List = () => {
               justifyContent: 'space-between',
             }}
           >
-            <Grid item xs={12} sm={8}>
+            <Grid item xs={12} sm={4}>
               <Box sx={{ rowGap: 5, display: 'flex', flexWrap: 'wrap', alignItems: 'right' }}>
                 <Button
                   variant='contained'
@@ -489,6 +488,29 @@ const List = () => {
               </Box>
             </Grid>
 
+            <Grid item xs={8} sm={8}>
+              <CustomTextField
+                sx={{
+                  width: '100%'
+                }}
+                select
+                fullWidth
+                label="Pilih Kategori Barang"
+                SelectProps={{
+                  displayEmpty: true,
+                  // onChange: e => setTakademik(e.target.value)
+                }}
+              >
+                <MenuItem key={0} value={null}>
+                  --Semua data--
+                </MenuItem>
+                {jenisbarang.map((jenisbarangs) => (
+                  <MenuItem key={jenisbarangs.id} value={jenisbarangs.id}>
+                    {jenisbarangs.id} - {jenisbarangs.jenis_barang}
+                  </MenuItem>
+                ))}
+              </CustomTextField>
+            </Grid>
           </Box>
 
         </CardContent>
@@ -518,7 +540,7 @@ const List = () => {
               },
               {
                 flex: 1,
-                minWidth: 200,
+                minWidth: 280,
                 field: 'nama_barang',
                 headerName: 'Nama Barang'
               },
@@ -559,19 +581,6 @@ const List = () => {
                     return row.stok_keluar + '/Pcs'
                   } else {
                     return (<b>Kosong</b>)
-                  }
-                }
-              },
-              {
-                flex: 1,
-                minWidth: 180,
-                field: 'jenis_barang',
-                headerName: 'Jenis Barang',
-                renderCell: ({ row }) => {
-                  if (row.jenis_barang) {
-                    return row.jenis_barang
-                  } else {
-                    return (<b>Belum di setting</b>)
                   }
                 }
               },
