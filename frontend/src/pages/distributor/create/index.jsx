@@ -32,6 +32,7 @@ import { addUser } from 'src/store/apps/user'
 import { Card, CardContent } from '@mui/material'
 import Headtitle from 'src/@core/components/Headtitle'
 import toast from 'react-hot-toast'
+import Swal from 'sweetalert2';
 
 
 const showErrors = (field, valueLen, min) => {
@@ -52,23 +53,15 @@ const Header = styled(Box)(({ theme }) => ({
 }))
 
 const schema = yup.object().shape({
-  namaBarang: yup.string().required(),
-  kategori: yup.string().required('Wajib diisi'),
-  diberikanoleh: yup.string().required('Di keluarkan oleh'),
-  lokasi: yup.string().required('Lokasi Wajib diisi'),
-  tahun: yup.string().required('Tahun Wajib di isi'),
-  // file: yup.mixed().required('A file is required'),
-
+  nama_distributor: yup.string().required("Wajib diisi"),
 })
-
-
 const defaultValues = {
-  namaBarang: '',
-  kategori: '',
-  diberikanoleh: '',
-  lokasi: '',
-  tahun: '',
-  file: '',
+  id_distributor: '',
+  nama_distributor: '',
+  alamat: '',
+  telepon: '',
+  created_at: '',
+  updated_at: '',
 }
 const Index = props => {
   // ** Props
@@ -100,25 +93,15 @@ const Index = props => {
   })
   const onSubmit = async (data) => {
     try {
-      const formData = new FormData();
-      formData.append('namaBarang', data.namaBarang);
-      formData.append('kategori', data.kategori);
-      formData.append('diberikanoleh', data.diberikanoleh);
-      formData.append('lokasi', data.lokasi);
-      formData.append('tahun', data.tahun);
-      // if (data.file[0]) {
-      formData.append('file', fileupload);
-      // }
-      await axios.post(`${process.env.APP_API}award/insert`, formData, {
+      await axios.post(`${process.env.APP_API}master/distributor/crate`, data, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       }).then(() => {
         toast.success('Data Award berhasil ditambahkan')
-        route.push('/award/list')
+        route.push('/distributor/list')
       })
     } catch (error) {
-
       Swal.fire('error', error.message, 'error')
       if (error.response) {
         console.error('Server responded with:', error.response.status);
@@ -207,16 +190,16 @@ const Index = props => {
                         sx={{ mb: 4 }}
                         label='Alamat'
                         onChange={onChange}
-                        placeholder='Harga Barang'
-                        error={Boolean(errors.hargabarang)}
-                        {...(errors.title && { helperText: errors.hargabarang.message })}
+                        placeholder='Alamat'
+                        error={Boolean(errors.alamat)}
+                        {...(errors.alamat && { helperText: errors.alamat.message })}
                       />
                     )}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Controller
-                    name='Telepon'
+                    name='telepon'
                     control={control}
                     rules={{ required: true }}
                     render={({ field: { value, onChange } }) => (
@@ -224,11 +207,11 @@ const Index = props => {
                         fullWidth
                         value={value}
                         sx={{ mb: 4 }}
-                        label='Stok Barang'
+                        label='Telepon'
                         onChange={onChange}
-                        placeholder='Stock Barang '
-                        error={Boolean(errors.stock)}
-                        {...(errors.title && { helperText: errors.stock.message })}
+                        placeholder=''
+                        error={Boolean(errors.telepon)}
+                        {...(errors.telepon && { helperText: errors.telepon.message })}
                       />
                     )}
                   />

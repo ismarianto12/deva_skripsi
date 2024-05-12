@@ -193,19 +193,16 @@ const List = () => {
     const handleRowOptionsClick = event => {
       setAnchorEl(event.currentTarget)
     }
-
     const router = useRouter()
-
     const handleRowOptionsClose = (id, params) => {
       if (params === 'edit') {
         router.push(`/barang/edit/${id}`)
       } else if (params === 'view') {
         router.push(`/barang/edit/${id}`)
       } else if (params === 'confirm') {
-        router.push(`/barang/confirm/${id}`)
+      router.push(`/barang/confirm/${id}`)
       } else if (params === 'delete') {
         // router.push(`/barang/edit/${id}`)
-
       }
       setAnchorEl(null)
     }

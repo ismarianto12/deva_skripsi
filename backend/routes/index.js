@@ -38,7 +38,7 @@ router.delete('/master/transaksi/delete/:id', verifyToken, TransaksiController.D
 
 // jenis transaksi barang
 router.get('/master/distributor', verifyToken, DistributorController.DistributorList)
-router.post('/master/distributor/crate', verifyToken, DistributorController.Create)
+router.post('/master/distributor/crate', verifyToken, DistributorController.Store)
 router.post('/master/distributor/show/:id', verifyToken, DistributorController.Create)
 router.delete('/master/distributor/delete/:id', verifyToken, DistributorController.Delete)
 router.post('/report/distributor/print/:id', verifyToken, DistributorController.Print)

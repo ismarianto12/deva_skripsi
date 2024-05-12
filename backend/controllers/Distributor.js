@@ -1,4 +1,4 @@
-import { QueryTypes, Op } from 'sequelize';
+import { QueryTypes, Op, Sequelize } from 'sequelize';
 import db from '../db/database.js'
 import multer from 'multer'
 import Distributor from '../models/Distributor.js';
@@ -14,7 +14,7 @@ export const Print = async (req, res) => {
         console.log(data, 'datanya')
         const datanya = data[0];
         // const htmlContent = fs.readFileSync("./views/purchasing.html", datanya, 'utf8')
-            const htmlContent = `
+        const htmlContent = `
             <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -289,7 +289,6 @@ const Distributorindex = async (req, res) => {
             error: error.message,
         });
     }
-
 }
 
 const storage = multer.diskStorage({
@@ -300,6 +299,28 @@ const storage = multer.diskStorage({
     }
 })
 const upload = multer({ storage })
+
+export const Store = async (req, res) => {
+    try {
+        const { nama_distributor, alamat, telepon } = req.body
+        db.query("insert into distributor set nama_distributor=?, alamat=?, telepon=?", {
+            replacements: [
+                nama_distributor, alamat, telepon
+            ], type: QueryTypes.INSERT
+        })
+
+        console.log(req.body,'body')
+        res.status(200).json({
+            msg: 'msg data berhasil di tambahkan'
+        })
+        
+    } catch (error) {
+        res.status(400).json({
+            msg: error
+        })
+    }
+}
+
 const Create = async (req, res) => {
     try {
         var storage = multer.diskStorage({

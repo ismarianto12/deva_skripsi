@@ -87,6 +87,9 @@ export const Print = async (req, res) => {
         p.jumlah as jumlah_purchase,
         p.tanggal_purchasing,
         p.no_faktur,
+        b.stok_akhir,
+        b.stok_awal,
+        b.stok_keluar,
         p.id_distributor,
         p.created_at,
         p.updated_at,
@@ -625,8 +628,6 @@ const Delete = async (req, res) => {
       error: error.message,
     })
   }
-
-
 }
 export const hitungClustering = async (req, res) => {
 

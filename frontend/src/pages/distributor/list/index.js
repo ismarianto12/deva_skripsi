@@ -173,6 +173,7 @@ const List = () => {
   const [takademik, setTakademik] = useState('')
   const [status, setStatus] = useState('')
   const [jenjang, setJenjang] = useState('')
+  const router = useRouter()
 
   const [tahunakademik, setTahunakademik] = useState([])
 
@@ -473,10 +474,11 @@ const List = () => {
                 <Icon fontSize='1.125rem' icon='tabler:printer' />
                 Print Report
               </Button>
+              &nbsp;
               <Button
                 variant='contained'
                 sx={{ '& svg': { mr: 2 } }}
-                onClick={() => route.push(url)}
+                onClick={() => router.push('/distributor/create')}
               >
                 <Icon fontSize='1.125rem' icon='tabler:plus' />
                 Tambah

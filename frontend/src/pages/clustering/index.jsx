@@ -427,7 +427,7 @@ const Index = () => {
 
     kmeansEngine.clusterize(
       fdata,
-      { k: 3, maxIterations: 25, initialCentroids: manualCentroid, debug: true },
+      { k: 3, maxIterations: 10, initialCentroids: manualCentroid, debug: true },
       (err, res) => {
         setLoading(false);
         // const formattedClusters = res.clusters.map(cluster => ({
@@ -849,43 +849,73 @@ const Index = () => {
                 Array.from({ length: iterations }, (_, index) => {
                   const clusterdata = [JSON.stringify(iterations[index])]
                   return (
-                    <Grid item xs={12} sm={6}>
-                      <div key={index}>
-                        {/* <h3 className='heading'>Iterasi Ke - {index + 1}</h3> */}
-                        <Alert severity="success">Iterasi Ke - {index + 1}</Alert>
-                        <table className='trx'>
-                          <thead>
-                            <tr>
-                              <th>Kode Barang</th>
-                              <th>C1</th>
-                              <th>C2</th>
-                              <th>C3</th>
-                              <th>Jarak Terdekat</th>
-                              <th>Cluster</th>
-                            </tr>
-                          </thead>
+                    <>
+                      <Alert severity="success" sx={{ 'width': '100%' }}><b>Iterasi Ke - {index + 1}</b></Alert>
+                      <Grid item xs={12} sm={12} sx={{
+                        'overflow': 'auto',
+                        'height': '400px'
+                      }}>
+                        <div key={index}>
+                          {/* <h3 className='heading'>Iterasi Ke - {index + 1}</h3> */}
+                          <table className='trx'>
+                            <thead>
+                              <tr>
+                                <th>Kode Barang</th>
+                                <th>SA</th>
+                                <th>SAK</th>
+                                <th>SKEL</th>
+                                <th>C1</th>
+                                <th>C2</th>
+                                <th>C3</th>
+                                <th>Jarak Terdekat</th>
+                                <th>Cluster</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {
+                                rows.map((rowsdata, j) => {
+                                  return (<tr>
+                                    <td>{rowsdata.kd_barang}</td>
+                                    <td>{rowsdata.stok_awal}</td>
+                                    <td>{rowsdata.stok_akhir}</td>
+                                    <td>{rowsdata.stok_keluar}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                  </tr>)
+
+                                })
+                              }
+
+                            </tbody>
+                          </table>
+                        </div>
+                        {JSON.stringify(clusters)}
+                      </Grid>
+
+                      <Grid item xs={12} lg={12}>
+                        <table className='childcls'>
+                          <tr style={{ 'background': '#ddd' }}>
+                            <th>Centroid</th>
+                            <th>SA</th>
+                            <th>SAK</th>
+                            <th>SEKL</th>
+                          </tr>
                           <tbody>
-                            {
-                              rows.map((rowsdata, j) => {
-                                return (<tr>
-                                  <td>{rowsdata.kd_barang}</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                </tr>)
-
-                              })
-                            }
-
+                            <tr>
+                              <td>Centroid</td>
+                              <td>SA</td>
+                              <td>SAK</td>
+                              <td>SEKL</td>
+                            </tr>
                           </tbody>
                         </table>
-                      </div>
 
-                      {JSON.stringify(clusters)}
+                      </Grid>
 
-                    </Grid>
+                    </>
                   )
 
                 }

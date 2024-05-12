@@ -185,3 +185,13 @@ td {
 tr:nth-child(even) {
   background-color: #f2f2f2
 }
+
+.childcls {
+  background-color: #ddd;
+
+}
+
+.childcls,
+tr>th {
+  background-color: #ddd;
+}
