@@ -96,13 +96,13 @@ const RowOptions = ({ id, status }) => {
 
   const handleRowOptionsClose = (id, params) => {
     if (params === 'edit') {
-      router.push(`/ppdb/edit/${id}`)
+      router.push(`/barang_keluar/edit/${id}`)
     } else if (params === 'view') {
-      router.push(`/ppdb/edit/${id}`)
+      router.push(`/barang_keluar/edit/${id}`)
     } else if (params === 'confirm') {
-      router.push(`/ppdb/confirm/${id}`)
+      router.push(`/barang_keluar/confirm/${id}`)
     } else if (params === 'delete') {
-      router.push(`/ppdb/edit/${id}`)
+      router.push(`/barang_keluar/edit/${id}`)
 
     }
     setAnchorEl(null)
