@@ -4,6 +4,7 @@ import multer from 'multer'
 import Posts from '../models/post.js'
 import Post from '../models/post.js';
 import JenisBarang from '../models/Jenis_barang.js';
+import Barang from '../models/Barang.js';
 
 
 
@@ -187,9 +188,10 @@ const Update = (req, res) => {
 
 }
 const Delete = async (req, res) => {
+    const id = req.params.id
     try {
-        const id = req.params.id
-        await Post.destroy({
+        
+        await JenisBarang.destroy({
             where: {
                 id: id
             },
@@ -198,6 +200,7 @@ const Delete = async (req, res) => {
             msg: 'date berhasil di hapus',
         })
     } catch (error) {
+         console.log(id,'adas')
         res.status(500).json({
             error: error.message,
         })

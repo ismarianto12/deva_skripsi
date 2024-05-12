@@ -52,23 +52,20 @@ const Header = styled(Box)(({ theme }) => ({
 }))
 
 const schema = yup.object().shape({
-  namaBarang: yup.string().required(),
-  kategori: yup.string().required('Wajib diisi'),
-  diberikanoleh: yup.string().required('Di keluarkan oleh'),
+  nama_barang: yup.string().required("Wajib"),
+  id_jenisbarang: yup.string().required('Wajib diisi'),
   lokasi: yup.string().required('Lokasi Wajib diisi'),
-  tahun: yup.string().required('Tahun Wajib di isi'),
-  // file: yup.mixed().required('A file is required'),
-
 })
 
-
 const defaultValues = {
-  namaBarang: '',
-  kategori: '',
-  diberikanoleh: '',
-  lokasi: '',
-  tahun: '',
-  file: '',
+  nama_barang: '',
+  kd_barang: '',
+  stok_awal: '',
+  stok_akhir: '',
+  stok_keluar: '',
+  jumlah_stok: '',
+  created_at: '',
+  id_jenisbarang: '',
 }
 const Index = props => {
   // ** Props
@@ -80,18 +77,18 @@ const Index = props => {
   const [file, setFile] = useState('')
   const [fileupload, setFileupload] = useState('')
   const [jenisbarang, setJenisBarang] = useState([])
-  // ** Hooks
   const dispatch = useDispatch()
   const store = useSelector(state => state.user)
   useEffect(() => {
     const calljenisbarang = async () => {
-      await axios.get(`${APP.APP_API}/master/jenibarang/list`, {
+      await axios.get(`${process.env.APP_API}master/jenis?q=&sort=asc&column=created_at`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('AccessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`
         }
+
       }).then((data) => {
         setJenisBarang(data.data.data)
-      }).then((errors) => {
+      }).catch((errors) => {
         Swal.fire('Gagal mendapatkan data barang')
       })
     }
@@ -112,22 +109,15 @@ const Index = props => {
   })
   const onSubmit = async (data) => {
     try {
-      const formData = new FormData();
-      formData.append('namaBarang', data.namaBarang);
-      formData.append('kategori', data.kategori);
-      formData.append('diberikanoleh', data.diberikanoleh);
-      formData.append('lokasi', data.lokasi);
-      formData.append('tahun', data.tahun);
-      // if (data.file[0]) {
-      formData.append('file', fileupload);
-      // }
-      await axios.post(`${process.env.APP_API}award/insert`, formData, {
+      await axios.post(`${process.env.APP_API}master/barang/create`, data, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       }).then(() => {
         toast.success('Data Award berhasil ditambahkan')
-        route.push('/award/list')
+        Swal.fire('success', 'Data Barang Berhail', 'success')
+
+        route.push('/barang/list')
       })
     } catch (error) {
 
@@ -214,6 +204,7 @@ const Index = props => {
                     rules={{ required: true }}
                     render={({ field: { value, onChange } }) => (
                       <CustomTextField
+                        type="number"
                         fullWidth
                         value={value}
                         sx={{ mb: 4 }}
@@ -236,6 +227,7 @@ const Index = props => {
                         fullWidth
                         value={value}
                         sx={{ mb: 4 }}
+                        type="number"
                         label='Kode Barang'
                         onChange={onChange}
                         placeholder='Kode Barang'
@@ -247,26 +239,27 @@ const Index = props => {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Controller
-                    name='stock_awal'
+                    name='stok_awal'
                     control={control}
                     rules={{ required: true }}
                     render={({ field: { value, onChange } }) => (
                       <CustomTextField
                         fullWidth
+                        type="number"
                         value={value}
                         sx={{ mb: 4 }}
                         label='Stok Awal'
                         onChange={onChange}
-                        placeholder='Stock Awal '
-                        error={Boolean(errors.stock)}
-                        {...(errors.title && { helperText: errors.stock.message })}
+                        placeholder='Stok Awal '
+                        error={Boolean(errors.stok)}
+                        {...(errors.title && { helperText: errors.stok.message })}
                       />
                     )}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Controller
-                    name='stock_akhir'
+                    name='stok_akhir'
                     control={control}
                     rules={{ required: true }}
                     render={({ field: { value, onChange } }) => (
@@ -274,30 +267,32 @@ const Index = props => {
                         fullWidth
                         value={value}
                         sx={{ mb: 4 }}
+                        type="number"
                         label='Stok Akhir'
                         onChange={onChange}
-                        placeholder='Stock Akhir '
-                        error={Boolean(errors.stock)}
-                        {...(errors.title && { helperText: errors.stock.message })}
+                        placeholder='Stok Akhir '
+                        error={Boolean(errors.stok)}
+                        {...(errors.title && { helperText: errors.stok.message })}
                       />
                     )}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Controller
-                    name='stock_keluar'
+                    name='stok_keluar'
                     control={control}
                     rules={{ required: true }}
                     render={({ field: { value, onChange } }) => (
                       <CustomTextField
                         fullWidth
                         value={value}
+                        type="number"
                         sx={{ mb: 4 }}
                         label='Stok Keluar'
                         onChange={onChange}
-                        placeholder='Stock Keluar '
-                        error={Boolean(errors.stock_keluar)}
-                        {...(errors.stock_keluar && { helperText: errors.stock_keluar.message })}
+                        placeholder='Stok Keluar '
+                        error={Boolean(errors.stok_keluar)}
+                        {...(errors.stok_keluar && { helperText: errors.stok_keluar.message })}
                       />
                     )}
                   />
@@ -317,8 +312,9 @@ const Index = props => {
                         placeholder='Status Publish:'
                         {...(errors.publish && { helperText: errors.publish.message })}
                       >
-                        {jenisbarang.map((data, j) => {
-                          return (<MenuItem key={`Y`} value={`Y`}>
+                        {jenisbarang.map((jenisbarangs, j) => {
+                          return (<MenuItem key={`Y`} value={`${jenisbarangs.id}`}>
+                            {jenisbarangs.jenis_barang}
                           </MenuItem>)
                         })
                         }
@@ -335,6 +331,7 @@ const Index = props => {
                     render={({ field: { value, onChange } }) => (
                       <CustomTextField
                         fullWidth
+
                         value={value}
                         sx={{ mb: 4 }}
                         label='Lokasi'

@@ -20,9 +20,10 @@ router.get('/v1', async (req, res) => {
     })
 })
 router.get('/master/barang', verifyToken, BarangController.BarangList)
-router.post('/master/barang/crate', verifyToken, BarangController.Create)
+router.post('/master/barang/create', verifyToken, BarangController.store)
+router.post('/master/barang/update/:id', verifyToken, BarangController.Update)
 router.get('/master/barang/show/:id', verifyToken, BarangController.Edit)
-router.delete('/master/barang/delete/:id', verifyToken, BarangController.Delete)
+router.post('/master/barang/delete/:id', verifyToken, BarangController.Delete)
 // jenis barang
 router.get('/master/jenis', verifyToken, JenisController.ListJenis)
 router.post('/master/jenis/crate', verifyToken, JenisController.Create)

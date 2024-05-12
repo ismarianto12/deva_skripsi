@@ -357,7 +357,8 @@ const BarangList = async (req, res) => {
                 'id_jenisbarang',
                 'id',
                 'updated_at'
-            ]
+            ],
+            order: [['id', 'DESC']]
         });
 
         const modifiedData = data.map(item => {
@@ -476,110 +477,116 @@ const Create = async (req, res) => {
 export const store = async (req, res) => {
     try {
         const {
-            id_barang,
+            kd_barang,
             nama_barang,
-            harga,
+            hargabarang,
             jumlah_stok,
             id_jenisbarang,
-            created_at,
-            updated_at,
-        } = req.body
+            stok_awal,
+            stok_akhir,
+            stok_keluar,
+        } = req.body;
 
-        await db.query(`Insert into barang
-       set  
-        id_barang=?,
-        nama_barang=?,
-        harga=?,
-        jumlah_stok=?,
-        id_jenisbarang=?,
-        created_at=?,
-        updated_at=?  
+        await db.query(`
+            INSERT INTO barang 
+             SET   
+            kd_barang=?,
+            nama_barang=?,
+            harga=?,
+            jumlah_stok=?,
+            id_jenisbarang=?, 
+            stok_awal=?,
+            stok_akhir=?,
+            stok_keluar=? 
         `, {
-            replacements:
-                [
-                    id_barang,
-                    nama_barang,
-                    harga,
-                    jumlah_stok,
-                    id_jenisbarang,
-                    created_at,
-                    updated_at,
-                ],
+            replacements: [
+                kd_barang,
+                nama_barang ? nama_barang : 'Kosong',
+                hargabarang,
+                jumlah_stok ? jumlah_stok : 0,
+                id_jenisbarang,
+                stok_awal,
+                stok_akhir,
+                stok_keluar,
+            ],
             type: QueryTypes.INSERT
-        },
-        )
-
+        });
         res.status(200).json({
-            message: `data berhasil dis simpan`
-        })
+            message: `Data berhasil disimpan`
+        });
 
     } catch (error) {
-        res.status(200).json({
-            message: `gagal disimpan ${error}`
-        })
-
+        res.status(500).json({
+            body: req.body,
+            message: `Gagal disimpan: ${error}`
+        });
     }
 }
+
 
 
 export const Update = async (req, res) => {
     try {
         const {
-            id_barang,
+            kd_barang,
             nama_barang,
             harga,
             jumlah_stok,
             id_jenisbarang,
-            created_at,
-            updated_at,
-        } = req.body
-        const parmaterid = req.params.id
-        await db.query(`UPDATE barang
-       set  
-        id_barang=?,
-        nama_barang=?,
-        harga=?,
-        jumlah_stok=?,
-        id_jenisbarang=?,
-        created_at=?,
-        updated_at=?  
-        where id = ?
+            stok_awal,
+            stok_akhir,
+            stok_keluar,
+        } = req.body;
+
+        await db.query(`
+            UPDATE barang 
+            SET
+            kd_barang=?,
+            nama_barang=?,
+            harga=?,
+            jumlah_stok=?,
+            id_jenisbarang=?, 
+            stok_awal=?,
+            stok_akhir=?,
+            stok_keluar=?
+            where id = ?
         `, {
-            replacements:
-                [
-                    id_barang,
-                    nama_barang,
-                    harga,
-                    jumlah_stok,
-                    id_jenisbarang,
-                    created_at,
-                    updated_at,
-                    parmaterid
-                ],
-            type: QueryTypes.INSERT
-        },
-        )
+            replacements: [
+                kd_barang,
+                nama_barang ? nama_barang : 'Kosong',
+                harga,
+                jumlah_stok ? jumlah_stok : 0,
+                id_jenisbarang,
+                stok_awal,
+                stok_akhir,
+                stok_keluar,
+                req.params.id
+            ],
+            type: QueryTypes.UPDATE
+        });
         res.status(200).json({
-            message: `data berhasil dis simpan`
-        })
-
+            message: `Data berhasil Update`
+        });
     } catch (error) {
-        res.status(200).json({
-            message: `gagal disimpan ${error}`
-        })
-
+        res.status(500).json({
+            body: req.body,
+            message: `Gagal disimpan: ${error}`
+        });
     }
 }
 
 const Edit = async (req, res) => {
     try {
         const id = req.params.id
-        const data = await Barang.findOne({
-            where: { id: id },
-            rejectOnEmpty: false,
-        })
+        const data = await db.query(` 
+            SELECT * from barang where id=?
+        `, {
+            replacements: [
+                id,
+            ], type: QueryTypes.SELECT
+        });
         res.status(200).json({
-            data: data,
+            data: data[0],
             msg: 'detail data',
         })
     } catch (error) {
@@ -590,13 +597,9 @@ const Edit = async (req, res) => {
 }
 
 const Delete = async (req, res) => {
+    const id = req.params.id
     try {
-        const id = req.params.id
         await db.query(`delete from barang where id = ?`, {
-            where: {
-                id: id
-            },
-        }, {
             replacements: [
                 id
             ],
@@ -612,7 +615,7 @@ const Delete = async (req, res) => {
     }
 
 
-  
+
 
 }
 

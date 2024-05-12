@@ -82,7 +82,7 @@ const RowOptions = ({ id, status }) => {
   // ** Hooks
   // const dispatch = useDispatch()
   // ** State
-  // console.log(status, 'status ppdb')
+  // console.log(status, 'status barang')
   const [anchorEl, setAnchorEl] = useState(null)
   const rowOptionsOpen = Boolean(anchorEl)
 
@@ -96,20 +96,32 @@ const RowOptions = ({ id, status }) => {
 
   const handleRowOptionsClose = (id, params) => {
     if (params === 'edit') {
-      router.push(`/ppdb/edit/${id}`)
+      router.push(`/barang/edit/${id}`)
     } else if (params === 'view') {
-      router.push(`/ppdb/edit/${id}`)
+      router.push(`/barang/edit/${id}`)
     } else if (params === 'confirm') {
-      router.push(`/ppdb/confirm/${id}`)
+      router.push(`/barang/confirm/${id}`)
     } else if (params === 'delete') {
-      router.push(`/ppdb/edit/${id}`)
+
+      // router.push(`/barang/edit/${id}`)
 
     }
     setAnchorEl(null)
   }
+  const Delete = async (id) => {
+    await axios.post(`${process.env.APP_API}master/barang/delete/${id}`, {}, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+      }
+    }).then((data) => {
+      Swal.fire('success', `Success Delete Data`, 'success')
+    }).catch((errors) => {
+      Swal.fire('info', `Gagal mendapatkan data ${errors}`, 'info')
+    })
+  }
 
   const handleDelete = () => {
-    // dispatch(deleteUser(id))
+    Delete(id)
     handleRowOptionsClose(id, 'delete')
   }
 
@@ -137,14 +149,14 @@ const RowOptions = ({ id, status }) => {
           sx={{ '& svg': { mr: 2 } }}
           onClick={() => handleRowOptionsClose(id, 'view')}
         >
-          <Icon icon='tabler:eye' fontSize={20} />
-          View
+          <Icon icon='tabler:edit' fontSize={20} />
+          Edit
         </MenuItem>
         <MenuItem onClick={() => handleRowOptionsClose(id, 'confirm')} sx={{ '& svg': { mr: 2 } }}>
           <Icon icon='tabler:check' fontSize={20} />
-          Edit
+          Detail
         </MenuItem>
-        <MenuItem href={`/ppdb/edit/${id}`} onClick={handleDelete} sx={{ '& svg': { mr: 2 } }}>
+        <MenuItem onClick={handleDelete} sx={{ '& svg': { mr: 2 } }}>
           <Icon icon='tabler:trash' fontSize={20} />
           Delete
         </MenuItem>
@@ -165,6 +177,7 @@ const datastatus = [
 
 const List = () => {
   // ** States
+  const router = useRouter()
   const [total, setTotal] = useState(0)
   const [action, setAction] = useState('tambah')
   const [sort, setSort] = useState('asc')
@@ -456,7 +469,7 @@ const List = () => {
                 <Button
                   variant='contained'
                   sx={{ '& svg': { mr: 1 } }}
-                  onClick={() => route.push(url)}
+                  onClick={() => router.push('/barang/create')}
                 >
                   <Icon fontSize='1.125rem' icon='tabler:plus' />
                   Tambah
