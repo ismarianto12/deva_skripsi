@@ -12,15 +12,28 @@ import CrmActivityTimeline from 'src/views/dashboards/crm/CrmActivityTimeline'
 import CrmSalesWithAreaChart from 'src/views/dashboards/crm/CrmSalesWithAreaChart'
 import CrmSalesWithRadarChart from 'src/views/dashboards/crm/CrmSalesWithRadarChart'
 import CrmEarningReportsWithTabs from 'src/views/dashboards/crm/CrmEarningReportsWithTabs'
+import Icon from 'src/@core/components/icon'
 
 // ** Custom Component Imports
 import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
 import CardStatsVertical from 'src/@core/components/card-statistics/card-stats-vertical'
+import { Card, CardContent, Typography } from '@mui/material'
 
 const CrmDashboard = () => {
   return (
     <>
       <ApexChartWrapper>
+        <Grid item xs={12}>
+          <Card>
+            <CardContent>
+              <Typography variant='h5' sx={{ mb: 0.5 }}>
+                <Icon icon='tabler:files' fontSize='1.125rem' />
+                Welcome Back Sistem Informasi Clustering Kmeans
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <br />
         <Grid container spacing={6}>
           <Grid item xs={6} sm={6} lg={3}>
             <CrmSalesWithAreaChart />
@@ -30,22 +43,22 @@ const CrmDashboard = () => {
           </Grid>
           <Grid item xs={6} sm={4} lg={3}>
             <CardStatsVertical
-              stats='1.28k'
+              stats='4'
               chipText='-12.2%'
               chipColor='default'
               avatarColor='error'
-              title='Total Profit'
+              title='Total Clustering'
               subtitle='Last week'
               avatarIcon='tabler:currency-dollar'
             />
           </Grid>
           <Grid item xs={6} sm={4} lg={3}>
             <CardStatsVertical
-              stats='24.67k'
+              stats='3'
               chipText='+25.2%'
               avatarColor='info'
               chipColor='default'
-              title='Total Sales'
+              title='Kriteria'
               subtitle='Last week'
               avatarIcon='tabler:chart-bar'
             />

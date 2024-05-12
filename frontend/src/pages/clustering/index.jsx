@@ -220,9 +220,9 @@ const Index = () => {
         }).finally(() => {
           setLoading(false)
         }).catch((err) => {
-          console.log(err.response.data.msg, 'get data')
-          toast.success(`Token Unactive ${err.response.data} Silahkan login`);
-          Swal.fire('error', `${err.response.data.msg} : Sesi login berakhir Silahkan login kembali`, 'error')
+          // console.log(err.response.data.msg, 'get data')
+          toast.success(`Token Unactive ${err.response?.data} Silahkan login`);
+          Swal.fire('error', `${err?.response?.data?.msg} : Sesi login berakhir Silahkan login kembali`, 'error')
         })
     },
     [paginationModel]
