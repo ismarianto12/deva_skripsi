@@ -77,6 +77,14 @@ const AuthProvider = ({ children }) => {
   }, [])
 
   const handleLogin = (params, errorCallback) => {
+    Swal.fire({
+      title: 'Login Success',
+      allowOutsideClick: false,
+      showCancelButton: false,
+      timer: 3000,
+      showConfirmButton: false,
+    });
+    Swal.showLoading();
     setLoading(true)
 
     axios
@@ -93,15 +101,8 @@ const AuthProvider = ({ children }) => {
         // document.cookie = response.data.accessToken
         params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+        Swal.fire('Success', 'login succes', 'success')
 
-        Swal.fire({
-          title: 'Login Success',
-          allowOutsideClick: false,
-          showCancelButton: false,
-          timer: 3000,
-          showConfirmButton: false,
-        });
-        Swal.showLoading();
         toast.success('Login Success')
         router.push('/home')
       })

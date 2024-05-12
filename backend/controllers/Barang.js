@@ -342,7 +342,7 @@ const BarangList = async (req, res) => {
             include: [{
                 model: JenisBarang,
                 as: 'jenis_barang',
-                attributes: ['jenis_barang']
+                attributes: ['id']
             }],
             attributes: [
                 'id_barang',
@@ -361,6 +361,8 @@ const BarangList = async (req, res) => {
             order: [['id', 'DESC']]
         });
 
+
+        console.log(data)
         const modifiedData = data.map(item => {
             return {
                 ...item.toJSON(),

@@ -167,7 +167,7 @@ const LoginPage = () => {
               'text-align': 'center'
             }}>
               <Typography variant='h5' sx={{ mb: 1.5 }}>
-                {`SISTEM MANAJEMEN INVENTARIS TOKO SUMBER JAYA 👋🏻`}
+                {`SISTEM MANAJEMEN INVENTARIS TOKO SUMBER JAYA`}
               </Typography>
               {/* <Typography sx={{ color: 'text.secondary' }}>
                 Please sign-in to your account and start the adventure

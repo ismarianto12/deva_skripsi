@@ -51,8 +51,9 @@ router.post('/master/purchasing/show/:id', verifyToken, PurhcasingController.Edi
 router.delete('/master/purchasing/delete/:id', verifyToken, PurhcasingController.Delete)
 
 
-
 //action crud users
+router.get('/master/kelompokcluster/list', verifyToken, ClusterController.listClustering)
+
 router.get('/logic/clustering/list', verifyToken, ClusterController.List)
 router.get('/logic/clustering/hitung', verifyToken, ClusterController.hitungClustering)
 

@@ -1,15 +1,18 @@
 // ** React Imports
 import { useEffect, useState, useCallback } from 'react'
-
 // ** MUI Imports
+import toast from 'react-hot-toast'
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
+import { FormControl, InputLabel, FormHelperText } from '@mui/material';
+
 import CardHeader from '@mui/material/CardHeader'
-import { DataGrid, GridToolbar } from '@mui/x-data-grid'
+import { DataGrid } from '@mui/x-data-grid'
 import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
 import axios from 'axios'
 import Link from 'next/link'
 import CustomChip from 'src/@core/components/mui/chip'
@@ -24,15 +27,10 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import CardStatsVertical from 'src/@core/components/card-statistics/card-stats-vertical'
 import CardContent from '@mui/material/CardContent';
-// import { CustomTextField, MenuItem } from 'src/@core/components/mui';
-import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
-
-// import   from 'src/@core/components/mui/text-field'
+import CustomTextField from 'src/@core/components/mui/text-field';
 import Comheader from 'src/@core/components/Comheader';
 import { getparamPend } from 'src/@core/utils/encp';
-import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
-import CustomTextField from 'src/@core/components/mui/text-field'
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -78,7 +76,77 @@ const Jenjang = [
 
   },
 ]
+const RowOptions = ({ id, status }) => {
 
+  const [anchorEl, setAnchorEl] = useState(null)
+  const rowOptionsOpen = Boolean(anchorEl)
+
+
+
+  const handleRowOptionsClick = event => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const router = useRouter()
+
+  const handleRowOptionsClose = (id, params) => {
+    if (params === 'edit') {
+      router.push(`/ppdb/edit/${id}`)
+    } else if (params === 'view') {
+      router.push(`/ppdb/edit/${id}`)
+    } else if (params === 'confirm') {
+      router.push(`/ppdb/confirm/${id}`)
+    } else if (params === 'delete') {
+      router.push(`/ppdb/edit/${id}`)
+
+    }
+    setAnchorEl(null)
+  }
+
+  const handleDelete = () => {
+    // dispatch(deleteUser(id))
+    handleRowOptionsClose(id, 'delete')
+  }
+
+  return (
+    <>
+      <IconButton size='small' onClick={handleRowOptionsClick}>
+        <Icon icon='tabler:dots-vertical' />
+      </IconButton>
+      <Menu
+        keepMounted
+        anchorEl={anchorEl}
+        open={rowOptionsOpen}
+        onClose={handleRowOptionsClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right'
+        }}
+        PaperProps={{ style: { minWidth: '8rem' } }}
+      >
+        <MenuItem
+          sx={{ '& svg': { mr: 2 } }}
+          onClick={() => handleRowOptionsClose(id, 'view')}
+        >
+          <Icon icon='tabler:eye' fontSize={20} />
+          View
+        </MenuItem>
+        <MenuItem onClick={() => handleRowOptionsClose(id, 'confirm')} sx={{ '& svg': { mr: 2 } }}>
+          <Icon icon='tabler:check' fontSize={20} />
+          Edit
+        </MenuItem>
+        <MenuItem href={`/ppdb/edit/${id}`} onClick={handleDelete} sx={{ '& svg': { mr: 2 } }}>
+          <Icon icon='tabler:trash' fontSize={20} />
+          Delete
+        </MenuItem>
+      </Menu>
+    </>
+  )
+}
 
 const datastatus = [
   {
@@ -92,7 +160,6 @@ const datastatus = [
 
 const List = () => {
   // ** States
-  const router = useRouter()
   const [total, setTotal] = useState(0)
   const [action, setAction] = useState('tambah')
   const [sort, setSort] = useState('asc')
@@ -110,44 +177,45 @@ const List = () => {
 
   const [searchValue, setSearchValue] = useState('')
   const [sortColumn, setSortColumn] = useState('full_name')
-  const [paginationModel, setPaginationModel] = useState({ page: 1, pageSize: 7 })
+  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 7 })
   function loadServerRows(currentPage, data) {
     return data.slice(currentPage * paginationModel.pageSize, (currentPage + 1) * paginationModel.pageSize)
   }
 
-
-
   const fetchTableData = useCallback(
-    async (sort, q, column, page) => {
+    async (sort, q, column,
+      status,
+      jenjang,) => {
       await axios
-        .get(`${process.env.APP_API}master/barang`, {
+        .get(`${process.env.APP_API}master/kelompokcluster/list`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`
           },
           params: {
-            page: paginationModel.page,
-            q: q,
-            sort: sort,
-            column: column,
+            status,
+            q,
+            sort,
+            column,
           }
         })
         .then(res => {
-          console.log(res.data.data, 'response server');
-          setTotal(res.data.total)
-          setRows(res.data.data)
+          setTotal(res.data.length)
+          const search = q.toLowerCase()
+          const filteredData = res.data.data[0]
+          // const filteredData = res.data.data.filter(galery => (
+          //   galery.nama?.toLowerCase().includes(search) || galery.jenjang?.toLowerCase().includes(search)
+          // ))
+          setRows(loadServerRows(paginationModel.page, filteredData))
         }).finally(() => {
           setLoading(false)
         }).catch((err) => {
-          console.log(err.response.data.msg, 'get data')
-          toast.success(`Token Unactive ${err.response.data} Silahkan login`);
-          Swal.fire('error', `${err.response.data.msg} : Sesi login berakhir Silahkan login kembali`, 'error')
+          // console.log(err.response.data.msg, 'get data')
+          toast.success(`Token Unactive ${err?.response?.data}`);
+          Swal.fire('error', `${err?.response?.data?.msg}`, 'error')
         })
     },
     [paginationModel]
   )
-
-
-
 
   useEffect(() => {
     const calltahun = async () => {
@@ -180,93 +248,6 @@ const List = () => {
     fetchTableData(sort, searchValue, sortColumn)
   }
 
-  const RowOptions = ({ id, status }) => {
-    // ** Hooks
-    // const dispatch = useDispatch()
-    // ** State
-    // console.log(status, 'status barang')
-    const [anchorEl, setAnchorEl] = useState(null)
-    const rowOptionsOpen = Boolean(anchorEl)
-
-
-
-    const handleRowOptionsClick = event => {
-      setAnchorEl(event.currentTarget)
-    }
-
-    const router = useRouter()
-
-    const handleRowOptionsClose = (id, params) => {
-      if (params === 'edit') {
-        router.push(`/barang/edit/${id}`)
-      } else if (params === 'view') {
-        router.push(`/barang/edit/${id}`)
-      } else if (params === 'confirm') {
-        router.push(`/barang/confirm/${id}`)
-      } else if (params === 'delete') {
-        // router.push(`/barang/edit/${id}`)
-
-      }
-      setAnchorEl(null)
-    }
-    const Delete = async (id) => {
-      await axios.post(`${process.env.APP_API}master/barang/delete/${id}`, {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        }
-      }).then((data) => {
-        Swal.fire('success', `Success Delete Data`, 'success')
-        fetchTableData(sort, searchValue, sortColumn)
-      }).catch((errors) => {
-        Swal.fire('info', `Gagal mendapatkan data ${errors}`, 'info')
-      })
-    }
-
-    const handleDelete = () => {
-      Delete(id)
-      handleRowOptionsClose(id, 'delete')
-    }
-
-    return (
-      <>
-        <IconButton size='small' onClick={handleRowOptionsClick}>
-          <Icon icon='tabler:dots-vertical' />
-        </IconButton>
-        <Menu
-          keepMounted
-          anchorEl={anchorEl}
-          open={rowOptionsOpen}
-          onClose={handleRowOptionsClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right'
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right'
-          }}
-          PaperProps={{ style: { minWidth: '8rem' } }}
-        >
-          <MenuItem
-            sx={{ '& svg': { mr: 2 } }}
-            onClick={() => handleRowOptionsClose(id, 'view')}
-          >
-            <Icon icon='tabler:edit' fontSize={20} />
-            Edit
-          </MenuItem>
-          <MenuItem onClick={() => handleRowOptionsClose(id, 'confirm')} sx={{ '& svg': { mr: 2 } }}>
-            <Icon icon='tabler:check' fontSize={20} />
-            Detail
-          </MenuItem>
-          <MenuItem onClick={handleDelete} sx={{ '& svg': { mr: 2 } }}>
-            <Icon icon='tabler:trash' fontSize={20} />
-            Delete
-          </MenuItem>
-        </Menu>
-      </>
-    )
-  }
-
   const filterByStatus = (e) => {
     // console.log(e.target.value, 'status')
     setStatus(e.target.value)
@@ -288,6 +269,7 @@ const List = () => {
     setSearchValue(value)
     fetchTableData(sort, value, sortColumn)
   }
+
   const fhandleRoleChange = (e) => {
     const level = e.target.value
 
@@ -296,30 +278,13 @@ const List = () => {
     // setSearchValue(value)
     fetchTableData(sort, value, sortColumn)
   }
-
-  const kodebarang = [
-    {
-      id: "C1",
-      name: 'PALING BANYAK TERJUAL',
-
-    },
-    {
-      id: "C2",
-      name: 'SEDIKIT TERJUAL',
-
-    },
-    {
-      id: "C3",
-      name: 'TIDAK LARIS TERJUAL',
-    }
-  ]
   return (
     <div data-aos="slide-left">
 
       <Head>
-        <title>Master - Barang</title>
+        <title>Master - Clustering</title>
       </Head>
-      <Grid container spacing={6}>
+      {/* <Grid container spacing={6}>
         <Grid item xs={6} sm={3} lg={3}>
           <CardStatsVertical
             stats={rows.length}
@@ -364,7 +329,7 @@ const List = () => {
             avatarIcon='tabler:chart-bar'
           />
         </Grid>
-      </Grid>
+      </Grid> */}
       <br /><br />
       <Card>
 
@@ -453,128 +418,58 @@ const List = () => {
             </Grid>
 
           </Box> */}
+          {/* <Grid container justifyContent="center" spacing={2}>
+
+            <Grid item xs={6} sm={3} sx={{
+              textAlign: 'center'
+            }}>
+              <Icon icon="mdi-light:file" />
+              <h4>Jenis Barang</h4>
+            </Grid>
+          </Grid> */}
           <Typography variant='h5' sx={{ mb: 0.5 }}>
             <Icon icon='tabler:files' fontSize='1.125rem' />
-            Master Barang
+            Jumlah Cluster & Variabel
           </Typography>
-
-
-          <Box
-            sx={{
-              py: 4,
-              px: 6,
-              rowGap: 2,
-              columnGap: 4,
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Grid item xs={12} sm={8}>
-              <Box sx={{ rowGap: 5, display: 'flex', flexWrap: 'wrap', alignItems: 'right' }}>
-                <Button
-                  variant='contained'
-                  sx={{ '& svg': { mr: 1 } }}
-                  onClick={() => router.push('/barang/create')}
-                >
-                  <Icon fontSize='1.125rem' icon='tabler:plus' />
-                  Tambah
-                </Button>
-                &nbsp;
-                <CustomTextField
-                  // value={value}
-                  sx={{ mr: 8 }}
-                  placeholder='Search Data'
-                  onChange={(e) => handleSearch(e.target.value)}
-                />
-
-              </Box>
-            </Grid>
-
-          </Box>
+          <Comheader
+            value={searchValue}
+            handleFilter={handleSearch}
+            url={`/jenisbarang/create`}
+          />
 
         </CardContent>
         <DataGrid
+          getRowId={(row) => row.id}
           autoHeight
           pagination
-          // rows={rows}
-          rows={rows.map((item, index) => ({ id: index + 1, ...item }))}
+          rows={rows}
           rowCount={total}
           columns={
             [
               {
                 flex: 1,
-                minWidth: 5,
-                maxWidth: 80,
-                field: "id",
-                headerName: 'No.',
+                minWidth: 20,
+                headerName: 'ID',
                 renderCell: ({ row }) => (
-                  <Typography href={`/apps/invoice/preview/${row.id}`}>{`#${row.id}`}</Typography>
+                  <Typography href={`/apps/cluster/preview/${row.id}`}>{`#${row.id}`}</Typography>
                 )
               },
               {
                 flex: 1,
-                minWidth: 180,
-                field: 'kd_barang',
-                headerName: 'Kode Barang'
+                minWidth: 20,
+                field: 'kode',
+                headerName: 'Kode'
               },
               {
                 flex: 1,
-                minWidth: 200,
-                field: 'nama_barang',
-                headerName: 'Nama Barang'
-              },
-
-              {
-                flex: 1,
-                minWidth: 180,
-                field: 'stok_awal',
-                headerName: 'Stok Awal',
+                minWidth: 20,
+                field: 'cluster',
+                headerName: 'Cluster',
                 renderCell: ({ row }) => {
-                  if (row.stok_awal) {
-                    return row.stok_awal + '/Pcs'
+                  if (row.cluster) {
+                    return row.cluster
                   } else {
                     return (<b>Kosong</b>)
-                  }
-                }
-              },
-              {
-                flex: 1,
-                minWidth: 180,
-                field: 'stok_akhir',
-                headerName: 'Stok Akhir',
-                renderCell: ({ row }) => {
-                  if (row.stok_akhir) {
-                    return row.stok_akhir + '/Pcs'
-                  } else {
-                    return (<b>Kosong</b>)
-                  }
-                }
-              },
-              {
-                flex: 1,
-                minWidth: 180,
-                field: 'stok_keluar',
-                headerName: 'Stok Keluar',
-                renderCell: ({ row }) => {
-                  if (row.stok_keluar) {
-                    return row.stok_keluar + '/Pcs'
-                  } else {
-                    return (<b>Kosong</b>)
-                  }
-                }
-              },
-              {
-                flex: 1,
-                minWidth: 180,
-                field: 'jenis_barang',
-                headerName: 'Jenis Barang',
-                renderCell: ({ row }) => {
-                  if (row.jenis_barang) {
-                    return row.jenis_barang
-                  } else {
-                    return (<b>Belum di setting</b>)
                   }
                 }
               },
@@ -594,19 +489,11 @@ const List = () => {
           pageSizeOptions={[7, 10, 25, 50]}
           paginationModel={paginationModel}
           onSortModelChange={handleSortModel}
-          getRowId={(row) => row.id}
-          slots={{
-            toolbar: (props) => (
-              <div style={{ marginBottom: '20px' }}>
-                <GridToolbar {...props} />
-              </div>
-            ),
-          }}
+          // slots={{ toolbar: ServerSideToolbar }}
           // onPaginationModelChange={setPaginationModel}
           onPaginationModelChange={newModel => {
-            console.log(newModel, 'pagenya')
             setPaginationModel(newModel);
-            // fetchTableData(sort, searchValue, sortColumn, newModel.page);
+            fetchTableData(sort, searchValue, sortColumn, newModel.page);
           }}
 
           slotProps={{

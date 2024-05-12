@@ -304,6 +304,23 @@ export const Print = async (req, res) => {
     })
   }
 }
+export const listClustering = async (req, res) => {
+  try {
+    const data = await db.query(`SELECT id,kode,cluster from mastercluster`, { type: Sequelize.SELECT });
+    const totaldata = data.length
+    res.status(200).json({
+      data: data,
+      total: totaldata
+    })
+  } catch (error) {
+    res.status(400).json({
+      data: [],
+      msg: error
+    })
+  }
+
+}
+
 
 export const List = async (req, res) => {
   try {
@@ -329,6 +346,8 @@ export const List = async (req, res) => {
         }
       };
     }
+
+
     // Hitung total data berdasarkan kriteria pencarian
     const totalCount = await Barang.count({ where: whereClause });
     const data = await Barang.findAll({
@@ -625,7 +644,7 @@ export const hitungClustering = async (req, res) => {
     const k = 3;
     const kmeans = new KMeans({ k });
     const datad = await kmeans.cluster(features);
-    console.log('Centroids:', datad);
+    // console.log('Centroids:', datad);
     // console.log('Clusters:', clusters);
     return res.status(200).json(datad)
 
