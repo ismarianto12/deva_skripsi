@@ -1,0 +1,36 @@
+CREATE TABLE Mapel (
+    id INT(15) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    unit_id INT(14) NOT NULL,
+    kelas_id INT(14) NOT NULL,
+    kode VARCHAR(30) NULL,
+    nama_mapel VARCHAR(40) NULL,
+    created_at DATETIME NULL,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Jadwal (
+    id INT(14) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    unit_id INT(14) NOT NULL,
+    kelas_id INT(14) NOT NULL,
+    siswa_id INT(14) NOT NULL,
+    kode_mapel INT(14) NOT NULL,
+    approve_status ENUM('Y', 'N') NULL,
+    nilai INT(14) NULL,
+    bobot VARCHAR(40) NULL,
+    guru_id INT(14) NULL,
+    created_at DATETIME NULL,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    user_id INT(15) NULL
+);
+
+CREATE TABLE Absensi (
+    id INT(14) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id_siswa INT(14) NOT NULL,
+    id_jadwal INT(14) NOT NULL,
+    status_hadir VARCHAR(14) NULL,
+    create_at DATETIME NULL,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    user_id INT(14) NULL
+);
+
+

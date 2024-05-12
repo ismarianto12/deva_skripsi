@@ -1,0 +1,173 @@
+<DataGrid
+  isDense={true}
+
+  stickyHeader
+  autoHeight
+  pagination
+  // rows={rows}
+  rows={rows.map((item, index) => ({ id: index + 1, ...item }))}
+  rowCount={total}
+  columns={
+    [
+      {
+        flex: 1,
+        minWidth: 5,
+        maxWidth: 80,
+        field: "id",
+        headerName: 'No.',
+        renderCell: ({ row }) => (
+          <Typography href={`/apps/invoice/preview/${row.id}`}>{`#${row.id}`}</Typography>
+        )
+      },
+      {
+        flex: 1,
+        minWidth: 180,
+        field: 'kd_barang',
+        headerName: 'Kode Barang'
+      },
+      {
+        flex: 1,
+        minWidth: 220,
+        field: 'nama_barang',
+        headerName: 'Nama Barang'
+      },
+      {
+        flex: 1,
+        minWidth: 80,
+        headerName: 'KDB',
+        field: 'KDB',
+      },
+      {
+        flex: 1,
+        minWidth: 80,
+        headerName: 'SA',
+        field: 'SA',
+        hide: true,
+      },
+      {
+        flex: 1,
+        headerClassName: 'redBackground',
+        cellClassName: 'redBackground',
+        minWidth: 80,
+        headerName: 'SAK',
+        field: 'SAK',
+      },
+      {
+        flex: 1,
+        minWidth: 80,
+        headerName: 'SKEL',
+        field: 'SKEL',
+        hide: true, renderCell: ({ row }) => {
+          if (row.SKEL) {
+            return row.SKEL
+          } else {
+            return (<b>0</b>)
+          }
+        }
+      },
+      {
+        flex: 1,
+        minWidth: 80,
+        headerName: 'C1',
+        // field: null,
+        field: 'C1',
+        hide: true, renderCell: ({ row }) => {
+          if (row.C1) {
+            return row.C1
+          } else {
+            return (<b>0</b>)
+          }
+        }
+      },
+      {
+        flex: 1,
+        minWidth: 80,
+        headerName: 'C2	',
+        // field: null,
+        field: 'C2',
+        hide: true, renderCell: ({ row }) => {
+          if (row.C2) {
+            return row.C2
+          } else {
+            return (<b>0</b>)
+          }
+        }
+      },
+      {
+        flex: 1,
+        minWidth: 80,
+        headerName: 'C3',
+        // field: null,
+        field: 'C3',
+        hide: true,
+        renderCell: ({ row }) => {
+          if (row.C3) {
+            return row.C3
+          } else {
+            return (<b>0</b>)
+          }
+        }
+      },
+      {
+        flex: 1,
+        minWidth: 80,
+        field: 'JARAK_TERDEKAT',
+        hide: true,
+        headerName: 'JARAK TERDEKAT	',
+        renderCell: ({ row }) => {
+          if (row.CLUSTER) {
+            return row.JARAK_TERDEKAT
+          } else {
+            return (<b>0</b>)
+          }
+        }
+      },
+      {
+        flex: 1,
+        minWidth: 80,
+        field: 'CLUSTER',
+        hide: true,
+        headerName: 'CLUSTER',
+        renderCell: ({ row }) => {
+          if (row.CLUSTER) {
+            return row.CLUSTER
+          } else {
+            return (<b>0</b>)
+          }
+        }
+      },
+      {
+        flex: 0.1,
+        minWidth: 100,
+        sortable: false,
+        field: 'actions',
+        headerName: 'Actions',
+        renderCell: ({ row }) => <RowOptions id={row.id} setAction={setAction} />
+      }
+    ]
+  }
+  checkboxSelection
+  sortingMode='server'
+  paginationMode='server'
+  pageSizeOptions={[80]}
+  paginationModel={paginationModel}
+  onSortModelChange={handleSortModel}
+  getRowId={(row) => row.id}
+  onPaginationModelChange={newModel => {
+    console.log(newModel, 'pagenya')
+    setPaginationModel(newModel);
+    // fetchTableData(sort, searchValue, sortColumn, newModel.page);
+  }}
+
+  slotProps={{
+    baseButton: {
+      size: 'medium',
+      variant: 'tonal'
+    },
+    toolbar: {
+      value: searchValue,
+      clearSearch: () => handleSearch(''),
+      onChange: event => handleSearch(event.target.value)
+    }
+  }}
+/>

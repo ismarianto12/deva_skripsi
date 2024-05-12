@@ -1,0 +1,19 @@
+mysqldump -u root darulmaza_siakad divisi > divisi.sql
+Dashboard
+Master Data
+Barang
+JENIS BARANG
+Distributor
+Transaksi
+Purcahsing
+Barang Masuk
+Barang Keluar
+Report
+Transaksi
+Data Barang
+Sistem
+User
+Identitias Aplikasi
+
+
+
