@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -77,21 +77,19 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
     color: theme.palette.text.secondary
   }
 }))
-
 const schema = yup.object().shape({
   username: yup.string().required(),
   password: yup.string().required()
 })
 
 const defaultValues = {
-  password: '', //admin
-  username: '' //admin@mnc.com
+  password: '',
+  username: ''
 }
 
 const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
-
   // ** Hooks
   const auth = useAuth()
   const theme = useTheme()
@@ -101,6 +99,10 @@ const LoginPage = () => {
 
   // ** Vars
   const { skin } = settings
+
+  useEffect(() => {
+    document.title = "Login Page"
+  }, [])
 
   const {
     control,
