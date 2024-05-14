@@ -154,7 +154,6 @@ const Index = props => {
       <br />
       <Card>
         <CardContent>
-
           <Box sx={{ p: theme => theme.spacing(0, 6, 6) }}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <Grid container spacing={2}>

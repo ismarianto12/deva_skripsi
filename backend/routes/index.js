@@ -50,11 +50,12 @@ router.post('/master/purchasing/print/:id', verifyToken, PurhcasingController.Pr
 router.post('/master/purchasing/show/:id', verifyToken, PurhcasingController.Edit)
 router.delete('/master/purchasing/delete/:id', verifyToken, PurhcasingController.Delete)
 
-
 //action crud users
 router.get('/master/kelompokcluster/list', verifyToken, ClusterController.listClustering)
 
 router.get('/logic/clustering/list', verifyToken, ClusterController.List)
+router.get('/logic/clustering/clusteresult', verifyToken, ClusterController.ClusterResult)
+
 router.get('/logic/clustering/hitung', verifyToken, ClusterController.hitungClustering)
 
 router.post('/master/purchasing/delete/:id', verifyToken, PurhcasingController.Delete)

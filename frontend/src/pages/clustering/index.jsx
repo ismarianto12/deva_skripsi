@@ -164,6 +164,10 @@ const Index = () => {
   // ** States
   const [total, setTotal] = useState(0)
   const [action, setAction] = useState('tambah')
+  const [iterasi, setIterasi] = useState('');
+  const [periodeCluster, setPeriodeCluster] = useState(1); // Nilai default untuk Select
+  const [error, setError] = useState(false); // State untuk menampilkan pesan kesalahan
+
   const [sort, setSort] = useState('asc')
   const [rows, setRows] = useState([])
   const [role, setRole] = useState('')
@@ -199,6 +203,15 @@ const Index = () => {
 
   }
 
+  const handleIterasiChange = (e) => {
+    setIterasi(e.target.value);
+    setError(false);
+  };
+
+  const handlePeriodeClusterChange = (e) => {
+    setPeriodeCluster(e.target.value);
+  };
+
   const fetchTableData = useCallback(
     async (sort, q, column, page) => {
       await axios
@@ -229,159 +242,71 @@ const Index = () => {
   )
 
 
-  // const clusteringdata = () => {
-  //   const manualCentroid = [
-  //     { stok_awal: 1000, stok_akhir: 500, stok_keluar: 500 },
-  //     { stok_awal: 415, stok_akhir: 15, stok_keluar: 400 },
-  //     { stok_awal: 212, stok_akhir: 12, stok_keluar: 200 }
-  //   ];
+  const clusteringdata = async () => {
+    if (!iterasi || !periodeCluster) {
+      setError(true); // Menampilkan pesan kesalahan jika input kosong
+      return;
+    }
+    setLoading(true);
+    const manualCentroid = [
+      { C1: 580, C1: 500, C1: 80 },
+      { C2: 415, C2: 400, C2: 15 },
+      { C1: 212, C2: 200, C3: 12 }
+    ];
 
-  //   const fdata = rows.map(item => ({
-  //     stok_awal: parseInt(item.stok_awal),
-  //     stok_akhir: parseInt(item.stok_akhir),
-  //     stok_keluar: parseInt(item.stok_keluar)
-  //   }));
+    const fdata = rows.map(item => ({
+      stok_awal: parseInt(item.stok_awal),
+      stok_akhir: parseInt(item.stok_akhir),
+      stok_keluar: parseInt(item.stok_keluar)
+    }));
+    console.log(fdata, "fdata")
+    // await awaitDelay(600);
+    await kmeansEngine.clusterize(
+      fdata,
+      { k: 3, maxIterations: parseInt(iterasi), initialCentroids: manualCentroid, debug: true },
+      (err, res) => {
+        setLoading(false);
+        // const formattedClusters = res.clusters.map(cluster => ({
+        //   C1: cluster.centroid.stok_awal.toFixed(7),
+        //   C2: cluster.centroid.stok_akhir.toFixed(7),
+        //   C3: cluster.centroid.stok_keluar.toFixed(7),
+        //   "JARAK TERDEKAT": Math.min(
+        //     cluster?.closest?.map(c => Math.min(c.distance.C1, c.distance.C2, c.distance.C3))
+        //   )
+        // }));
+        console.log(res, 'hasil cluster terakhir data')
+        setIterations(res.iterations);
+        setClusters(res);
+        setClosestCentroids(res.closest);
+      }
+    );
+  };
 
-  //   kmeansEngine.clusterize(fdata, { k: 3, maxIterations: 10, initialCentroids: manualCentroid, debug: true }, (err, res) => {
-  //     console.log('----- Results -----');
-  //     console.log('Initial Centroids: ', res.centroids);
-  //     console.log(`Iterations: ${res.iterations}`);
-  //     console.log('Clusters: ');
-  //     console.log(res.clusters);
-  //     // Mengelompokkan data berdasarkan ketentuan cluster
-  //     const clusterData = {
-  //       cluster1: [],
-  //       cluster2: [],
-  //       cluster3: []
-  //     };
+  const cancel = () => {
+    setIterasi('')
+    setIterations('')
+  }
 
-  //     for (let idx = 0; idx < res.clusters.length; idx++) {
-  //       const cluster = res?.clusters[idx];
-  //       // if (cluster) {
-  //       cluster?.forEach((item) => {
-  //         const { stok_awal, stok_akhir, stok_keluar } = fdata[item];
-  //         if (idx === 0) {
-  //           clusterData.cluster1.push({ 'stok_awal': stok_awal });
-  //         } else if (idx === 1) {
-  //           clusterData.cluster2.push({ 'stok_keluar': stok_keluar });
-  //         } else if (idx === 2) {
-  //           clusterData.cluster3.push({ 'stok_akhir': stok_akhir });
-  //         }
-  //       });
-  //       // } else {
-  //       //   console.log('Cluster terhenti')
-  //       // }
-  //     }
-
-
-  //     console.log('Cluster 1 - Stok Awal:');
-  //     console.log(clusterData.cluster1);
-  //     console.log('Cluster 2 - Stok Keluar:');
-  //     console.log(clusterData.cluster2);
-  //     console.log('Cluster 3 - Stok Akhir:');
-  //     console.log(clusterData.cluster3);
-
-  //     const newCluster = res.clusters;
-  //     const iteration = res.iterations;
-
-  //     // this.setOutput(newCluster, iteration)
-  //     // Jika Anda ingin mengatur state, Anda harus melakukannya di sini
-  //     // setClustering({
-  //     //   newCluster: newCluster,
-  //     //   iteration: iteration,
-  //     // })
-  //   });
-  // };
-
-
-  // const clusteringdata = () => {
-  //   const manualCentroid = [
-  //     { stok_awal: 1000, stok_akhir: 500, stok_keluar: 500 },
-  //     { stok_awal: 415, stok_akhir: 15, stok_keluar: 400 },
-  //     { stok_awal: 212, stok_akhir: 12, stok_keluar: 200 }
-  //   ];
-
-  //   const fdata = rows.map(item => ({
-  //     stok_awal: parseInt(item.stok_awal),
-  //     stok_akhir: parseInt(item.stok_akhir),
-  //     stok_keluar: parseInt(item.stok_keluar)
-  //   }));
-
-  //   kmeansEngine.clusterize(fdata, { k: 3, maxIterations: 10, initialCentroids: manualCentroid, debug: true }, (err, res) => {
-  //     console.log('----- Results -----');
-  //     console.log('Initial Centroids: ', res.centroids);
-  //     console.log(`Iterations: ${res.iterations}`);
-
-  //     for (let i = 0; i < res.iterations; i++) {
-  //       console.log(`----- Iteration ${i + 1} -----`);
-  //       console.log('Clusters: ');
-  //       console.log(res.clusters[i]);
-
-  //       const closestCentroids = res.closest[i];
-  //       console.log('Closest Centroids: ', closestCentroids);
-
-  //       // Mengelompokkan data berdasarkan ketentuan cluster
-  //       const clusterData = {
-  //         cluster1: [],
-  //         cluster2: [],
-  //         cluster3: []
-  //       };
-
-  //       res.clusters[i].forEach((cluster, idx) => {
-  //         cluster.forEach((item) => {
-  //           const { stok_awal, stok_akhir, stok_keluar } = fdata[item];
-  //           if (idx === 0) {
-  //             clusterData.cluster1.push({ 'stok_awal': stok_awal });
-  //           } else if (idx === 1) {
-  //             clusterData.cluster2.push({ 'stok_keluar': stok_keluar });
-  //           } else if (idx === 2) {
-  //             clusterData.cluster3.push({ 'stok_akhir': stok_akhir });
-  //           }
-  //         });
-  //       });
-
-  //       console.log('Cluster 1 - Stok Awal:');
-  //       console.log(clusterData.cluster1);
-  //       console.log('Cluster 2 - Stok Keluar:');
-  //     }
-  //   })
-  // }
-
-  // const clusteringdata = () => {
-  //   const manualCentroid = [
-  //     { stok_awal: 1000, stok_akhir: 500, stok_keluar: 500 },
-  //     { stok_awal: 415, stok_akhir: 15, stok_keluar: 400 },
-  //     { stok_awal: 212, stok_akhir: 12, stok_keluar: 200 }
-  //   ];
-
-  //   const fdata = rows.map(item => ({
-  //     stok_awal: parseInt(item.stok_awal),
-  //     stok_akhir: parseInt(item.stok_akhir),
-  //     stok_keluar: parseInt(item.stok_keluar)
-  //   }));
-  //   kmeansEngine.clusterize(fdata, { k: 3, maxIterations: 25, initialCentroids: manualCentroid, debug: true }, (err, res) => {
-  //     console.log('----- Results -----');
-  //     console.log('Initial Centroids: ', manualCentroid)
-  //     console.log(`Iterations: ${res.iterations}`);
-  //     console.log('Clusters: ');
-  //     console.log(res.clusters);
-
-  //     const newCluster = res.clusters
-  //     const iteration = res.iterations
-  //     // setClustering(res)
-
-  //     setClustering({
-  //       newCluster: newCluster,
-  //       iteration: iteration,
-  //     })
-  //     setLoading(false);
-  //   });
-  // }
   const awaitDelay = async (milliseconds) => {
     // setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, milliseconds));
     // setIsLoading(false);
   };
+
+  const months = [
+    { id: 1, name: 'Januari' },
+    { id: 2, name: 'Februari' },
+    { id: 3, name: 'Maret' },
+    { id: 4, name: 'April' },
+    { id: 5, name: 'Mei' },
+    { id: 6, name: 'Juni' },
+    { id: 7, name: 'Juli' },
+    { id: 8, name: 'Agustus' },
+    { id: 9, name: 'September' },
+    { id: 10, name: 'Oktober' },
+    { id: 11, name: 'November' },
+    { id: 12, name: 'Desember' }
+  ];
 
   // const clusteringdata = async () => {
   //   setLoading(true)
@@ -407,44 +332,42 @@ const Index = () => {
   // };
 
 
-  const clusteringdata = async () => {
-    setLoading(true);
-    const manualCentroid = [
-      { SA: 1000, SAK: 500, SKEL: 500 },
-      { SA: 415, SAK: 15, SKEL: 400 },
-      { SA: 212, SAK: 12, SKEL: 200 }
-    ];
+  // const clusteringdata = async () => {
+  //   setLoading(true);
+  //   const manualCentroid = [
+  //     { SA: 1000, SAK: 500, SKEL: 500 },
+  //     { SA: 415, SAK: 15, SKEL: 400 },
+  //     { SA: 212, SAK: 12, SKEL: 200 }
+  //   ];
 
-    const fdata = rows.map(item => ({
-      stok_awal: parseInt(item.stok_awal),
-      stok_akhir: parseInt(item.stok_akhir),
-      stok_keluar: parseInt(item.stok_keluar)
-    }));
+  //   const fdata = rows.map(item => ({
+  //     stok_awal: parseInt(item.stok_awal),
+  //     stok_akhir: parseInt(item.stok_akhir),
+  //     stok_keluar: parseInt(item.stok_keluar)
+  //   }));
 
-    console.log(fdata, "fdata")
+  //   // await awaitDelay(600);
 
-    // await awaitDelay(600);
-
-    kmeansEngine.clusterize(
-      fdata,
-      { k: 3, maxIterations: 10, initialCentroids: manualCentroid, debug: true },
-      (err, res) => {
-        setLoading(false);
-        // const formattedClusters = res.clusters.map(cluster => ({
-        //   C1: cluster.centroid.stok_awal.toFixed(7),
-        //   C2: cluster.centroid.stok_akhir.toFixed(7),
-        //   C3: cluster.centroid.stok_keluar.toFixed(7),
-        //   "JARAK TERDEKAT": Math.min(
-        //     cluster?.closest?.map(c => Math.min(c.distance.C1, c.distance.C2, c.distance.C3))
-        //   )
-        // }));
-        // console.log(formattedClusters)
-        setIterations(res.iterations);
-        setClusters(res);
-        setClosestCentroids(res.closest);
-      }
-    );
-  };
+  //   kmeansEngine.clusterize(
+  //     fdata,
+  //     { k: 3, maxIterations: 10, initialCentroids: manualCentroid, debug: true },
+  //     (err, res) => {
+  //       setLoading(false);
+  //       // const formattedClusters = res.clusters.map(cluster => ({
+  //       //   C1: cluster.centroid.stok_awal.toFixed(7),
+  //       //   C2: cluster.centroid.stok_akhir.toFixed(7),
+  //       //   C3: cluster.centroid.stok_keluar.toFixed(7),
+  //       //   "JARAK TERDEKAT": Math.min(
+  //       //     cluster?.closest?.map(c => Math.min(c.distance.C1, c.distance.C2, c.distance.C3))
+  //       //   )
+  //       // }));
+  //       // console.log(formattedClusters)
+  //       setIterations(res.iterations);
+  //       setClusters(res);
+  //       setClosestCentroids(res.closest);
+  //     }
+  //   );
+  // };
 
 
   // const clusteringdata = async () => {
@@ -535,25 +458,6 @@ const Index = () => {
   //   setIterationData(iterationDetails);
   // });
 
-
-  useEffect(() => {
-    const calltahun = async () => {
-      await axios.get(`${process.env.APP_API}tahunakademik/list`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-        },
-      }).then((res) => {
-        setTahunakademik(res.data)
-      }).catch((err) => {
-        console.log('gagal mengabil data tahun akademik', err)
-      })
-    }
-    calltahun()
-  }, [
-    status,
-    jenjang
-  ])
-
   useEffect(() => {
     fetchTableData(sort, searchValue, sortColumn)
   }, [fetchTableData, searchValue, sort, sortColumn])
@@ -602,7 +506,7 @@ const Index = () => {
   const kodebarang = [
     {
       id: "C1",
-      name: 'PALING BANYAK TERJUAL',
+      name: 'BANYAK TERJUAL',
 
     },
     {
@@ -616,6 +520,7 @@ const Index = () => {
     }
   ]
 
+  const jsonData = clusters.clusters
   const pantek = JSON.parse(JSON.stringify(iterations));
 
   return (
@@ -631,7 +536,8 @@ const Index = () => {
             chipText='-12.2%'
             chipColor='default'
             avatarColor='info'
-            title='PALING BANYAK TERJUAL'
+            title='BANYAK TERJUAL
+'
             subtitle='Last week'
             avatarIcon='tabler:currency-dollar'
           />
@@ -762,171 +668,173 @@ const Index = () => {
             />
             K Means Clustering
           </Typography>
-
-          <Box
-            sx={{
-              py: 4,
-              px: 6,
-              rowGap: 2,
-              columnGap: 4,
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
+          <br />
+          <Grid container spacing={10}>
             <Grid item xs={12} sm={6}>
-              <Box sx={{ rowGap: 5, display: 'flex', flexWrap: 'wrap', alignItems: 'right' }}>
-                <Button
-                  variant='contained'
-                  sx={{ '& svg': { mr: 1 } }}
-                  onClick={() => clusteringdata()}
-                >
-                  <Icon fontSize='1.125rem' icon='tabler:plus' />
-                  Proses Iterasi
-                </Button>
-                &nbsp;
-                <CustomTextField
-                  value={value}
-                  sx={{ mr: 8 }}
-                  placeholder='Search Data'
-                  onChange={(e) => handleFilter(e.target.value)}
+              <Typography variant='h6' sx={{ mb: 0.5 }}>
+                <Icon icon='tabler:files' fontSize='1.125rem'
                 />
-
-              </Box>
-
-
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {/* <Box sx={{ rowGap: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'right' }}> */}
+                Iterasi
+              </Typography>
               <CustomTextField
-                value={value}
-                sx={{ mr: 8 }}
-                placeholder='Iterasi Data'
-                onChange={(e) => handleFilter(e.target.value)}
+                fullWidth
+                value={iterasi}
+                onChange={handleIterasiChange}
+                sx={{ mb: 4 }}
+                label='Iterasi'
+                placeholder='Iterasi'
               />
+              {error && (
+                <Typography variant='body2' color='error'>
+                  Tidak boleh kosong.
+                </Typography>
+              )}
+            </Grid>
 
+
+
+            <Grid item xs={12} sm={6}>
+              {/* <Box sx={{ rowGap: 5, display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}> */}
+              <Typography variant='h5'>
+                <Icon icon='tabler:calendar' />
+                Periode Cluster
+              </Typography>&nbsp;
               <Select
+                value={periodeCluster}
+                onChange={handlePeriodeClusterChange}
                 size='small'
-              // value={selectedSubdistrict}
-              // onChange={(e) => setSelectedSubdistrict(e.target.value)}
+                sx={{
+                  minWidth: '80%',
+                }}
               >
-                <MenuItem value="">Pilih Kategori</MenuItem>
-                {kodebarang.map((kodebarangs) => (
-                  <MenuItem key={kodebarangs.id} value={kodebarangs.name}>
-                    {kodebarangs.name}
+                {months.map((monthsdata, i) => (
+                  <MenuItem key={`Y-${i}`} value={i + 1}>
+                    {monthsdata.name}
                   </MenuItem>
                 ))}
               </Select>
-              &nbsp;&nbsp;
-              <Button
-                variant='contained'
-                color='success'
-                sx={{ '& svg': { mr: 2 } }}
-                onClick={() => route.push(url)}
-              >
-                <Icon fontSize='1.125rem' icon='tabler:search' />
-                Cari
-              </Button>
+            </Grid>
+          </Grid>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Grid container spacing={10} justifyContent="flex-start">
+              <Grid item xs={12} sm={3}>
+                <Button type='submit' variant='contained' onClick={clusteringdata} sx={{ width: '100%', marginRight: '8px' }}>
+                  Cluster
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={3}>
+                <Button variant='tonal' color='info' onClick={cancel} sx={{ width: '100%' }}>
+                  Cancel
+                </Button>
+              </Grid>
             </Grid>
           </Box>
-
         </CardContent>
 
+      </Card>
 
-
-        {/* {clustering.newCluster
+      {/* {clustering.newCluster
 
         } */}
-        <div>
-          {/* {JSON.stringify(clusters)} */}
-          <Grid container spacing={2} sx={{ 'padding': '0px 30px 30px 30px' }}>
-            {
-              loading ?
 
-                <></>
-                :
-                Array.from({ length: iterations }, (_, index) => {
-                  const clusterdata = [JSON.stringify(iterations[index])]
-                  return (
-                    <>
-                      <Alert severity="success" sx={{ 'width': '100%' }}><b>Iterasi Ke - {index + 1}</b></Alert>
-                      <Grid item xs={12} sm={12} sx={{
-                        'overflow': 'auto',
-                        'height': '400px'
-                      }}>
-                        <div key={index}>
-                          {/* <h3 className='heading'>Iterasi Ke - {index + 1}</h3> */}
-                          <table className='trx'>
-                            <thead>
-                              <tr>
-                                <th>Kode Barang</th>
-                                <th>SA</th>
-                                <th>SAK</th>
-                                <th>SKEL</th>
-                                <th>C1</th>
-                                <th>C2</th>
-                                <th>C3</th>
-                                <th>Jarak Terdekat</th>
-                                <th>Cluster</th>
-                              </tr>
-                            </thead>
+
+      <div>
+        {/* {JSON.stringify(clusters)} */}
+        {
+          loading ?
+            <></>
+            :
+            <Card sx={{ marginTop: '40px' }}>
+
+              <CardContent>
+                <div style={{ 'overflow': 'auto', 'marginBottom': '30px' }}>
+                  <BarangTable data={jsonData} iterations={iterations} />
+                </div>
+                {
+                  Array.from({ length: iterations }, (_, index) => {
+                    const clusterdata = [JSON.stringify(iterations[index])]
+                    return (
+                      <>
+                        <Alert severity="success" sx={{ 'width': '100%' }}><b>Iterasi Ke - {index + 1}</b></Alert>
+                        <Grid item xs={12} sm={12} sx={{
+                          'overflow': 'auto',
+                          'height': '400px'
+                        }}>
+                          <div key={index}>
+                            {/* <h3 className='heading'>Iterasi Ke - {index + 1}</h3> */}
+                            <table className='trx'>
+                              <thead>
+                                <tr>
+                                  <th>No.</th>
+                                  <th>Kode Barang</th>
+                                  <th>SA</th>
+                                  <th>SAK</th>
+                                  <th>SKEL</th>
+                                  <th>C1</th>
+                                  <th>C2</th>
+                                  <th>C3</th>
+                                  <th>Jarak Terdekat</th>
+                                  <th>Cluster</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {
+                                  rows.map((rowsdata, j) => {
+                                    return (<tr>
+                                      <td style={{ 'width': '4%' }}>{j + 1}</td>
+                                      <td style={{ 'width': '10%' }}>{rowsdata.kd_barang}</td>
+                                      <td>{rowsdata.stok_awal}</td>
+                                      <td>{rowsdata.stok_akhir}</td>
+                                      <td>{rowsdata.stok_keluar}</td>
+                                      <td>{_hitungCluster(parseInt(rowsdata.stok_awal), 1000, parseInt(rowsdata.stok_akhir), 500, parseInt(rowsdata.stok_keluar), 500)}</td>
+                                      <td>{_hitungCluster(parseInt(rowsdata.stok_awal), 415, parseInt(rowsdata.stok_akhir), 400, parseInt(rowsdata.stok_keluar), 15)}</td>
+                                      <td>{_hitungCluster(parseInt(rowsdata.stok_awal), 212, parseInt(rowsdata.stok_akhir), 200, parseInt(rowsdata.stok_keluar), 12)}</td>
+                                      <td></td>
+                                      <td></td>
+                                    </tr>)
+
+                                  })
+                                }
+
+                              </tbody>
+                            </table>
+                          </div>
+
+                        </Grid>
+
+                        <Grid item xs={12} lg={12}>
+                          <table className='childcls'>
+                            <tr style={{ 'background': '#ddd' }}>
+                              <th>Centroid</th>
+                              <th>SA</th>
+                              <th>SAK</th>
+                              <th>SEKL</th>
+                            </tr>
                             <tbody>
-                              {
-                                rows.map((rowsdata, j) => {
-                                  return (<tr>
-                                    <td>{rowsdata.kd_barang}</td>
-                                    <td>{rowsdata.stok_awal}</td>
-                                    <td>{rowsdata.stok_akhir}</td>
-                                    <td>{rowsdata.stok_keluar}</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                  </tr>)
-
-                                })
-                              }
-
+                              <tr>
+                                <td>Centroid</td>
+                                <td>SA</td>
+                                <td>SAK</td>
+                                <td>SEKL</td>
+                              </tr>
                             </tbody>
                           </table>
-                        </div>
-                        {JSON.stringify(clusters)}
-                      </Grid>
 
-                      <Grid item xs={12} lg={12}>
-                        <table className='childcls'>
-                          <tr style={{ 'background': '#ddd' }}>
-                            <th>Centroid</th>
-                            <th>SA</th>
-                            <th>SAK</th>
-                            <th>SEKL</th>
-                          </tr>
-                          <tbody>
-                            <tr>
-                              <td>Centroid</td>
-                              <td>SA</td>
-                              <td>SAK</td>
-                              <td>SEKL</td>
-                            </tr>
-                          </tbody>
-                        </table>
+                        </Grid>
 
-                      </Grid>
+                      </>
+                    )
 
-                    </>
+                  }
                   )
-
                 }
-                )
+              </CardContent>
+            </Card>
+        }
 
-            }
-          </Grid>
-        </div>
-        {/* <DataGrid
+      </div>
+      {/* <DataGrid
           isDense={true}
-
           stickyHeader
           autoHeight
           pagination
@@ -1097,13 +1005,18 @@ const Index = () => {
             }
           }}
         /> */}
-      </Card>
+
       <Preloading show={loading} info={`Sedang Melakukan Perhitungan`} />
-    </div>
+    </div >
   )
 }
 
+function _hitungCluster(W3, R3, X3, S3, Y3, T3) {
+  return Math.sqrt(Math.pow((W3 - R3), 2) + Math.pow((X3 - S3), 2) + Math.pow((Y3 - T3), 2));
+}
+
 export default Index
+
 
 // kmeans.clusterize(data, { k: 4, maxIterations: 25, initialCentroids: this.state.manualCentroid ? centroids : undefined, debug: true }, (err, res) => {
 //   console.log('----- Results -----');
@@ -1116,3 +1029,41 @@ export default Index
 
 //   this.setOutput(newCluster, iteration)
 // });
+
+const BarangTable = ({ data, iterations }) => {
+  return (
+    <div>
+      <Typography variant='h4' sx={{ mb: 10 }}>
+        <Icon icon='tabler:files' fontSize='1.125rem'
+        />
+        Hasil Clustering KE - {iterations}
+      </Typography>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Stok Awal</th>
+            <th>Stok Akhir</th>
+            <th>Stok Keluar</th>
+            {/* <th>Vector IDs</th> */}
+          </tr>
+        </thead>
+        <tbody>
+          {data?.map((item, index) => (
+            <tr key={index}>
+              <td>{item.centroid?.stok_awal?.toFixed(2) ?? 0}</td>
+              <td>{item.centroid?.stok_akhir?.toFixed(2) ?? 0}</td>
+              <td>{item.centroid?.stok_keluar?.toFixed(2) ?? 0}</td>
+              {/* <td>{item.vectorIds.join(', ')}</td> */}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+
+
+
+

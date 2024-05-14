@@ -154,7 +154,7 @@ export const Print = async (req, res) => {
             </style>
         </head>
         <body>
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgtLCr2u2upCyFV_qaAi-VDAj_zlp4V0daCi0lpzef0GiWZSBoo3S5IKjs3aT4WeF8VPQS9LsTXpsfN51XF104bbbfyGMhhKp_ryOlgiWVkQjYVotioOOMwHALuvolRyfigpdRHREuaqEs/s1600/sumber+jaya+palur.jpg"
+        <img src="/logo_app.png"
         style='
           width: 20%
         '
@@ -163,7 +163,7 @@ export const Print = async (req, res) => {
                 <h3>Laporan Barang Keseluruhan</h3>
                 <hr />
                 <p><strong>Vendor:</strong> ${datanya.nama_distributor}</p>
-                <p><strong>PO Number:</strong> ${datanya.no_faktur}</p>
+                <p><strong>PO Number:</strong> ${datanya.no_faktur ? datanya.no_faktur : 'PO-12.19812.012'}</p>
                 <p><strong>Date:</strong> May 8, 2024</p> 
                 <table>
                     <thead>
@@ -206,7 +206,6 @@ export const Print = async (req, res) => {
         </body>
         </html>        
         `
-
         const options = { format: 'A4', orientation: 'landscape', };
         pdf.create(htmlContent.toString(), options).toStream((err, stream) => {
             if (err) {

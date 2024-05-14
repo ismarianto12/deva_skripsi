@@ -8,7 +8,7 @@ import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import CardHeader from '@mui/material/CardHeader'
-import { DataGrid } from '@mui/x-data-grid'
+import { DataGrid, GridToolbar } from '@mui/x-data-grid'
 import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
@@ -340,7 +340,14 @@ const List = () => {
 
         <Divider sx={{ m: '0 !important' }} />
         {/* <TableHeader value={value} handleFilter={handleFilter} /> */}
+
         <CardContent>
+          <Typography variant='h5' sx={{ mb: 0.5 }}>
+            <Icon icon='tabler:files' fontSize='1.125rem' />
+            Report Barang
+          </Typography>
+
+          <br />
           <Box sx={{ p: theme => theme.spacing(0, 6, 6) }}>
             <Grid container spacing={4} paddingBottom={10} sx={{
               display: 'flex'
@@ -427,10 +434,7 @@ const List = () => {
               </Grid>
             </Grid>
           </Box>
-          <Typography variant='h5' sx={{ mb: 0.5, ml: 7 }}>
-            <Icon icon='tabler:files' fontSize='1.125rem' />
-            Report Barang
-          </Typography>
+
           {/* <Comheader
             value={searchValue}
             handleFilter={handleSearch}
@@ -452,7 +456,6 @@ const List = () => {
             <Grid item xs={12} sm={6}>
               <Box sx={{ rowGap: 5, display: 'flex', flexWrap: 'wrap', alignItems: 'right' }}>
                 <CustomTextField
-                  value={value}
                   sx={{ mr: 8 }}
                   placeholder='Search Data'
                   onChange={(e) => handleSearch(e.target.value)}
@@ -482,14 +485,17 @@ const List = () => {
         <DataGrid
           autoHeight
           pagination
-          rows={rows}
+          // rows={rows}
+          rows={rows.map((item, index) => ({ id: index + 1, ...item }))}
           rowCount={total}
           columns={
             [
               {
                 flex: 1,
-                minWidth: 180,
-                headerName: 'ID',
+                minWidth: 5,
+                maxWidth: 80,
+                field: "id",
+                headerName: 'No.',
                 renderCell: ({ row }) => (
                   <Typography href={`/apps/invoice/preview/${row.id}`}>{`#${row.id}`}</Typography>
                 )
@@ -497,29 +503,24 @@ const List = () => {
               {
                 flex: 1,
                 minWidth: 180,
-                field: 'created_at',
-                headerName: 'Tgl & Jam'
+                field: 'kd_barang',
+                headerName: 'Kode Barang'
               },
               {
                 flex: 1,
-                minWidth: 180,
+                minWidth: 280,
                 field: 'nama_barang',
                 headerName: 'Nama Barang'
               },
+
               {
                 flex: 1,
                 minWidth: 180,
-                field: 'harga',
-                headerName: 'Harga'
-              },
-              {
-                flex: 1,
-                minWidth: 180,
-                field: 'jumlah_stok',
-                headerName: 'Stoct',
+                field: 'stok_awal',
+                headerName: 'Stok Awal',
                 renderCell: ({ row }) => {
-                  if (row.jumlah_stok) {
-                    return row.jumlah_stok + '/Pcs'
+                  if (row.stok_awal) {
+                    return row.stok_awal + '/Pcs'
                   } else {
                     return (<b>Kosong</b>)
                   }
@@ -528,11 +529,24 @@ const List = () => {
               {
                 flex: 1,
                 minWidth: 180,
-                field: 'jenis_barang',
-                headerName: 'Jenis Barang',
+                field: 'stok_akhir',
+                headerName: 'Stok Akhir',
                 renderCell: ({ row }) => {
-                  if (row.jenis_barang) {
-                    return row.jenis_barang
+                  if (row.stok_akhir) {
+                    return row.stok_akhir + '/Pcs'
+                  } else {
+                    return (<b>Kosong</b>)
+                  }
+                }
+              },
+              {
+                flex: 1,
+                minWidth: 180,
+                field: 'stok_keluar',
+                headerName: 'Stok Keluar',
+                renderCell: ({ row }) => {
+                  if (row.stok_keluar) {
+                    return row.stok_keluar + '/Pcs'
                   } else {
                     return (<b>Kosong</b>)
                   }
@@ -554,11 +568,19 @@ const List = () => {
           pageSizeOptions={[7, 10, 25, 50]}
           paginationModel={paginationModel}
           onSortModelChange={handleSortModel}
-          // slots={{ toolbar: ServerSideToolbar }}
+          getRowId={(row) => row.id}
+          slots={{
+            toolbar: (props) => (
+              <div style={{ marginBottom: '20px' }}>
+                <GridToolbar {...props} />
+              </div>
+            ),
+          }}
           // onPaginationModelChange={setPaginationModel}
           onPaginationModelChange={newModel => {
+            console.log(newModel, 'pagenya')
             setPaginationModel(newModel);
-            fetchTableData(sort, searchValue, sortColumn, newModel.page);
+            // fetchTableData(sort, searchValue, sortColumn, newModel.page);
           }}
 
           slotProps={{

@@ -49,20 +49,21 @@ const navigation = () => {
           auth: false,
         },
         {
-          title: 'Clustering Data',
+          title: 'Hasil Kluster',
+          path: '/cluster/result',
+          auth: false,
+        },
+        {
+          title: 'Variable Clustering',
           path: '/cluster/list',
           auth: false,
         },
-        {
-          title: 'Hasil Iterasi',
-          path: '/distributor/list',
-          auth: false,
-        },
-        {
-          title: 'Hasil Kluster',
-          path: '/distributor/list',
-          auth: false,
-        }
+        // {
+        //   title: 'Hasil C',
+        //   path: '/distributor/list',
+        //   auth: false,
+        // },
+
       ]
     },
     {

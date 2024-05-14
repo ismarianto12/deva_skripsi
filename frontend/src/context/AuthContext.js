@@ -78,7 +78,7 @@ const AuthProvider = ({ children }) => {
 
   const handleLogin = (params, errorCallback) => {
     Swal.fire({
-      title: 'Login Success',
+      title: 'Please Wait',
       allowOutsideClick: false,
       showCancelButton: false,
       timer: 3000,

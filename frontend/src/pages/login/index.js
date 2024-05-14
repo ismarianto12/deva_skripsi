@@ -158,7 +158,7 @@ const LoginPage = () => {
           <Box sx={{ width: '100%', maxWidth: 400 }} style={{
             'text-align': 'center'
           }}>
-            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgtLCr2u2upCyFV_qaAi-VDAj_zlp4V0daCi0lpzef0GiWZSBoo3S5IKjs3aT4WeF8VPQS9LsTXpsfN51XF104bbbfyGMhhKp_ryOlgiWVkQjYVotioOOMwHALuvolRyfigpdRHREuaqEs/s1600/sumber+jaya+palur.jpg"
+            <img src="/logo_app.png"
               style={{
                 'width': '40%',
               }}

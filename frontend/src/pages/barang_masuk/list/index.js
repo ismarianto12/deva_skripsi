@@ -280,7 +280,7 @@ const List = () => {
   const kodebarang = [
     {
       id: "C1",
-      name: 'PALING BANYAK TERJUAL',
+      name: 'BANYAK TERJUAL',
 
     },
     {

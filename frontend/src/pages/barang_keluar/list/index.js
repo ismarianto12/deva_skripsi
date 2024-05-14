@@ -103,7 +103,6 @@ const RowOptions = ({ id, status }) => {
       router.push(`/barang_keluar/confirm/${id}`)
     } else if (params === 'delete') {
       router.push(`/barang_keluar/edit/${id}`)
-
     }
     setAnchorEl(null)
   }
@@ -186,7 +185,6 @@ const List = () => {
   function loadServerRows(currentPage, data) {
     return data.slice(currentPage * paginationModel.pageSize, (currentPage + 1) * paginationModel.pageSize)
   }
-
   const fetchTableData = useCallback(
     async (sort, q, column, page) => {
       await axios
@@ -280,7 +278,7 @@ const List = () => {
   const kodebarang = [
     {
       id: "C1",
-      name: 'PALING BANYAK TERJUAL',
+      name: 'BANYAK TERJUAL',
 
     },
     {

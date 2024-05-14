@@ -171,7 +171,8 @@ td {
   text-align: left;
   border: 0.1px solid #ddd;
   background-color: #fff;
-  padding: 8px;
+  padding: 1px;
+  text-align: center;
 }
 
 .trx,
@@ -194,4 +195,29 @@ tr:nth-child(even) {
 .childcls,
 tr>th {
   background-color: #ddd;
+}
+
+.text-center {
+  text-align: center;
+  /* margin: 0 auto; */
+  background-color: green;
+  color: #fff;
+  border-color: #fff;
+}
+
+
+.text-right {
+  text-align: center;
+  /* margin: 0 auto; */
+  background-color: orange;
+  color: #fff;
+  border-color: #fff;
+}
+
+.text-left {
+  text-align: center;
+  /* margin: 0 auto; */
+  background-color: rgb(21, 255, 0);
+  color: #fff;
+  border-color: #fff;
 }

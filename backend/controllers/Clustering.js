@@ -75,10 +75,36 @@ const currentDate = new Date();
 //     }
 // }
 
+export const List = async (req, res) => {
+  try {
+    const sql = `SELECT 	
+    barang.id, 
+    barang.id_barang, 
+    barang.kd_barang, 
+    barang.nama_barang, 
+    barang.harga, 
+    barang.jumlah_stok, 
+    barang.created_at, 
+    barang.id_jenisbarang, 
+    barang.updated_at, 
+    barang.stok_awal, 
+    barang.stok_akhir, 
+    barang.stok_keluar from barang`;
+    const lstdata = await db.query(sql, {
+      type: Sequelize.SELECT
+    })
+
+    res.status(200).json({ data: lstdata[0], msg: 'success' })
+  } catch (error) {
+    res.status(400).json({ data: lstdata[0], msg: 'error' })
+
+  }
+}
+
 export const Print = async (req, res) => {
   const id = req.params.id
   try {
-    const data = await db.query(` SELECT 
+    const data = await db.query(`SELECT 
         p.id, 
         p.id_barang, 
         b.nama_barang,
@@ -158,7 +184,7 @@ export const Print = async (req, res) => {
             </style>
         </head>
         <body>
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgtLCr2u2upCyFV_qaAi-VDAj_zlp4V0daCi0lpzef0GiWZSBoo3S5IKjs3aT4WeF8VPQS9LsTXpsfN51XF104bbbfyGMhhKp_ryOlgiWVkQjYVotioOOMwHALuvolRyfigpdRHREuaqEs/s1600/sumber+jaya+palur.jpg"
+        <img src="/logo_app.png"
         style='
           width: 20%
         '
@@ -324,8 +350,130 @@ export const listClustering = async (req, res) => {
 
 }
 
+export const insertClusteringResult = async (req, res) => {
+  try {
+    const {
+      id_barang,
+      hasil_cluster,
+      keterangan,
+      created_at,
+      updated_at,
+      user_id,
+    } = req.body
 
-export const List = async (req, res) => {
+    const sql = `INSERT INTO clustering_result set 
+      id_barang=?,
+      hasil_cluster=?,
+      keterangan=?,
+      created_at=?,
+      updated_at=?,
+      user_id=?
+          `
+    const data = db.query(sql, {
+      replacements: [
+        id_barang,
+        hasil_cluster,
+        keterangan,
+        created_at,
+        updated_at,
+        user_id,
+      ], type: QueryTypes.INSERT
+    })
+    res.status(200).json({
+      msg: 'data berhasil di simpan'
+    })
+  } catch (error) {
+    res.status(200).json({
+      msg: error
+    })
+  }
+}
+
+
+export const ClusterResult = async (req, res) => {
+  let { page = 1 } = req.query
+  // if (req.query.page) {
+  //   const onlyLettersPattern = /^[0-9]+$/
+  //   if (page.match(onlyLettersPattern) || page < 0) {
+  //     res.status(400).json({
+  //       err: "Special characters and only numbers"
+  //     })
+  //   }
+  // }
+  const totaldata = await db.query(`SELECT count(id) as total from clustering_result`, { type: Sequelize.SELECT })
+  let pageSize = 10
+  if (req.query.pageSize === 'All' || req.query.pageSize === 'NaN') {
+    pageSize = parseInt(totaldata[0][0]?.total)
+  } else {
+    pageSize = parseInt(req.query.pageSize)
+  }
+
+  const search = req.query.q
+  page = parseInt(page)
+  pageSize = parseInt(pageSize)
+  const offset = parseInt((page - 1) * pageSize)
+  let whereClause = {}
+  console.log(search != '', 'status search')
+  if (search != '') {
+    whereClause = {
+      nama_barang: {
+        [Op.like]: `%${search}%`
+      }
+    }
+  }
+  try {
+
+
+    const sql = `
+    SELECT
+	barang.id_barang, 
+	barang.kd_barang, 
+	barang.nama_barang, 
+	barang.harga, 
+	barang.jumlah_stok, 
+	barang.id_jenisbarang, 
+	barang.created_at, 
+	clustering_result.id_barang, 
+	clustering_result.keterangan, 
+	clustering_result.hasil_cluster, 
+	clustering_result.created_at, 
+	clustering_result.updated_at
+FROM
+	barang
+ JOIN
+	clustering_result
+	ON 
+    barang.id = clustering_result.id_barang
+  ORDER BY
+   barang.id ASC 
+  LIMIT 
+   :offset, :pageSize  
+   `;
+    const data = await db.query(sql, {
+      replacements: {
+        search: `%${search}%`,
+        offset: (page - 1) * pageSize,
+        pageSize: pageSize
+      },
+      type: db.QueryTypes.SELECT
+    })
+    // console.log(totaldata[0][0]?.total, ' totaldata[0].tota')
+    res.json({
+      data: data,
+      page,
+      pageSize,
+      total: totaldata[0][0]?.total, // Note: This may not be accurate for large datasets, consider using COUNT query
+    });
+  } catch (error) {
+    console.log(error, 'err')
+    res.status(400).json({
+      data: 'error request',
+      msg: error
+    })
+  }
+}
+
+export const ClusterResultList = async (req, res) => {
   try {
     let { page = 1, pageSize = 10 } = req.query;
     const q = req.query.q;
