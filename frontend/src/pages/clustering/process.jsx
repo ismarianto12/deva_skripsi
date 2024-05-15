@@ -23,7 +23,6 @@ import { useForm, Controller } from 'react-hook-form'
 import Icon from 'src/@core/components/icon'
 // ** Store Imports
 import { useDispatch, useSelector } from 'react-redux'
-
 // ** Actions Imports
 import { addUser } from 'src/store/apps/user'
 import { Card, CardContent } from '@mui/material'

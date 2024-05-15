@@ -175,6 +175,12 @@ td {
   text-align: center;
 }
 
+
+.trx,
+th {
+  padding: 10px;
+}
+
 .trx,
 tbody,
 td {

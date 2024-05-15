@@ -805,5 +805,35 @@ export const hitungClustering = async (req, res) => {
   }
 }
 
+export const createcenteroid = async (req, res) => {
+  const { SA, SAK, SKEL, ITERASI } = req.body
+  try {
+    const sql = `INSERT INTO centeroid set SA=?,SAK=?,SKEL=?,ITERASI=?`
+    await db.query(sql, {
+      replacements: [
+        SA,
+        SAK,
+        SKEL,
+        ITERASI
+      ],
+      type: QueryTypes.INSERT
+    })
+    res.json(200).json({
+      msg: 'data berhasil disimpan',
+      status: 'ok'
+    })
+
+  } catch (error) {
+    res.json(200).json({
+      msg: 'gagal',
+      status: 'ok'
+    })
+
+  }
+}
+
 export { Create, Edit, Delete, ListArtikel }
+
+
+
 

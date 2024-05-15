@@ -1,0 +1,30 @@
+import { QueryTypes } from 'sequelize';
+import db from 'path_to_your_db'; // Import your Sequelize instance
+export async function getServerSideProps() {
+  try {
+    // Fetch data from the 'barang' table
+    const barangData = await db.query(`SELECT * FROM barang LIMIT 5`, {
+      type: QueryTypes.SELECT
+    });
+
+    // Fetch data from another table (example: 'users')
+    const userData = await db.query(`SELECT * FROM users LIMIT 10`, {
+      type: QueryTypes.SELECT
+    });
+
+    return {
+      props: {
+        barangData: JSON.parse(JSON.stringify(barangData)), // Convert barangData to JSON format
+        userData: JSON.parse(JSON.stringify(userData)) // Convert userData to JSON format
+      }
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      props: {
+        barangData: [], // Return an empty array for barangData if there's an error
+        userData: [] // Return an empty array for userData if there's an error
+      }
+    };
+  }
+}

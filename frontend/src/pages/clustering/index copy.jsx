@@ -183,13 +183,11 @@ const Index = (props) => {
   const router = useRouter()
   const [takademik, setTakademik] = useState('')
   const [status, setStatus] = useState('')
-  const [manualCentroid, setManualCentroid] = useState(
-    [
-      { "C1": 580, "C2": 415, "C3": 212 },
-      { "C1": 500, "C2": 400, "C3": 200 },
-      { "C1": 80, "C2": 15, "C3": 12 }
-    ]
-  )
+  const [manualCentroid, setManualCentroid] = useState([
+    { C1: 580, C1: 500, C1: 80 },
+    { C2: 415, C2: 400, C2: 15 },
+    { C1: 212, C2: 200, C3: 12 }
+  ])
 
   const [plotdata, setPlotdata] = useState([{
     options: {},
@@ -563,7 +561,7 @@ const Index = (props) => {
     <div data-aos="slide-left">
 
       <Head>
-        <title>Clustering Barang</title>
+        <title>Master - Barang</title>
       </Head>
       {/* <Grid container spacing={6}>
         <Grid item xs={6} sm={3} lg={3}>
@@ -783,7 +781,11 @@ const Index = (props) => {
                 </div>
                 {
                   Array.from({ length: iterations }, (_, index) => {
-                    let updateclustering = '';
+
+
+                    
+
+
                     const clusterdata = [JSON.stringify(iterations[index])]
                     return (
                       <>
@@ -840,14 +842,10 @@ const Index = (props) => {
                                 }
                               </tbody>
                             </table>
-
                           </div>
                         </Grid>
                         {
                           console.log(index, 'iterations')
-                        }
-                        {
-                          console.log(manualCentroid)
                         }
                         <Grid item xs={12} lg={12} sx={{ 'marginBottom': '30px' }}>
                           {
@@ -905,6 +903,7 @@ const Index = (props) => {
                                   </tr>
                                 </tbody>
                               </table>
+
                               :
                               <table className='childcls'>
                                 <tr style={{ 'background': '#ddd' }}>
@@ -914,16 +913,12 @@ const Index = (props) => {
                                   <th>SEKL</th>
                                 </tr>
                                 <tbody>
-                                  {
-                                    manualCentroid?.map((manualCentroids, j) =>
-                                    (<tr>
-                                      <td>{'C' + j}</td>
-                                      <td>{manualCentroids.C1 ?? 0}</td>
-                                      <td>{manualCentroids.C2 ?? 0}</td>
-                                      <td>{manualCentroids.C3 ?? 0}</td>
-                                    </tr>),
-                                    )
-                                  }
+                                  <tr>
+                                    <td>Centroid</td>
+                                    <td>SA</td>
+                                    <td>SAK</td>
+                                    <td>SEKL</td>
+                                  </tr>
                                 </tbody>
                               </table>
 
@@ -1119,20 +1114,6 @@ const Index = (props) => {
     </div >
   )
 }
-function __storeCenteroid(data) {
-  try {
-    const res = axios.post(`${process.env.APP_API}/createcenteroid`, {
-      data
-    }, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('accesssToken')}`
-      }
-    })
-    return res
-  } catch (error) {
-    return error
-  }
-}
 
 function _hitungCluster(W3, R3, X3, S3, Y3, T3) {
   return Math.sqrt(Math.pow((W3 - R3), 2) + Math.pow((X3 - S3), 2) + Math.pow((Y3 - T3), 2));
@@ -1166,14 +1147,8 @@ function _cariCluster(Z3, AA3, AB3) {
   }
 }
 
-function _hitungCentroid(inputString) {
-  let count = 0;
-  for (let i = 0; i < inputString.length; i++) {
-    if (inputString[i].toLowerCase() === 'i') {
-      count++;
-    }
-  }
-  return count;
+function _hitungCentroid() {
+
 }
 export default Index
 
@@ -1297,19 +1272,19 @@ const BarangTable = ({ data, iterations, plotdata }) => {
           <Typography variant='h4' sx={{ mb: 10 }}>
             <Icon icon='tabler:files' fontSize='1.125rem'
             />
-            Total Clustering Ke - {iterations}
+            Hasil Clustering KE - {iterations}
           </Typography>
 
           <Grid container xs={12}>
-            <Grid item xs={12} sm={6}>
 
-              <ReactApexcharts options={clusterchart.options} series={clusterchart.series} type="bar" width="100%" />
+            <Grid item xs={12} sm={6}>
               <table style={{ 'width': '100%' }}>
                 <thead>
                   <tr>
                     <th>Stok Awal</th>
                     <th>Stok Akhir</th>
                     <th>Stok Keluar</th>
+                    {/* <th>Vector IDs</th> */}
                   </tr>
                 </thead>
                 <tbody>
@@ -1323,15 +1298,19 @@ const BarangTable = ({ data, iterations, plotdata }) => {
                   ))}
                 </tbody>
               </table>
+
               <br /><br /><br /><br />
+              <ReactApexcharts options={clusterchart.options} series={clusterchart.series} type="bar" width="100%" />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <ReactApexcharts options={param.options} series={param.series} type="line" width="100%" style={{ 'marginLeft': '10px' }} />
-              <ReactApexcharts options={plotdata[0].options} series={plotdata[0].series} type="donut" width="80%" style={{ 'marginLeft': '30px' }} />
+              <ReactApexcharts options={param.options} series={param.series} type="line" width="100%" />
+              <ReactApexcharts options={plotdata[0].options} series={plotdata[0].series} type="donut" width="100%" />
+
             </Grid>
           </Grid>
         </>
         : <></>}
+
 
     </div>
 
@@ -1344,7 +1323,3 @@ const BarangTable = ({ data, iterations, plotdata }) => {
 
 
 
-
-
-
-// https://stackoverflow.com/questions/44119692/how-to-go-through-a-queue-with-a-loop-which-includes-a-delay-javascript
