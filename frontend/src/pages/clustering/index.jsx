@@ -265,44 +265,133 @@ const Index = (props) => {
   )
 
 
-  const clusteringdata = async () => {
-    if (!iterasi || !periodeCluster) {
-      setError(true); // Menampilkan pesan kesalahan jika input kosong
-      return;
+  const distance = (point1, point2) => {
+    return Math.sqrt(point1.reduce((sum, val, i) => sum + Math.pow(val - point2[i], 2), 0));
+  };
+
+  const assignClusters = (data, centroids) => {
+    return data.map(point => {
+      let minDist = Infinity;
+      let cluster = -1;
+      centroids.forEach((centroid, i) => {
+        const dist = distance(point, centroid);
+        if (dist < minDist) {
+          minDist = dist;
+          cluster = i;
+        }
+      });
+      return cluster;
+    });
+  };
+
+  const updateCentroids = (data, clusters, k) => {
+    const sums = Array(k).fill(null).map(() => Array(data[0].length).fill(0));
+    const counts = Array(k).fill(0);
+
+    clusters.forEach((cluster, i) => {
+      counts[cluster]++;
+      data[i].forEach((val, j) => {
+        sums[cluster][j] += val;
+      });
+    });
+
+    return sums.map((sum, i) => sum.map(val => val / counts[i]));
+  };
+
+  const kmeans = (data, initialCentroids, iterations) => {
+    let centroids = initialCentroids;
+    const allCentroids = [centroids.map(arr => [...arr])];
+
+    for (let i = 0; i < iterations; i++) {
+      const clusters = assignClusters(data, centroids);
+      centroids = updateCentroids(data, clusters, centroids.length);
+      allCentroids.push(centroids.map(arr => [...arr]));
     }
-    setLoading(true);
-    // const manualCentroid = [
-    //   { C1: 580, C1: 500, C1: 80 },
-    //   { C2: 415, C2: 400, C2: 15 },
-    //   { C1: 212, C2: 200, C3: 12 }
-    // ];
-    const fdata = rows.map(item => ({
-      stok_awal: parseInt(item.stok_awal),
-      stok_akhir: parseInt(item.stok_akhir),
-      stok_keluar: parseInt(item.stok_keluar)
-    }));
-    console.log(fdata, "fdata")
-    // await awaitDelay(600);
-    await kmeansEngine.clusterize(
-      fdata,
-      { k: 3, maxIterations: parseInt(iterasi), initialCentroids: manualCentroid, debug: true },
-      (err, res) => {
-        setLoading(false);
-        // const formattedClusters = res.clusters.map(cluster => ({
-        //   C1: cluster.centroid.stok_awal.toFixed(7),
-        //   C2: cluster.centroid.stok_akhir.toFixed(7),
-        //   C3: cluster.centroid.stok_keluar.toFixed(7),
-        //   "JARAK TERDEKAT": Math.min(
-        //     cluster?.closest?.map(c => Math.min(c.distance.C1, c.distance.C2, c.distance.C3))
-        //   )
-        // }));
-        // console.log(res, 'hasil cluster terakhir data')
-        setIterations(res.iterations);
-        setClusters(res);
-        setClosestCentroids(res.closest);
-        Swal.fire('success', "Success Clustering data", 'success')
-      }
-    );
+
+    return allCentroids;
+  };
+
+  const clusteringdata = async () => {
+    const manualCentroid = [
+      [580, 500, 80],
+      [415, 400, 15],
+      [212, 200, 12]
+    ];
+
+    const fdata = [
+      [755, 500, 255], [600, 500, 100], [730, 500, 230], [623, 500, 123], [1000, 500, 500],
+      [420, 400, 20], [760, 400, 360], [515, 500, 15], [1000, 500, 500], [750, 600, 150],
+      [580, 500, 80], [590, 500, 90], [700, 500, 200], [560, 500, 60], [1030, 500, 530],
+      [535, 500, 35], [900, 600, 300], [1100, 700, 400], [420, 300, 120], [560, 500, 60],
+      [720, 400, 320], [580, 500, 80], [219, 200, 19], [335, 300, 35], [512, 500, 12],
+      [415, 400, 15], [330, 300, 30], [600, 500, 100], [490, 400, 90], [712, 700, 12],
+      [500, 200, 300], [760, 700, 60], [390, 300, 90], [530, 500, 30], [411, 400, 11],
+      [270, 200, 70], [630, 500, 130], [505, 500, 5], [1035, 800, 235], [450, 400, 50],
+      [734, 500, 234], [367, 300, 67], [823, 400, 423], [1061, 300, 761], [113, 100, 13],
+      [108, 100, 8], [110, 100, 10], [135, 100, 35], [124, 100, 24], [290, 200, 90],
+      [157, 100, 57], [307, 300, 7], [546, 500, 46], [500, 200, 300], [309, 300, 9],
+      [319, 300, 19], [304, 300, 4], [306, 300, 6], [278, 200, 78], [390, 300, 90],
+      [322, 200, 122], [290, 200, 90], [167, 100, 67], [287, 200, 87], [345, 300, 45],
+      [542, 200, 342], [123, 100, 23], [108, 100, 8], [109, 100, 9], [276, 200, 76],
+      [389, 300, 89], [243, 200, 43], [150, 100, 50], [104, 100, 4], [209, 200, 9],
+      [134, 100, 34], [154, 100, 54], [201, 200, 1], [134, 100, 34], [153, 100, 53],
+      [222, 200, 22], [212, 200, 12], [311, 300, 11], [310, 300, 10], [436, 400, 36],
+      [410, 400, 10], [325, 300, 25], [112, 100, 12], [179, 100, 79], [130, 100, 30],
+      [256, 200, 56], [214, 200, 14], [225, 100, 125], [600, 300, 300], [570, 500, 70],
+      [189, 100, 89], [165, 100, 65], [150, 100, 50], [104, 100, 4], [218, 200, 18],
+      [280, 200, 80], [107, 100, 7], [105, 100, 5], [114, 100, 14], [129, 100, 29],
+      [205, 200, 5], [260, 200, 60], [106, 100, 6], [102, 100, 2], [128, 50, 78],
+      [59, 50, 9], [72, 70, 2], [64, 60, 4], [100, 50, 50], [140, 50, 90], [104, 70, 34],
+      [106, 80, 26], [171, 90, 81], [118, 100, 18], [101, 60, 41], [85, 70, 15], [121, 100, 21],
+      [86, 50, 36], [74, 40, 34], [123, 100, 23], [550, 50, 500], [48, 40, 8], [196, 30, 166],
+      [104, 100, 4], [127, 100, 27], [152, 150, 2], [216, 200, 16], [74, 50, 24], [175, 100, 75],
+      [67, 60, 7], [123, 80, 43], [82, 60, 22], [85, 80, 5], [107, 90, 17]
+    ];
+
+    console.log(fdata, 'fdata')
+    const allCentroids = kmeans(fdata, manualCentroid, 6)
+    console.log(allCentroids)
+    setIterations(iterasi);
+    setClusters(allCentroids);
+
+
+    // if (!iterasi || !periodeCluster) {
+    //   setError(true); // Menampilkan pesan kesalahan jika input kosong
+    //   return;
+    // }
+    // setLoading(true);
+    // // const manualCentroid = [
+    // //   { C1: 580, C1: 500, C1: 80 },
+    // //   { C2: 415, C2: 400, C2: 15 },
+    // //   { C1: 212, C2: 200, C3: 12 }
+    // // ];
+    // const fdata = rows.map(item => ({
+    //   stok_awal: parseInt(item.stok_awal),
+    //   stok_akhir: parseInt(item.stok_akhir),
+    //   stok_keluar: parseInt(item.stok_keluar)
+    // }));
+    // console.log(fdata, "fdata")
+    // // await awaitDelay(600);
+    // await kmeansEngine.clusterize(
+    //   fdata,
+    //   { k: 3, maxIterations: parseInt(iterasi), initialCentroids: manualCentroid, debug: true },
+    //   (err, res) => {
+    //     setLoading(false);
+    //     // const formattedClusters = res.clusters.map(cluster => ({
+    //     //   C1: cluster.centroid.stok_awal.toFixed(7),
+    //     //   C2: cluster.centroid.stok_akhir.toFixed(7),
+    //     //   C3: cluster.centroid.stok_keluar.toFixed(7),
+    //     //   "JARAK TERDEKAT": Math.min(
+    //     //     cluster?.closest?.map(c => Math.min(c.distance.C1, c.distance.C2, c.distance.C3))
+    //     //   )
+    //     // }));
+    //     // console.log(res, 'hasil cluster terakhir data')
+    //     setIterations(res.iterations);
+    //     setClusters(res);
+    //     setClosestCentroids(res.closest);
+    //     Swal.fire('success', "Success Clustering data", 'success')
+    //   }
+    // );
   };
 
   const cancel = () => {
@@ -342,7 +431,6 @@ const Index = (props) => {
     { id: 11, name: 'November' },
     { id: 12, name: 'Desember' }
   ];
-
   // const clusteringdata = async () => {
   //   setLoading(true)
   //   const manualCentroid = [
@@ -351,11 +439,6 @@ const Index = (props) => {
   //     { stok_awal: 212, stok_akhir: 12, stok_keluar: 200 }
   //   ];
 
-  //   const fdata = rows.map(item => ({
-  //     stok_awal: parseInt(item.stok_awal),
-  //     stok_akhir: parseInt(item.stok_akhir),
-  //     stok_keluar: parseInt(item.stok_keluar)
-  //   }));
   //   await awaitDelay(600);
   //   await kmeansEngine.clusterize(fdata, { k: 3, maxIterations: 10, initialCentroids: manualCentroid, debug: true }, (err, res) => {
   //     setLoading(false)
