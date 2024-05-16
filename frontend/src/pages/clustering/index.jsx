@@ -164,7 +164,7 @@ const datastatus = [
     'id': '2', 'status': 'Di tolak',
   }
 ]
-const Index = (props) => {
+const Index = () => {
 
 
   // ** States
@@ -1260,8 +1260,6 @@ function _hitungCentroid(inputString) {
   return count;
 }
 export default Index
-
-
 // kmeans.clusterize(data, { k: 4, maxIterations: 25, initialCentroids: this.state.manualCentroid ? centroids : undefined, debug: true }, (err, res) => {
 //   console.log('----- Results -----');
 //   console.log('Initial Centroids: ', centroids)
@@ -1273,29 +1271,7 @@ export default Index
 
 //   this.setOutput(newCluster, iteration)
 // });
-// export async function getServerSideProps(context) {
-//   try {
-//     const paramdata = await db.query(`SELECT * FROM centeroid where ITERASI = ?`, {
-//       replacements: [
-//         context.params.id
-//       ],
-//       type: QueryTypes.SELECT
-//     });
 
-//     return {
-//       props: {
-//         paramdata: JSON.parse(JSON.stringify(paramdata)) // Convert paramdata to JSON format
-//       }
-//     };
-//   } catch (error) {
-//     console.error(error);
-//     return {
-//       props: {
-//         paramdata: [] // Return an empty array for paramdata if there's an error
-//       }
-//     };
-//   }
-// }
 
 const BarangTable = ({ data, iterations, plotdata }) => {
   const param = {
