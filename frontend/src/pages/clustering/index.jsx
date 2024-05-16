@@ -164,10 +164,8 @@ const datastatus = [
     'id': '2', 'status': 'Di tolak',
   }
 ]
-const Index = () => {
-
-
-  // ** States
+const Index = (props) => {
+ // ** States
   const [total, setTotal] = useState(0)
   const [action, setAction] = useState('tambah')
   const [iterasi, setIterasi] = useState('');
@@ -317,7 +315,6 @@ const Index = () => {
       [415, 400, 15],
       [212, 200, 12]
     ];
-
     const fdata = [
       [755, 500, 255], [600, 500, 100], [730, 500, 230], [623, 500, 123], [1000, 500, 500],
       [420, 400, 20], [760, 400, 360], [515, 500, 15], [1000, 500, 500], [750, 600, 150],
@@ -348,12 +345,11 @@ const Index = () => {
       [67, 60, 7], [123, 80, 43], [82, 60, 22], [85, 80, 5], [107, 90, 17]
     ];
 
+
     console.log(fdata, 'fdata')
     const allCentroids = kmeans(fdata, manualCentroid, 6)
     console.log(allCentroids)
     setIterations(iterasi);
-    setClusters(allCentroids);
-
 
     // if (!iterasi || !periodeCluster) {
     //   setError(true); // Menampilkan pesan kesalahan jika input kosong
@@ -573,7 +569,7 @@ const Index = () => {
   //   setIterationData(iterationDetails);
   // });
   useEffect(() => {
-    // console.log(props.paramdata, 'paramdataF')
+    console.log(props.paramdata, 'paramdataF')
 
     fetchTableData(sort, searchValue, sortColumn)
   }, [fetchTableData, searchValue, sort, sortColumn])
@@ -1260,6 +1256,8 @@ function _hitungCentroid(inputString) {
   return count;
 }
 export default Index
+
+
 // kmeans.clusterize(data, { k: 4, maxIterations: 25, initialCentroids: this.state.manualCentroid ? centroids : undefined, debug: true }, (err, res) => {
 //   console.log('----- Results -----');
 //   console.log('Initial Centroids: ', centroids)
@@ -1271,7 +1269,29 @@ export default Index
 
 //   this.setOutput(newCluster, iteration)
 // });
+export async function getServerSideProps(context) {
+  try {
+    const paramdata = await db.query(`SELECT * FROM centeroid where ITERASI = ?`, {
+      replacements: [
+        context.params.id
+      ],
+      type: QueryTypes.SELECT
+    });
 
+    return {
+      props: {
+        paramdata: JSON.parse(JSON.stringify(paramdata)) // Convert paramdata to JSON format
+      }
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      props: {
+        paramdata: [] // Return an empty array for paramdata if there's an error
+      }
+    };
+  }
+}
 
 const BarangTable = ({ data, iterations, plotdata }) => {
   const param = {
