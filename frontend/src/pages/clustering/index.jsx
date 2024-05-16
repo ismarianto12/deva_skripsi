@@ -573,7 +573,7 @@ const Index = (props) => {
   //   setIterationData(iterationDetails);
   // });
   useEffect(() => {
-    console.log(props.paramdata, 'paramdataF')
+    // console.log(props.paramdata, 'paramdataF')
 
     fetchTableData(sort, searchValue, sortColumn)
   }, [fetchTableData, searchValue, sort, sortColumn])
@@ -1273,29 +1273,29 @@ export default Index
 
 //   this.setOutput(newCluster, iteration)
 // });
-export async function getServerSideProps(context) {
-  try {
-    const paramdata = await db.query(`SELECT * FROM centeroid where ITERASI = ?`, {
-      replacements: [
-        context.params.id
-      ],
-      type: QueryTypes.SELECT
-    });
+// export async function getServerSideProps(context) {
+//   try {
+//     const paramdata = await db.query(`SELECT * FROM centeroid where ITERASI = ?`, {
+//       replacements: [
+//         context.params.id
+//       ],
+//       type: QueryTypes.SELECT
+//     });
 
-    return {
-      props: {
-        paramdata: JSON.parse(JSON.stringify(paramdata)) // Convert paramdata to JSON format
-      }
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      props: {
-        paramdata: [] // Return an empty array for paramdata if there's an error
-      }
-    };
-  }
-}
+//     return {
+//       props: {
+//         paramdata: JSON.parse(JSON.stringify(paramdata)) // Convert paramdata to JSON format
+//       }
+//     };
+//   } catch (error) {
+//     console.error(error);
+//     return {
+//       props: {
+//         paramdata: [] // Return an empty array for paramdata if there's an error
+//       }
+//     };
+//   }
+// }
 
 const BarangTable = ({ data, iterations, plotdata }) => {
   const param = {
