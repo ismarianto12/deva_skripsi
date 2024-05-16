@@ -55,6 +55,7 @@ const schema = yup.object().shape({
   nama_barang: yup.string().required("Wajib"),
   id_jenisbarang: yup.string().required('Wajib diisi'),
   lokasi: yup.string().required('Lokasi Wajib diisi'),
+  kd_barang: yup.string().required('Lokasi Wajib diisi')
 })
 
 const defaultValues = {
@@ -116,23 +117,20 @@ const Index = props => {
       }).then(() => {
         toast.success('Data Award berhasil ditambahkan')
         Swal.fire('success', 'Data Barang Berhail', 'success')
-
         route.push('/barang/list')
       })
     } catch (error) {
-
-      Swal.fire('error', error.message, 'error')
-      if (error.response) {
-        console.error('Server responded with:', error.response.status);
-        console.error('Response data:', error.response.data);
-      } else if (error.request) {
+      Swal.fire('error', error?.message, 'error')
+      if (error?.response) {
+        console.error('Server responded with:', error?.response?.status);
+        console.error('Response data:', error?.response?.data);
+      } else if (error?.request) {
         console.error('No response received');
       } else {
-        console.error('Error:', error.message);
+        console.error('Error:', error?.message);
       }
     }
   }
-
   const uploadFile = (e) => {
     const allowedExtensions = ['jpg', 'jpeg', 'png', 'bmp'];
     const fileExtension = e.target.files[0]?.name.split('.').pop().toLowerCase();
@@ -174,8 +172,16 @@ const Index = props => {
       <br />
       <Card>
         <CardContent>
-
-          <Box sx={{ p: theme => theme.spacing(0, 6, 6) }}>
+          <Box sx={{
+            py: 8,
+            px: 1,
+            rowGap: 2,
+            columnGap: 4,
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
@@ -191,8 +197,8 @@ const Index = props => {
                         label='Nama Barang'
                         onChange={onChange}
                         placeholder='Nama Barang'
-                        error={Boolean(errors.namabarang)}
-                        {...(errors.title && { helperText: errors.namabarang.message })}
+                        error={Boolean(errors.nama_barang)}
+                        {...(errors.nama_barang && { helperText: errors.nama_barang.message })}
                       />
                     )}
                   />
@@ -227,12 +233,12 @@ const Index = props => {
                         fullWidth
                         value={value}
                         sx={{ mb: 4 }}
-                        type="number"
+                        type="text"
                         label='Kode Barang'
                         onChange={onChange}
                         placeholder='Kode Barang'
-                        error={Boolean(errors.kode_barang)}
-                        {...(errors.kode_barang && { helperText: errors.kode_barang.message })}
+                        error={Boolean(errors.kd_barang)}
+                        {...(errors.kd_barang && { helperText: errors.kd_barang.message })}
                       />
                     )}
                   />
@@ -379,7 +385,7 @@ const Index = props => {
             </form>
           </Box>
         </CardContent>
-      </Card>
+      </Card >
     </>
   )
 }

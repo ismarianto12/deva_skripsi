@@ -456,8 +456,8 @@ const List = () => {
 
           <Box
             sx={{
-              py: 4,
-              px: 6,
+              py: 8,
+              px: 0,
               rowGap: 2,
               columnGap: 4,
               display: 'flex',

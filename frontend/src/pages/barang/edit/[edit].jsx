@@ -55,6 +55,10 @@ const schema = yup.object().shape({
   nama_barang: yup.string().required("Wajib"),
   id_jenisbarang: yup.string().required('Wajib diisi'),
   lokasi: yup.string().required('Lokasi Wajib diisi'),
+  stok_awal: yup.number().required("Wajib diisi"),
+  stok_akhir: yup.number().required("Wajib diisi"),
+  stok_keluar: yup.number().required("Wajib diisi"),
+  // jumlah_stok: yup.string().required("Wajib diisi"),
 })
 
 const defaultValues = {
@@ -217,15 +221,15 @@ const Index = props => {
                     rules={{ required: true }}
                     render={({ field: { value, onChange } }) => (
                       <CustomTextField
-                        type="number"
+                        type="text"
                         fullWidth
                         value={value}
                         sx={{ mb: 4 }}
                         label='Harga Barang'
                         onChange={onChange}
                         placeholder='Harga Barang'
-                        error={Boolean(errors.hargabarang)}
-                        {...(errors.title && { helperText: errors.hargabarang.message })}
+                        error={Boolean(errors.harga)}
+                        {...(errors.harga && { helperText: errors.harga.message })}
                       />
                     )}
                   />
@@ -258,14 +262,14 @@ const Index = props => {
                     render={({ field: { value, onChange } }) => (
                       <CustomTextField
                         fullWidth
-                        type="number"
+                        type="text"
                         value={value}
                         sx={{ mb: 4 }}
                         label='Stok Awal'
                         onChange={onChange}
                         placeholder='Stok Awal '
-                        error={Boolean(errors.stok)}
-                        {...(errors.title && { helperText: errors.stok.message })}
+                        error={Boolean(errors.stok_awal)}
+                        {...(errors.stok_awal && { helperText: errors.stok_awal.message })}
                       />
                     )}
                   />
@@ -280,12 +284,12 @@ const Index = props => {
                         fullWidth
                         value={value}
                         sx={{ mb: 4 }}
-                        type="number"
+                        type="text"
                         label='Stok Akhir'
                         onChange={onChange}
-                        placeholder='Stok Akhir '
-                        error={Boolean(errors.stok)}
-                        {...(errors.title && { helperText: errors.stok.message })}
+                        placeholder='Stok Akhir'
+                        error={Boolean(errors.stok_akhir)}
+                        {...(errors.stok_akhir && { helperText: errors.stok_akhir.message })}
                       />
                     )}
                   />
@@ -299,7 +303,7 @@ const Index = props => {
                       <CustomTextField
                         fullWidth
                         value={value}
-                        type="number"
+                        type="text"
                         sx={{ mb: 4 }}
                         label='Stok Keluar'
                         onChange={onChange}

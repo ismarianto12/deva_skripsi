@@ -451,9 +451,6 @@ const Index = (props) => {
   //     }
   //   );
   // };
-
-
-
   // const manualCentroid = [
   //   { stok_awal: 1000, stok_akhir: 500, stok_keluar: 500 },
   //   { stok_awal: 415, stok_akhir: 15, stok_keluar: 400 },
@@ -699,7 +696,7 @@ const Index = (props) => {
               </Grid>
             </Grid>
           </Box> */}
-          <Typography variant='h5' sx={{ mb: 0.5 }}>
+          <Typography variant='h5' sx={{ mb: 10 }}>
             <Icon icon='tabler:files' fontSize='1.125rem'
             />
             K Means Clustering
@@ -707,11 +704,7 @@ const Index = (props) => {
           <br />
           <Grid container spacing={10} xs={12}>
             <Grid item xs={12} sm={6}>
-              <Typography variant='h6' sx={{ mb: 0.5 }}>
-                <Icon icon='tabler:files' fontSize='1.125rem'
-                />
-                Iterasi
-              </Typography>
+
               <CustomTextField
                 fullWidth
                 value={iterasi}
@@ -728,28 +721,36 @@ const Index = (props) => {
             </Grid>
             <Grid item xs={12} sm={6}>
               {/* <Box sx={{ rowGap: 5, display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}> */}
-              <Typography variant='h5'>
-                <Icon icon='tabler:calendar' />
-                Periode Cluster
-              </Typography>&nbsp;
-              <Select
+
+              {/* <Select
                 value={periodeCluster}
                 onChange={handlePeriodeClusterChange}
                 size='small'
+                label='Iterasi'
                 sx={{
-                  minWidth: '80%',
+                  minWidth: '100%',
                 }}
+              > */}
+              <CustomTextField
+                fullWidth
+                select
+                value={periodeCluster}
+                onChange={handlePeriodeClusterChange}
+                sx={{ mb: 4 }}
+                label='Iterasi'
+                placeholder='Iterasi'
               >
+
                 {months.map((monthsdata, i) => (
                   <MenuItem key={`Y-${i}`} value={i + 1}>
                     {monthsdata.name}
                   </MenuItem>
                 ))}
-              </Select>
+              </CustomTextField>
             </Grid>
           </Grid>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Grid container spacing={10} justifyContent="flex-start">
+            <Grid container spacing={20} justifyContent="flex-start">
               <Grid item xs={12} sm={3}>
                 <Button type='submit' variant='contained' onClick={clusteringdata} sx={{ width: '100%', marginRight: '8px' }}>
                   Cluster
@@ -1189,9 +1190,12 @@ export default Index
 
 //   this.setOutput(newCluster, iteration)
 // });
-export async function getServerSideProps() {
+export async function getServerSideProps(context) {
   try {
-    const paramdata = await db.query(`SELECT * FROM barang LIMIT 5`, {
+    const paramdata = await db.query(`SELECT * FROM centeroid where ITERASI = ?`, {
+      replacements: [
+        context.params.id
+      ],
       type: QueryTypes.SELECT
     });
 
