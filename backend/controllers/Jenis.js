@@ -192,16 +192,17 @@ const Created = async (req, res) => {
     });
   }
 }
-
 const Show = async (req, res) => {
   try {
     const id = req.params.id
-    const data = await Post.findOne({
-      where: { id: id },
-      rejectOnEmpty: false,
+    const data = await db.query(`SELECT * from jenis_barang where id = ?`, {
+      replacements: [
+        id
+      ],
+      type: QueryTypes.SELECT
     })
     res.status(200).json({
-      data: data,
+      data: data[0],
       msg: 'detail data',
     })
   } catch (error) {
@@ -228,8 +229,26 @@ const Edit = async (req, res) => {
     })
   }
 }
-const Update = (req, res) => {
+  const Update = async (req, res) => {
+  const { jenis_barang } = req.body
+  const id = req.params.id
+  try {
+    await db.query(`Update jenis_barang set jenis_barang=? where id = ?`, {
+      replacements: [
+        jenis_barang,
+        id,
+      ],
+      type: Sequelize.INSERT,
+    })
+    res.status(200).json({
+      msg: 'berhasil',
+    })
+  } catch (error) {
+    res.status(400).json({
+      msg: error,
+    })
 
+  }
 }
 const Delete = async (req, res) => {
   const id = req.params.id

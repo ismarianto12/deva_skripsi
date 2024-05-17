@@ -30,7 +30,7 @@ router.post('/master/barang/delete/:id', verifyToken, BarangController.Delete)
 router.get('/master/jenis', verifyToken, JenisController.ListJenis)
 router.post('/master/jenis/create', verifyToken, JenisController.Create)
 router.post('/master/jenis/show/:id', verifyToken, JenisController.Show)
-router.delete('/master/jenis/delete/:id', verifyToken, JenisController.Delete)
+router.post('/master/jenis/delete/:id', verifyToken, JenisController.Delete)
 
 //transaksi 
 router.get('/master/transaksi', verifyToken, TransaksiController.List)

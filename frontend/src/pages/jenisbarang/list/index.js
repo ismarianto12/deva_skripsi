@@ -31,6 +31,8 @@ import CustomTextField from 'src/@core/components/mui/text-field';
 import Comheader from 'src/@core/components/Comheader';
 import { getparamPend } from 'src/@core/utils/encp';
 import Swal from 'sweetalert2';
+import { deleteJenis } from 'src/store/apps/actions';
+import { fetchData } from 'src/store/apps/user';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -48,118 +50,6 @@ const renderClient = params => {
 
 }
 
-const statusObj = {
-  1: { title: 'current', color: 'primary' },
-  2: { title: 'professional', color: 'success' },
-  3: { title: 'rejected', color: 'error' },
-  4: { title: 'resigned', color: 'warning' },
-  5: { title: 'applied', color: 'info' }
-}
-
-const Jenjang = [
-  {
-    'id': 1,
-    'value': 'TKA',
-
-  },
-  {
-    'id': 2,
-    'value': 'TKB',
-  },
-  {
-    'id': 3,
-    'value': 'SD',
-
-  }, {
-    'id': 4,
-    'value': 'MTSI',
-
-  },
-]
-const RowOptions = ({ id, status }) => {
-  // ** Hooks
-  // const dispatch = useDispatch()
-  // ** State
-  // console.log(status, 'status ppdb')
-  const [anchorEl, setAnchorEl] = useState(null)
-  const rowOptionsOpen = Boolean(anchorEl)
-
-
-
-  const handleRowOptionsClick = event => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const router = useRouter()
-
-  const handleRowOptionsClose = (id, params) => {
-    if (params === 'edit') {
-      router.push(`/ppdb/edit/${id}`)
-    } else if (params === 'view') {
-      router.push(`/ppdb/edit/${id}`)
-    } else if (params === 'confirm') {
-      router.push(`/ppdb/confirm/${id}`)
-    } else if (params === 'delete') {
-      router.push(`/ppdb/edit/${id}`)
-
-    }
-    setAnchorEl(null)
-  }
-
-  const handleDelete = () => {
-    // dispatch(deleteUser(id))
-    handleRowOptionsClose(id, 'delete')
-  }
-
-  return (
-    <>
-      <IconButton size='small' onClick={handleRowOptionsClick}>
-        <Icon icon='tabler:dots-vertical' />
-      </IconButton>
-      <Menu
-        keepMounted
-        anchorEl={anchorEl}
-        open={rowOptionsOpen}
-        onClose={handleRowOptionsClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right'
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right'
-        }}
-        PaperProps={{ style: { minWidth: '8rem' } }}
-      >
-        <MenuItem
-          sx={{ '& svg': { mr: 2 } }}
-          onClick={() => handleRowOptionsClose(id, 'view')}
-        >
-          <Icon icon='tabler:eye' fontSize={20} />
-          View
-        </MenuItem>
-        <MenuItem onClick={() => handleRowOptionsClose(id, 'confirm')} sx={{ '& svg': { mr: 2 } }}>
-          <Icon icon='tabler:check' fontSize={20} />
-          Edit
-        </MenuItem>
-        <MenuItem href={`/ppdb/edit/${id}`} onClick={handleDelete} sx={{ '& svg': { mr: 2 } }}>
-          <Icon icon='tabler:trash' fontSize={20} />
-          Delete
-        </MenuItem>
-      </Menu>
-    </>
-  )
-}
-
-const datastatus = [
-  {
-    'id': '1', 'status': 'Diterima',
-
-  },
-  {
-    'id': '2', 'status': 'Di tolak',
-  }
-]
 
 const List = () => {
   // ** States
@@ -240,6 +130,115 @@ const List = () => {
     jenjang
   ])
 
+
+
+  const statusObj = {
+    1: { title: 'current', color: 'primary' },
+    2: { title: 'professional', color: 'success' },
+    3: { title: 'rejected', color: 'error' },
+    4: { title: 'resigned', color: 'warning' },
+    5: { title: 'applied', color: 'info' }
+  }
+
+  const Jenjang = [
+    {
+      'id': 1,
+      'value': 'TKA',
+
+    },
+    {
+      'id': 2,
+      'value': 'TKB',
+    },
+    {
+      'id': 3,
+      'value': 'SD',
+
+    }, {
+      'id': 4,
+      'value': 'MTSI',
+
+    },
+  ]
+  const RowOptions = ({ id, status }) => {
+    // ** Hooks
+    // const dispatch = useDispatch()
+    // ** State
+    // console.log(status, 'status ppdb')
+    const [anchorEl, setAnchorEl] = useState(null)
+    const rowOptionsOpen = Boolean(anchorEl)
+
+
+
+    const handleRowOptionsClick = event => {
+      setAnchorEl(event.currentTarget)
+    }
+
+    const router = useRouter()
+
+    const handleRowOptionsClose = (id, params) => {
+      if (params === 'edit') {
+        router.push(`/jenisbarang/edit/${id}`)
+      } else if (params === 'view') {
+        router.push(`/jenisbarang/edit/${id}`)
+      } else if (params === 'confirm') {
+        router.push(`/jenisbarang/confirm/${id}`)
+      }
+      setAnchorEl(null)
+    }
+
+    const handleDelete = () => {
+      deleteJenis(id).then((res) => {
+        Swal.fire('info', 'berhasil di delete', 'success')
+        fetchTableData('asc', '', '')
+      })
+      handleRowOptionsClose(id, 'delete')
+    }
+
+    return (
+      <>
+        <IconButton size='small' onClick={handleRowOptionsClick}>
+          <Icon icon='tabler:dots-vertical' />
+        </IconButton>
+        <Menu
+          keepMounted
+          anchorEl={anchorEl}
+          open={rowOptionsOpen}
+          onClose={handleRowOptionsClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right'
+          }}
+          PaperProps={{ style: { minWidth: '8rem' } }}
+        >
+
+          <MenuItem onClick={() => handleRowOptionsClose(id, 'edit')} sx={{ '& svg': { mr: 2 } }}>
+            <Icon icon='tabler:edit' fontSize={20} />
+            Edit
+          </MenuItem>
+          <MenuItem onClick={handleDelete} sx={{ '& svg': { mr: 2 } }}>
+            <Icon icon='tabler:trash' fontSize={20} />
+            Delete
+          </MenuItem>
+        </Menu>
+      </>
+    )
+  }
+
+  const datastatus = [
+    {
+      'id': '1', 'status': 'Diterima',
+
+    },
+    {
+      'id': '2', 'status': 'Di tolak',
+    }
+  ]
+
   useEffect(() => {
     fetchTableData(sort, searchValue, sortColumn)
   }, [fetchTableData, searchValue, sort, sortColumn])
@@ -287,7 +286,7 @@ const List = () => {
     <div data-aos="slide-left">
 
       <Head>
-        <title>Master - PPDB</title>
+        <title>Master - Jenis </title>
       </Head>
       {/* <Grid container spacing={6}>
         <Grid item xs={6} sm={3} lg={3}>

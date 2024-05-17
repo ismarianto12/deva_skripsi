@@ -409,8 +409,8 @@ export const Print = async (req, res) => {
                 <h3>Purchase Order</h3>
                 <hr />
                 <p><strong>Vendor:</strong> ${datanya.nama_distributor}</p>
-                <p><strong>PO Number:</strong> ${datanya.no_faktur}</p>
-                <p><strong>Date:</strong> May 8, 2024</p> 
+                <p><strong>PO Number:</strong> ${datanya.no_faktur ?? 'PO-12.0912.1292'}</p>
+                <p><strong>Date:</strong> ${currentDate.toUTCString()}</p> 
                 <table>
                     <thead>
                         <tr>
@@ -426,21 +426,21 @@ export const Print = async (req, res) => {
                             <td>Product A</td>
                             <td>Lorem ipsum dolor sit amet</td>
                             <td>2</td>
-                            <td>$50.00</td>
-                            <td>$100.00</td>
+                            <td>Rp.50.00</td>
+                            <td>Rp.100.00</td>
                         </tr>
                         <tr>
                             <td>Product B</td>
                             <td>Consectetur adipiscing elit</td>
                             <td>3</td>
-                            <td>$30.00</td>
-                            <td>$90.00</td>
+                            <td>Rp.30.00</td>
+                            <td>Rp.90.00</td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <td colspan="4" style="text-align: right;"><strong>Total:</strong></td>
-                            <td>$190.00</td>
+                            <td>Rp.190.00</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -474,7 +474,6 @@ export const Print = async (req, res) => {
 
         // // Tambahkan konten ke PDF
         // doc.text('Hello, World!');
-
         // // Akhiri pembuatan PDF
         // doc.end();
 

@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Grid from '@mui/material/Grid'
 
 // ** MUI Imports
@@ -31,6 +31,7 @@ import { addUser } from 'src/store/apps/user'
 import { Card, CardContent } from '@mui/material'
 import Headtitle from 'src/@core/components/Headtitle'
 import toast from 'react-hot-toast'
+import Swal from 'sweetalert2'
 
 
 const showErrors = (field, valueLen, min) => {
@@ -51,41 +52,25 @@ const Header = styled(Box)(({ theme }) => ({
 }))
 
 const schema = yup.object().shape({
-  namaBarang: yup.string().required(),
-  kategori: yup.string().required('Wajib diisi'),
-  diberikanoleh: yup.string().required('Di keluarkan oleh'),
-  lokasi: yup.string().required('Lokasi Wajib diisi'),
-  tahun: yup.string().required('Tahun Wajib di isi'),
-  // file: yup.mixed().required('A file is required'),
-
+  jenis_barang: yup.string().required("Field Required"),
 })
 
-
 const defaultValues = {
-  namaBarang: '',
-  kategori: '',
-  diberikanoleh: '',
-  lokasi: '',
-  tahun: '',
-  file: '',
+  jenis_barang: '',
 }
 const Index = props => {
   // ** Props
   const route = useRouter();
-  const { open, toggle } = props
-
+  const { id, open, toggle } = props
   // ** State
   const [plan, setPlan] = useState('basic')
   const [role, setRole] = useState('subscriber')
 
   const [file, setFile] = useState('')
   const [fileupload, setFileupload] = useState('')
-
-
   // ** Hooks
   const dispatch = useDispatch()
   const store = useSelector(state => state.user)
-
   const {
     reset,
     control,
@@ -98,27 +83,33 @@ const Index = props => {
     mode: 'onChange',
     resolver: yupResolver(schema)
   })
+  useEffect(() => {
+    const callEdit = async () => {
+      await axios.post(`${process.env.APP_API}master/jenis/show/${id}`, {}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      }).then((data) => {
+        console.log(data?.data?.data, 'jenis_barang')
+        reset(data?.data?.data)
+      }).catch((err) => {
+        Swal.fire('Gagal mengambil data', err, 'error')
+      })
+    }
+    callEdit()
+  }, [])
+
   const onSubmit = async (data) => {
     try {
-      const formData = new FormData();
-      formData.append('namaBarang', data.namaBarang);
-      formData.append('kategori', data.kategori);
-      formData.append('diberikanoleh', data.diberikanoleh);
-      formData.append('lokasi', data.lokasi);
-      formData.append('tahun', data.tahun);
-      // if (data.file[0]) {
-      formData.append('file', fileupload);
-      // }
-      await axios.post(`${process.env.APP_API}award/insert`, formData, {
+      await axios.post(`${process.env.APP_API}master/jenis/update/${id}`, data, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       }).then(() => {
-        toast.success('Data Award berhasil ditambahkan')
-        route.push('/award/list')
+        toast.success('Data Jenis baranag update')
+        route.push('/jenisbarang/list')
       })
     } catch (error) {
-
       Swal.fire('error', error.message, 'error')
       if (error.response) {
         console.error('Server responded with:', error.response.status);
@@ -142,7 +133,7 @@ const Index = props => {
     }
   }
   const handleClose = () => {
-    route.push('/award/list');
+    route.push('/jenisbarang/list');
   }
   return (
     <>
@@ -151,7 +142,7 @@ const Index = props => {
         <Header>
           <Typography variant='h5'>
             <Icon icon='tabler:edit' />
-            Tambah Barang</Typography>
+            Jenis Barang</Typography>
           <IconButton
             size='small'
             onClick={handleClose}
@@ -178,18 +169,18 @@ const Index = props => {
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <Controller
-                    name='Stock'
+                    name='jenis_barang'
                     control={control}
                     rules={{ required: true }}
                     render={({ field: { value, onChange } }) => (
                       <CustomTextField
                         fullWidth
+                        onChange={onChange}
                         value={value}
                         sx={{ mb: 4 }}
-                        label='Jenis'
-                        // placeholder=' '
-                        error={Boolean(errors.jenisbarang)}
-                        {...(errors.title && { helperText: errors.jenisbarang.message })}
+                        label='Jenis Barang'
+                        error={Boolean(errors.jenis_barang)}
+                        {...(errors.title && { helperText: errors.jenis_barang.message })}
                       />
                     )}
                   />
@@ -243,7 +234,7 @@ const Index = props => {
                   </Grid>
                 </Grid>
               </Box> */}
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
                 <Grid container spacing={2} justifyContent="flex-end">
                   <Grid item xs={12} sm={3}>
                     <Button type='submit' variant='contained' sx={{ width: '100%', marginRight: '8px' }}>
@@ -263,6 +254,15 @@ const Index = props => {
       </Card>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  const id = context.query.edit;
+  return {
+    props: {
+      id
+    },
+  };
 }
 
 export default Index
