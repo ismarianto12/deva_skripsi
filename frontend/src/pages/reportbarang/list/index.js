@@ -289,55 +289,9 @@ const List = () => {
       <Head>
         <title>Master - Barang</title>
       </Head>
-      <Grid container spacing={6}>
-        <Grid item xs={6} sm={3} lg={3}>
-          <CardStatsVertical
-            stats={rows.length}
-            chipText='-12.2%'
-            chipColor='default'
-            avatarColor='info'
-            title='Total Barang Masuk'
-            subtitle='Last week'
-            avatarIcon='tabler:currency-dollar'
-          />
-        </Grid>
-        <Grid item xs={6} sm={3} lg={3}>
-          <CardStatsVertical
-            stats={rows.length}
-            chipText='-12.2%'
-            chipColor='default'
-            avatarColor='error'
-            title='Total Barang Keluar'
-            subtitle='Last week'
-            avatarIcon='tabler:currency-dollar'
-          />
-        </Grid>
-        <Grid item xs={6} sm={3} lg={3}>
-          <CardStatsVertical
-            stats='1.28k'
-            chipText='-12.2%'
-            chipColor='default'
-            avatarColor='error'
-            title='Total List'
-            subtitle='Last week'
-            avatarIcon='tabler:currency-dollar'
-          />
-        </Grid>
-        <Grid item xs={6} sm={3} lg={3}>
-          <CardStatsVertical
-            stats='24.67k'
-            chipText='+25.2%'
-            avatarColor='info'
-            chipColor='default'
-            title='Total Purchasing'
-            subtitle='Last week'
-            avatarIcon='tabler:chart-bar'
-          />
-        </Grid>
-      </Grid>
+
       <br /><br />
       <Card>
-
         <Divider sx={{ m: '0 !important' }} />
         {/* <TableHeader value={value} handleFilter={handleFilter} /> */}
 

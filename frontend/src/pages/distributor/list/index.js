@@ -454,10 +454,10 @@ const List = () => {
             <Grid item xs={12} sm={6}>
               <Box sx={{ rowGap: 5, display: 'flex', flexWrap: 'wrap', alignItems: 'right' }}>
                 <CustomTextField
-                  value={value}
+                  // value={value}
                   sx={{ mr: 8 }}
                   placeholder='Search Data'
-                  onChange={(e) => handleFilter(e.target.value)}
+                  onChange={(e) => handleSearch(e.target.value)}
                 />
               </Box>
             </Grid>

@@ -429,7 +429,7 @@ const List = () => {
           </Grid> */}
           <Typography variant='h5' sx={{ mb: 0.5 }}>
             <Icon icon='tabler:files' fontSize='1.125rem' />
-            Jumlah Cluster & Variabel
+            Jumlah Cluster & Variabel (Read Only)
           </Typography>
           <Comheader
             value={searchValue}

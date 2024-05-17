@@ -253,10 +253,7 @@ const List = () => {
             <Icon icon='tabler:edit' fontSize={20} />
             Edit
           </MenuItem>
-          <MenuItem onClick={() => handleRowOptionsClose(id, 'confirm')} sx={{ '& svg': { mr: 2 } }}>
-            <Icon icon='tabler:check' fontSize={20} />
-            Detail
-          </MenuItem>
+
           <MenuItem onClick={handleDelete} sx={{ '& svg': { mr: 2 } }}>
             <Icon icon='tabler:trash' fontSize={20} />
             Delete
@@ -481,7 +478,7 @@ const List = () => {
                 </Button>
                 &nbsp;
                 <CustomTextField
-                  // value={value}
+                  value={''}
                   sx={{ mr: 8 }}
                   placeholder='Search Data'
                   onChange={(e) => handleSearch(e.target.value)}

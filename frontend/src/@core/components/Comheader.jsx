@@ -15,31 +15,17 @@ const Comheader = (props) => {
   const { handleFilter, value, url } = props
 
   return (
-    <Box
-      sx={{
-        py: 4,
-        px: 6,
-        rowGap: 2,
-        columnGap: 4,
-        display: 'flex',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
-    >
+    <Grid container xs={12} sx={{ 'marginTop': '20px' }}>
       <Grid item xs={12} sm={6}>
-        <Box sx={{ rowGap: 5, display: 'flex', flexWrap: 'wrap', alignItems: 'right' }}>
-          <CustomTextField
-            value={value}
-            sx={{ mr: 8 }}
-            placeholder='Search Data'
-            onChange={(e) => handleFilter(e.target.value)}
-          />
-        </Box>
+        <CustomTextField
+          value={value}
+          sx={{ width: '80%' }}
+          placeholder='Search Data'
+          onChange={(e) => handleFilter(e.target.value)}
+        />
 
       </Grid>
-      <Grid item xs={12} sm={6}>
-
+      <Grid item xs={12} sm={6} sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
         <Button
           variant='contained'
           sx={{ '& svg': { mr: 2 } }}
@@ -49,7 +35,7 @@ const Comheader = (props) => {
           Tambah
         </Button>
       </Grid>
-    </Box>
+    </Grid>
   )
 }
 
