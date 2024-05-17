@@ -97,6 +97,8 @@ const List = () => {
   const [action, setAction] = useState('tambah')
   const [sort, setSort] = useState('asc')
   const [rows, setRows] = useState([])
+  const [idkategori, setIdkategori] = useState('')
+
   const [jenisbarang, setJenisBarang] = useState([])
   const [role, setRole] = useState('')
   const [plan, setPlan] = useState('')
@@ -128,6 +130,7 @@ const List = () => {
           params: {
             page: paginationModel.page,
             q: q,
+            idkategori: idkategori,
             sort: sort,
             column: column,
           }
@@ -493,11 +496,13 @@ const List = () => {
                   width: '100%'
                 }}
                 select
+                value={idkategori}
                 fullWidth
                 label="Pilih Kategori Barang"
+                name="kategori"
                 SelectProps={{
                   displayEmpty: true,
-                  // onChange: e => setTakademik(e.target.value)
+                  onChange: e => setIdkategori(e.target.value)
                 }}
               >
                 <MenuItem key={0} value={null}>

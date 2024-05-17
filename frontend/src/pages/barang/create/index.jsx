@@ -55,7 +55,7 @@ const schema = yup.object().shape({
   nama_barang: yup.string().required("Wajib"),
   id_jenisbarang: yup.string().required('Wajib diisi'),
   lokasi: yup.string().required('Lokasi Wajib diisi'),
-  kd_barang: yup.string().required('Lokasi Wajib diisi')
+  kd_barang: yup.string().required('Kode Wajib diisi')
 })
 
 const defaultValues = {
@@ -78,23 +78,10 @@ const Index = props => {
   const [file, setFile] = useState('')
   const [fileupload, setFileupload] = useState('')
   const [jenisbarang, setJenisBarang] = useState([])
+  const [kdbarang, setKdbarang] = useState('')
   const dispatch = useDispatch()
   const store = useSelector(state => state.user)
-  useEffect(() => {
-    const calljenisbarang = async () => {
-      await axios.get(`${process.env.APP_API}master/jenis?q=&sort=asc&column=created_at`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-        }
 
-      }).then((data) => {
-        setJenisBarang(data.data.data)
-      }).catch((errors) => {
-        Swal.fire('Gagal mendapatkan data barang')
-      })
-    }
-    calljenisbarang()
-  }, [])
 
   const {
     reset,
@@ -108,6 +95,37 @@ const Index = props => {
     mode: 'onChange',
     resolver: yupResolver(schema)
   })
+
+  useEffect(() => {
+
+    const callgenerateKd = async () => {
+      await axios.get(`${process.env.APP_API}master/generateKd?q=&sort=asc&column=created_at`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      }).then((data) => {
+        setKdbarang(data.data.data)
+        setValue('kd_barang', data?.data?.data)
+      }).catch((errors) => {
+        Swal.fire('Gagal mendapatkan data barang')
+      })
+    }
+
+    const calljenisbarang = async () => {
+      await axios.get(`${process.env.APP_API}master/jenis?q=&sort=asc&column=created_at`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+        }
+
+      }).then((data) => {
+        setJenisBarang(data.data.data)
+      }).catch((errors) => {
+        Swal.fire('Gagal mendapatkan data barang')
+      })
+    }
+    callgenerateKd()
+    calljenisbarang()
+  }, [])
   const onSubmit = async (data) => {
     try {
       await axios.post(`${process.env.APP_API}master/barang/create`, data, {

@@ -327,13 +327,12 @@ const BarangList = async (req, res) => {
             whereClause = {
                 nama_barang: {
                     [Op.like]: `%${q}%`
-                }
+                },
+                id_jenisbarang: req?.idkategori
             };
         }
-
         // Hitung total data berdasarkan kriteria pencarian
         const totalCount = await Barang.count({ where: whereClause });
-
         const data = await Barang.findAll({
             limit: pageSize,
             offset: offset >= 0 ? offset : 0,
@@ -341,7 +340,7 @@ const BarangList = async (req, res) => {
             include: [{
                 model: JenisBarang,
                 as: 'jenis_barang',
-                attributes: ['id','jenis_barang']
+                attributes: ['id', 'jenis_barang']
             }],
             attributes: [
                 'id_barang',
@@ -382,6 +381,29 @@ const BarangList = async (req, res) => {
         });
     }
 };
+
+
+export const generateKdbarang = async (req, res) => {
+    try {
+        const data = await db.query(`SELECT generate_kode_barang( 
+	            (SELECT MAX(barang.id) from barang LIMIT 1)
+        ) AS kd_barang FROM barang limit 1`, {
+            type: Sequelize.SELECT
+            // QueryTypes: Sequelize.SELECT
+        })
+        res.status(200).json({
+            data: data[0][0]?.kd_barang,
+            msg: 'data berhasil'
+        })
+     } catch (error) {
+        console.log(err,'error')
+        res.status(400).json({
+            data: error,
+            msg: 'data berhasil'
+        })
+   
+    }
+}
 
 const ListArtikel = async (req, res) => {
     try {
