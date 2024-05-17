@@ -385,7 +385,6 @@ const List = () => {
           <Grid container xs={12}>
             <Grid item xs={12} sm={4}>
               <CustomTextField
-                value={value}
                 sx={{ width: '100%' }}
                 placeholder='Search Data'
                 onChange={(e) => handleSearch(e.target.value)}

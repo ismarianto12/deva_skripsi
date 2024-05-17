@@ -431,11 +431,17 @@ const List = () => {
             <Icon icon='tabler:files' fontSize='1.125rem' />
             Jumlah Cluster & Variabel (Read Only)
           </Typography>
-          <Comheader
-            value={searchValue}
-            handleFilter={handleSearch}
-            url={`/jenisbarang/create`}
-          />
+          <Grid container xs={12} sx={{ 'marginTop': '20px' }}>
+            <Grid item xs={12} sm={6}>
+              <CustomTextField
+                sx={{ width: '80%' }}
+                placeholder='Search Data'
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+
+            </Grid>
+
+          </Grid>
 
         </CardContent>
         <DataGrid
