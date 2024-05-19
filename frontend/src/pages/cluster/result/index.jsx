@@ -445,7 +445,7 @@ const List = () => {
                 flex: 1,
                 minWidth: 30,
                 field: 'hasil_cluster',
-                cellClassName: customCellClassName,
+                // cellClassName: customCellClassName,
                 headerName: 'Hasil Cluster',
 
               },

@@ -206,7 +206,7 @@ tr>th {
 .text-center {
   text-align: center;
   /* margin: 0 auto; */
-  background-color: green;
+  /* background-color: green; */
   color: #fff;
   border-color: #fff;
 }

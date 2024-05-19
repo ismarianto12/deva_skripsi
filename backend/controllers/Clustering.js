@@ -389,89 +389,89 @@ export const insertClusteringResult = async (req, res) => {
   }
 }
 
-
 export const ClusterResult = async (req, res) => {
-  let { page = 1 } = req.query
-  // if (req.query.page) {
-  //   const onlyLettersPattern = /^[0-9]+$/
-  //   if (page.match(onlyLettersPattern) || page < 0) {
-  //     res.status(400).json({
-  //       err: "Special characters and only numbers"
-  //     })
-  //   }
-  // }
-  const totaldata = await db.query(`SELECT count(id) as total from clustering_result`, { type: Sequelize.SELECT })
-  let pageSize = 10
-  if (req.query.pageSize === 'All' || req.query.pageSize === 'NaN') {
-    pageSize = parseInt(totaldata[0][0]?.total)
-  } else {
-    pageSize = parseInt(req.query.pageSize)
-  }
+  let { page = 1, q } = req.query;
+  page = parseInt(page) || 1;
+  const search = q || '';
 
-  const search = req.query.q
-  page = parseInt(page)
-  pageSize = parseInt(pageSize)
-  const offset = parseInt((page - 1) * pageSize)
-  let whereClause = {}
-  console.log(search != '', 'status search')
-  if (search != '') {
-    whereClause = {
-      nama_barang: {
-        [Op.like]: `%${search}%`
-      }
-    }
-  }
   try {
-
-
-    const sql = `
-    SELECT
-	barang.id_barang, 
-	barang.kd_barang, 
-	barang.nama_barang, 
-	barang.harga, 
-	barang.jumlah_stok, 
-	barang.id_jenisbarang, 
-	barang.created_at, 
-	clustering_result.id_barang, 
-	clustering_result.keterangan, 
-	clustering_result.hasil_cluster, 
-	clustering_result.created_at, 
-	clustering_result.updated_at
+    // Determine if we need a WHERE clause
+    const whereClause = search ? 'WHERE barang.nama_barang LIKE :search' : '';
+    // Get total data count
+    const totalDataQuery = `
+     SELECT
+	count(*) as total
 FROM
 	barang
- JOIN
+	INNER JOIN
 	clustering_result
 	ON 
-    barang.id = clustering_result.id_barang
-  ORDER BY
-   barang.id ASC 
-  LIMIT 
-   :offset, :pageSize  
-   `;
-    const data = await db.query(sql, {
+		barang.id = clustering_result.id_barang
+      ${whereClause}
+    `;
+    const totalData = await db.query(totalDataQuery, {
+      replacements: { search: `%${search}%` },
+      type: Sequelize.QueryTypes.SELECT
+    });
+
+    const total = totalData[0].total;
+
+    let pageSize = 10;
+    if (req.query.pageSize === 'All' || req.query.pageSize === 'NaN') {
+      pageSize = total;
+    } else {
+      pageSize = parseInt(req.query.pageSize) || 10;
+    }
+    const offset = (page - 1) * pageSize;
+    const dataQuery = `
+    SELECT
+    barang.kd_barang, 
+    barang.nama_barang, 
+    barang.harga, 
+    barang.jumlah_stok, 
+    barang.id_jenisbarang, 
+    barang.created_at, 
+    barang.updated_at, 
+    barang.stok_awal, 
+    barang.stok_akhir, 
+    barang.stok_keluar,
+    clustering_result.hasil_cluster
+
+  FROM
+    barang
+    INNER JOIN
+    clustering_result
+    ON 
+      barang.id = clustering_result.id_barang
+      ${whereClause}
+      ORDER BY barang.id_barang ASC 
+      LIMIT :offset, :pageSize
+    `;
+    const data = await db.query(dataQuery, {
       replacements: {
         search: `%${search}%`,
-        offset: (page - 1) * pageSize,
-        pageSize: pageSize
+        offset,
+        pageSize
       },
-      type: db.QueryTypes.SELECT
-    })
-    // console.log(totaldata[0][0]?.total, ' totaldata[0].tota')
+      type: Sequelize.QueryTypes.SELECT
+    });
+    console.log(data, 'result arra')
+
     res.json({
-      data: data,
+      data,
       page,
       pageSize,
-      total: totaldata[0][0]?.total, // Note: This may not be accurate for large datasets, consider using COUNT query
+      total
     });
   } catch (error) {
-    console.log(error, 'err')
+    console.error(error);
     res.status(400).json({
       data: 'error request',
-      msg: error
-    })
+      msg: error.message
+    });
   }
-}
+};
+
 
 export const ClusterResultList = async (req, res) => {
   try {

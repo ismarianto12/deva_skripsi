@@ -220,8 +220,7 @@ const BarangList = async (req, res) => {
                 nama_barang: {
                     [Op.like]: `%${q}%`
                 },
-                id_jenisbarang: `${req?.query.idkategori}`
-
+ 
             };
         }
 
