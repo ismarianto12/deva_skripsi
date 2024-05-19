@@ -536,25 +536,11 @@ const List = () => {
                 field: 'nama_barang',
                 headerName: 'Nama Barang'
               },
-
-              {
-                flex: 1,
-                minWidth: 80,
-                field: 'stok_awal',
-                headerName: 'S.Awal',
-                renderCell: ({ row }) => {
-                  if (row.stok_awal) {
-                    return row.stok_awal + '/Pcs'
-                  } else {
-                    return (<b>Kosong</b>)
-                  }
-                }
-              },
               {
                 flex: 1,
                 minWidth: 80,
                 field: 'stok_akhir',
-                headerName: 'S.Akhir',
+                headerName: 'Stock',
                 renderCell: ({ row }) => {
                   if (row.stok_akhir) {
                     return row.stok_akhir + '/Pcs'
@@ -566,13 +552,13 @@ const List = () => {
               {
                 flex: 1,
                 minWidth: 180,
-                field: 'stok_keluar',
-                headerName: 'Stok Keluar',
+                field: 'harga',
+                headerName: 'Harga Satuan',
                 renderCell: ({ row }) => {
-                  if (row.stok_keluar) {
-                    return row.stok_keluar + '/Pcs'
+                  if (row.harga) {
+                    return 'Rp' + row.harga
                   } else {
-                    return (<b>Kosong</b>)
+                    return (<small>Kosong</small>)
                   }
                 }
               },
