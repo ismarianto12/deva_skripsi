@@ -2,6 +2,18 @@ import { QueryTypes, Op, Sequelize } from 'sequelize';
 import db from '../db/database.js'
 import multer from 'multer'
 import Distributor from '../models/Distributor.js';
+import pdf from 'html-pdf'
+
+// const currentDate = new Date();
+const currentDate = new Date();
+
+// Get the year, month, and day
+const year = currentDate.getFullYear();
+const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Add 1 to the month because it's zero-based
+const day = String(currentDate.getDate()).padStart(2, '0');
+
+// Format the date as "YYYY-MM-DD"
+const formattedDate = `${year}-${month}-${day}`;
 
 export const Print = async (req, res) => {
     const id = req.params.id
@@ -42,7 +54,7 @@ export const Print = async (req, res) => {
                         border: 1px solid #ddd;
                     }
                     th, td {
-                        padding: 10px;
+                        padding: 5px;
                         text-align: left;
                     }
                     .footer {
@@ -60,9 +72,7 @@ export const Print = async (req, res) => {
                 <div class="container">
                     <h3>Laporan Distributor</h3>
                     <hr />
-                    <p><strong>Vendor:</strong> ${datanya.nama_distributor}</p>
-                    <p><strong>PO Number:</strong> ${datanya.no_faktur}</p>
-                    <p><strong>Date:</strong> May 8, 2024</p> 
+                      <p><strong>Print Date:</strong> ${formattedDate}</p> 
                     <table>
                         <thead>
                             <tr>
@@ -78,17 +88,12 @@ export const Print = async (req, res) => {
                             <td>${index + 1}</td>
                             <td>${list.nama_distributor}</td>
                             <td>${list.alamat}</td>
-                            <td>${list.no_telp}</td>
+                            <td>${list.telepon}</td>
                         </tr>
                     `).join('')}
                         
                         </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="4" style="text-align: right;"><strong>Total:</strong></td>
-                                <td>$190.00</td>
-                            </tr>
-                        </tfoot>
+                       
                     </table>
                             <div class="footer">
                         <p><strong>Jakarta,</strong> ${currentDate.toUTCString()}</p>
@@ -99,7 +104,7 @@ export const Print = async (req, res) => {
             </html>        
             `
 
-        const options = { format: 'A4', orientation: 'landscape', };
+        const options = { format: 'A4', orientation: 'potrait', };
         pdf.create(htmlContent.toString(), options).toStream((err, stream) => {
             if (err) {
                 console.error('Error generating PDF:', err);
