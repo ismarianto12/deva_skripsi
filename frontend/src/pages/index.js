@@ -145,36 +145,4 @@ export async function getServerSideProps(context) {
   }
 } // Assuming you're using Sequelize for database queries
 
-export async function getServerSideProps(context) {
-  try {
-    // Fetch data for the first table
-    const barang = await db.query(`SELECT count(id) as jl FROM barang`, {
-      type: QueryTypes.SELECT
-    });
-
-
-    // Fetch data for the second table
-    const transaksi = await db.query(`SELECT count(id) as jl FROM transaksi`, {
-      type: QueryTypes.SELECT
-    });
-
-    // Combine the fetched data
-    const combinedData = {
-      centeroidData: JSON.parse(JSON.stringify(barang)),
-      otherTableData: JSON.parse(JSON.stringify(transaksi))
-    };
-    return {
-      props: {
-        combinedData
-      }
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      props: {
-        combinedData: { centeroidData: [], otherTableData: [] } // Return empty arrays for both tables if there's an error
-      }
-    };
-  }
-}
 export default CrmDashboard
