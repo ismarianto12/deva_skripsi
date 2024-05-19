@@ -38,6 +38,17 @@ const Report = (props) => {
           const base64String = Buffer.from(response.data, 'binary').toString('base64');
           setPdfData(base64String);
           setLoading(false)
+
+        } else if (props.id[1] === 'transaksi') {
+          document.title = "Data transaksi"
+          const response = await axios.post(`${process.env.APP_API}master/transaction/print/${props.id[0]}`, {}, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+            responseType: 'arraybuffer', // Important for PDF files
+          });
+          const base64String = Buffer.from(response.data, 'binary').toString('base64');
+          setPdfData(base64String);
+          setLoading(false)
+
         } else if (props.id[1] == 'distributor') {
           document.title = "Laporan Data Ditributor"
           const response = await axios.post(`${process.env.APP_API}report/distributor/print/${props.id[0]}`, {}, {

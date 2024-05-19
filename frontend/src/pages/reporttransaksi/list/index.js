@@ -17,7 +17,7 @@ import CustomChip from 'src/@core/components/mui/chip'
 import CustomAvatar from 'src/@core/components/mui/avatar'
 import { getInitials } from 'src/@core/utils/get-initials'
 import Icon from 'src/@core/components/icon'
-import { Button, Divider, FormLabel } from '@mui/material'
+import { Button, Divider, FormLabel, TextField } from '@mui/material'
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import TableHeader from './Tableheader';
@@ -171,11 +171,12 @@ const List = () => {
   const [plan, setPlan] = useState('')
   const [value, setValue] = useState('')
   const [loading, setLoading] = useState(true)
-
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+  const [error, setError] = useState({ fromDate: '', toDate: '' });
   const [takademik, setTakademik] = useState('')
   const [status, setStatus] = useState('')
   const [jenjang, setJenjang] = useState('')
-
   const [tahunakademik, setTahunakademik] = useState([])
 
   const [searchValue, setSearchValue] = useState('')
@@ -184,6 +185,39 @@ const List = () => {
   function loadServerRows(currentPage, data) {
     return data.slice(currentPage * paginationModel.pageSize, (currentPage + 1) * paginationModel.pageSize)
   }
+
+  const handleSearchRep = (value, type) => {
+    if (type === 'fromDate') {
+      setFromDate(value);
+    } else if (type === 'toDate') {
+      setToDate(value);
+    }
+    setError({ fromDate: '', toDate: '' });
+  };
+
+  const handleClick = () => {
+    let valid = true;
+    let newError = { fromDate: '', toDate: '' };
+
+    if (!fromDate) {
+      newError.fromDate = 'Wajib diisi';
+      valid = false;
+    }
+
+    if (!toDate) {
+      newError.toDate = 'Wajib diisi';
+      valid = false;
+    }
+
+    setError(newError);
+
+    if (valid) {
+      // Do something with fromDate and toDate
+      console.log('From:', fromDate, 'To:', toDate);
+      const url = `/report/2/transaksi`
+      window.open(url, '_blank');
+    }
+  };
 
   const fetchTableData = useCallback(
     async (sort, q, column,
@@ -384,28 +418,47 @@ const List = () => {
           </Typography>
           <br />
           <Grid container xs={12}>
-            <Grid item xs={12} sm={4} pr={10}>
+            <Grid item xs={12} sm={3} pr={10}>
               <CustomTextField
                 sx={{ width: '100%' }}
                 placeholder='Search Data'
-                onChange={(e) => handleSearch(e.target.value)}
+                onChange={(e) => handleSearchRep(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
-              <CustomTextField
+            <Grid item xs={12} sm={3}>
+              <TextField
                 sx={{ width: '80%' }}
                 placeholder='Dari'
-                type={'date'}
-                onChange={(e) => handleSearch(e.target.value)}
+                type='date'
+                size='small'
+                value={fromDate}
+                onChange={(e) => handleSearchRep(e.target.value, 'fromDate')}
+                error={!!error.fromDate}
+                helperText={error.fromDate}
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
-              <CustomTextField
+            <Grid item xs={12} sm={3}>
+              <TextField
                 sx={{ width: '80%' }}
                 placeholder='Sampai'
-                type={'date'}
-                onChange={(e) => handleSearch(e.target.value)}
+                type='date'
+                size='small'
+                value={toDate}
+                onChange={(e) => handleSearchRep(e.target.value, 'toDate')}
+                error={!!error.toDate}
+                helperText={error.toDate}
               />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <Button
+                type='submit'
+                variant='contained'
+                sx={{ mr: 3, width: '50%' }}
+                onClick={handleClick}
+              >
+                <Icon icon='tabler:print' fontSize='1.125rem' />
+                Print
+              </Button>
             </Grid>
           </Grid>
 

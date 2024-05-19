@@ -3,8 +3,133 @@ import db from '../db/database.js'
 import multer from 'multer'
 import Posts from '../models/post.js'
 import Post from '../models/post.js';
+import pdf from 'html-pdf';
 
+export const PrintData = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const data = await db.query(`
+        SELECT 
+        purchasing.id_purchasing, 
+        purchasing.id_barang, 
+        purchasing.no_faktur, 
 
+        purchasing.jumlah, 
+        barang.id_barang, 
+        barang.kd_barang
+    FROM
+        purchasing,
+        barang 
+        
+        where FIND_IN_SET(barang.id,purchasing.id_barang) > 0
+        `, {
+            type: QueryTypes.SELECT
+        });
+        console.log(data)
+        // if (data.length === 0) {
+        //     return res.status(404).send('Data not found');
+        // }
+
+        const datanya = data ?? [];
+        console.log(datanya, 'dtanya')
+        const htmlContent = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Report Barang</title>
+            <style>
+            @media print {
+                @page {
+                    margin: 20mm;
+                }
+                body {
+                    margin: 0;
+                    padding: 10mm;
+                }
+            }
+                body {
+                    font-family: Arial, sans-serif;
+                }
+                .container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 10px 10px 10px;
+                }
+                h3 {
+                    text-align: center;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                }
+                table, th, td {
+                    border: 1px solid #ddd;
+                }
+                th, td {
+                    padding: 5px;
+                    text-align: left;
+                }
+                .footer {
+                    margin-top: 20px;
+                    text-align: center;
+                }
+            </style>
+        </head>
+        <body>
+            <img src="/logo_app.png" style="width: 20%;" />
+            <div class="container">
+                <h3>Laporan Transaksi</h3>
+                <hr />
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Kode Barang</th>                            
+                            <th>No. Faktur</th>
+                            <th>Jumlah</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${datanya.map((item, i) => `
+                            <tr>
+                                <td>${i + 1}</td>
+                                <td>${item.kd_barang}</td>
+                                <td>${item.no_faktur}</td> 
+                                <td>${item.jumlah}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <div class="footer">
+                    <p><strong>Jakarta,</strong> ${new Date().toUTCString()}</p>
+                    <p>Tanda tangan: ___________________</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        `;
+
+        const options = { format: 'A4', orientation: 'landscape' };
+        pdf.create(htmlContent, options).toStream((err, stream) => {
+            if (err) {
+                console.error('Error generating PDF:', err);
+                return res.status(500).send('Error generating PDF');
+            }
+
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename="generated.pdf"');
+            stream.pipe(res);
+        });
+
+    } catch (error) {
+        res.status(400).json({
+            msg: `  ${error}`
+        });
+    }
+};
 
 // list datat bimibingan
 const List = async (req, res) => {
@@ -181,6 +306,128 @@ const Edit = async (req, res) => {
         })
     }
 }
+
+export const Print = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const data = await db.query(`
+            SELECT  
+            *
+            FROM 
+                barang   
+        `, {
+            type: QueryTypes.SELECT
+        });
+
+        // if (data.length === 0) {
+        //     return res.status(404).send('Data not found');
+        // }
+
+        const datanya = data ?? [];
+        console.log(datanya, 'dtanya')
+        const htmlContent = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Report Barang</title>
+            <style>
+            @media print {
+                @page {
+                    margin: 20mm;
+                }
+                body {
+                    margin: 0;
+                    padding: 10mm;
+                }
+            }
+                body {
+                    font-family: Arial, sans-serif;
+                }
+                .container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 10px 10px 10px;
+                }
+                h3 {
+                    text-align: center;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                }
+                table, th, td {
+                    border: 1px solid #ddd;
+                }
+                th, td {
+                    padding: 5px;
+                    text-align: left;
+                }
+                .footer {
+                    margin-top: 20px;
+                    text-align: center;
+                }
+            </style>
+        </head>
+        <body>
+            <img src="/logo_app.png" style="width: 20%;" />
+            <div class="container">
+                <h3>Laporan Barang Keseluruhan</h3>
+                <hr />
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Kode</th>                            
+                            <th>Kode</th>
+                            <th>Stok Awal</th>
+                            <th>Stock Akhir</th>
+                            <th>Stok Keluar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${datanya.map((item, i) => `
+                            <tr>
+                                <td>${i + 1}</td>
+                                <td>${item.kd_barang}</td>
+                                <td>${item.nama_barang}</td> 
+                                <td>${item.stok_awal}</td>
+                                <td>${item.stok_akhir}</td>
+                                <td>${item.stok_keluar}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <div class="footer">
+                    <p><strong>Jakarta,</strong> ${new Date().toUTCString()}</p>
+                    <p>Tanda tangan: ___________________</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        `;
+
+        const options = { format: 'A4', orientation: 'landscape' };
+        pdf.create(htmlContent, options).toStream((err, stream) => {
+            if (err) {
+                console.error('Error generating PDF:', err);
+                return res.status(500).send('Error generating PDF');
+            }
+
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename="generated.pdf"');
+            stream.pipe(res);
+        });
+
+    } catch (error) {
+        res.status(400).json({
+            msg: `  ${error}`
+        });
+    }
+};
+
 const Update = (req, res) => {
 
 }

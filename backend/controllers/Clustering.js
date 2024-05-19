@@ -390,27 +390,28 @@ export const insertClusteringResult = async (req, res) => {
 }
 
 export const ClusterResult = async (req, res) => {
-  let { page = 1, q } = req.query;
+  let { page = 1, q, month } = req.query;
   page = parseInt(page) || 1;
   const search = q || '';
+  const monthFilter = month ? parseInt(month) : null;
 
   try {
-    // Determine if we need a WHERE clause
-    const whereClause = search ? 'WHERE barang.nama_barang LIKE :search' : '';
+    // Build the WHERE clause
+    let whereClause = '';
+    if (search) {
+      whereClause += `WHERE barang.nama_barang LIKE :search `;
+    }
+    if (monthFilter) {
+      whereClause += (whereClause ? 'AND ' : 'WHERE ') + `MONTH(barang.created_at) = :month `;
+    }
     // Get total data count
     const totalDataQuery = `
-     SELECT
-	count(*) as total
-FROM
-	barang
-	INNER JOIN
-	clustering_result
-	ON 
-		barang.id = clustering_result.id_barang
+      SELECT COUNT(*) as total FROM barang 
+      JOIN clustering_result ON barang.id_barang = clustering_result.id_barang 
       ${whereClause}
     `;
     const totalData = await db.query(totalDataQuery, {
-      replacements: { search: `%${search}%` },
+      replacements: { search: `%${search}%`, month: monthFilter },
       type: Sequelize.QueryTypes.SELECT
     });
 
@@ -422,41 +423,32 @@ FROM
     } else {
       pageSize = parseInt(req.query.pageSize) || 10;
     }
-    const offset = (page - 1) * pageSize;
-    const dataQuery = `
-    SELECT
-    barang.kd_barang, 
-    barang.nama_barang, 
-    barang.harga, 
-    barang.jumlah_stok, 
-    barang.id_jenisbarang, 
-    barang.created_at, 
-    barang.updated_at, 
-    barang.stok_awal, 
-    barang.stok_akhir, 
-    barang.stok_keluar,
-    clustering_result.hasil_cluster,
-    clustering_result.keterangan
 
-  FROM
-    barang
-    INNER JOIN
-    clustering_result
-    ON 
-      barang.id = clustering_result.id_barang
+    const offset = (page - 1) * pageSize;
+
+    const dataQuery = `
+      SELECT 
+        barang.id_barang, 
+        barang.kd_barang, 
+        barang.nama_barang, 
+        barang.harga, 
+        barang.jumlah_stok, 
+        barang.id_jenisbarang, 
+        barang.created_at, 
+        clustering_result.keterangan, 
+        clustering_result.hasil_cluster, 
+        clustering_result.created_at, 
+        clustering_result.updated_at 
+      FROM barang 
+      JOIN clustering_result ON barang.id_barang = clustering_result.id_barang 
       ${whereClause}
       ORDER BY barang.id_barang ASC 
       LIMIT :offset, :pageSize
     `;
     const data = await db.query(dataQuery, {
-      replacements: {
-        search: `%${search}%`,
-        offset,
-        pageSize
-      },
+      replacements: { search: `%${search}%`, month: monthFilter, offset, pageSize },
       type: Sequelize.QueryTypes.SELECT
     });
-    console.log(data, 'result arra')
 
     res.json({
       data,
