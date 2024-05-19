@@ -185,7 +185,7 @@ const Index = props => {
                     control={control}
                     rules={{ required: true }}
                     render={({ field: { value, onChange } }) => (
-                      <CustomTextField select fullWidth label='Status Berita :' id='form-layouts-tabs-select'
+                      <CustomTextField select fullWidth label='Status Publish :' id='form-layouts-tabs-select'
                         value={value}
                         onChange={onChange}
                         error={Boolean(errors.publish)}

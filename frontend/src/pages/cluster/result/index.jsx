@@ -32,6 +32,7 @@ import { getparamPend } from 'src/@core/utils/encp';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 import CustomTextField from 'src/@core/components/mui/text-field'
+import { StyledDataGridTable } from 'src/layouts/StyledDataGridTable';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -371,7 +372,6 @@ const List = () => {
       </Grid>
       <br /><br />
       <Card>
-
         <Box
           sx={{
             py: 4,
@@ -384,42 +384,47 @@ const List = () => {
             justifyContent: 'space-between',
           }}
         >
-          <Grid item xs={8} sm={8}>
-            <Grid container xs={12} sm={12}>
-              <Grid item lg={6}>
-                <Typography variant='h5'>
-                  <Icon icon='tabler:calendar' />
-                  Periode
-                </Typography>
-              </Grid>
-              <Grid item xs={6} sm={6}>
-                <Select
-                  value={1}
-                  size='small'
-                  sx={{
-                    minWidth: '100%',
-                  }}
-                  onChange={(e) => null}
-                >
-                  {months.map((monthsdata, i) => (
-                    <MenuItem key={`Y-${i}`} value={i + 1}>
-                      {monthsdata.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Grid>
+          <Grid container spacing={2}>
+            {/* Left side with lg=3 */}
+            <Grid item xs={12} lg={3}>
+              <Typography variant='h5'>
+                <Icon icon='tabler:calendar' />
+                Periode Clustering
+              </Typography>
+            </Grid>
+
+            {/* Middle side with lg=4 */}
+            <Grid item xs={12} lg={4}>
+              <Select
+                value={1}
+                size='small'
+                sx={{
+                  minWidth: '100%',
+                }}
+                onChange={(e) => null}
+              >
+                {/* Render months data */}
+                {months.map((monthsdata, i) => (
+                  <MenuItem key={`Y-${i}`} value={i + 1}>
+                    {monthsdata.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Grid>
+
+            {/* Right side with lg=4 */}
+            <Grid item xs={12} lg={4} sx={{ display: 'flex', alignItems: 'flex-end' }}>
+              <CustomTextField
+                sx={{ marginLeft: 'auto', minWidth: 250 }} // Adjust margin and width as needed
+                placeholder='Search Data'
+                onChange={(e) => handleSearch(e.target.value)} // Assuming handleSearch is defined
+              />
             </Grid>
           </Grid>
-          <Grid item xs={4} sm={4}>
-            <CustomTextField
-              sx={{ marginRight: 8 }}
-              placeholder='Search Data'
-              onChange={(e) => handleSearch(e.target.value)}
-            />
-          </Grid>
+
         </Box>
         <br />
-        <DataGrid
+        <StyledDataGridTable
           autoHeight
           pagination
           // rows={rows}

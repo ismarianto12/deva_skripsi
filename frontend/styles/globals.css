@@ -227,3 +227,12 @@ tr>th {
   color: #fff;
   border-color: #fff;
 }
+
+.react-grid-HeaderCell {
+  padding: 2px 5px;
+  font-size: 12px;
+  background-color: #d3d3d3;
+  /* Grey background for header cells */
+  color: #000;
+  /* Black text color for header cells */
+}

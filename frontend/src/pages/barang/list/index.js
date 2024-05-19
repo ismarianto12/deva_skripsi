@@ -1,6 +1,6 @@
 // ** React Imports
 import { useEffect, useState, useCallback } from 'react'
-
+// import { makeStyles } from '@mui/styles';
 // ** MUI Imports
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box'
@@ -41,6 +41,35 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: 'center',
   color: theme.palette.text.secondary,
 }));
+const StyledDataGrid = styled(DataGrid)({
+  '& .MuiDataGrid-columnHeaders': {
+    backgroundColor: '#d3d3d3', // Grey background for headers
+    color: '#000', // Black text color for headers
+    fontSize: '12px', // Smaller font size for compact appearance
+    padding: '2px 5px', // Compact padding for header cells
+    borderLeft: '1px solid #d3d3d3'
+  },
+  '& .MuiDataGrid-cell': {
+    // borderRadius: '10px 10px 10px',
+    fontSize: '12px', // Smaller font size for cells
+    padding: '2px 5px', // Compact padding for cells
+    borderBottom: 'none', // Remove border-bottom from cells
+
+  },
+  '& .MuiDataGrid-row': {
+    boxShadow: '0px 4px #ddd',
+    borderTopLeftRadius: '10px', // Border radius for left edge
+    borderTopRightRadius: '10px', // Border radius for right edge
+    // borderRadius: '0px 10px 10px 10px',
+    // padding: '10px 10px 10px',
+    maxHeight: '40px !important', // Compact row height
+    minHeight: '40px !important', // Compact row height
+    border: 'none !importatant'
+  },
+  '& .MuiDataGrid-iconSeparator': {
+    display: 'none', // Hide the column separator icon for a cleaner look
+  },
+});
 
 const renderClient = params => {
   const { row } = params
@@ -308,6 +337,12 @@ const List = () => {
       name: 'TIDAK LARIS TERJUAL',
     }
   ]
+  const defaultColumnOptions = {
+    resizable: true,
+    width: '100%'
+  };
+
+
   return (
     <div data-aos="slide-left">
 
@@ -478,7 +513,6 @@ const List = () => {
                 </Button>
                 &nbsp;
                 <CustomTextField
-                  value={''}
                   sx={{ mr: 8 }}
                   placeholder='Search Data'
                   onChange={(e) => handleSearch(e.target.value)}
@@ -499,7 +533,7 @@ const List = () => {
                 name="kategori"
                 SelectProps={{
                   displayEmpty: true,
-                  onChange: e => setIdkategori(e.target.value)
+                  onChange: e => { setIdkategori(e.target.value), fetchTableData(sort, searchValue, sortColumn) }
                 }}
               >
                 <MenuItem key={0} value={null}>
@@ -515,17 +549,19 @@ const List = () => {
           </Box>
 
         </CardContent>
-        <DataGrid
+        <StyledDataGrid
           autoHeight
           pagination
+          rowHeight={40}
+          // className={classes.root}
           // rows={rows}
           rows={rows.map((item, index) => ({ id: index + 1, ...item }))}
           rowCount={total}
           columns={
+            defaultColumnOptions,
             [
               {
                 flex: 1,
-                minWidth: 5,
                 maxWidth: 80,
                 field: "id",
                 headerName: 'No.',
@@ -548,9 +584,9 @@ const List = () => {
 
               {
                 flex: 1,
-                minWidth: 180,
+                minWidth: 80,
                 field: 'stok_awal',
-                headerName: 'Stok Awal',
+                headerName: 'S.Awal',
                 renderCell: ({ row }) => {
                   if (row.stok_awal) {
                     return row.stok_awal + '/Pcs'
@@ -561,9 +597,9 @@ const List = () => {
               },
               {
                 flex: 1,
-                minWidth: 180,
+                minWidth: 80,
                 field: 'stok_akhir',
-                headerName: 'Stok Akhir',
+                headerName: 'S.Akhir',
                 renderCell: ({ row }) => {
                   if (row.stok_akhir) {
                     return row.stok_akhir + '/Pcs'

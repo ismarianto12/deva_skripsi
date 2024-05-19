@@ -74,48 +74,25 @@ const currentDate = new Date();
 //     }
 // }
 
-export const Print = async (req, res) => {
-    const id = req.params.id
-    try {
-        const data = await db.query(` SELECT 
-        p.id, 
-        p.id_barang, 
-        b.nama_barang,
-        b.harga,
-        b.jumlah_stok as jumlah_barang,
-        p.jumlah as jumlah_purchase,
-        p.tanggal_purchasing,
-        p.no_faktur,
-        p.id_distributor,
-        p.created_at,
-        p.updated_at,
-        d.nama_distributor,
-        d.telepon,
-        d.alamat,
-        p.total_biaya,
-        j.jenis_barang
-    FROM 
-        purchasing p 
-    LEFT OUTER JOIN 
-        barang b ON p.id_barang = b.id
-    LEFT OUTER JOIN 
-        distributor d ON d.id = p.id_distributor
-    LEFT OUTER JOIN 
-       jenis_barang j ON d.id = b.id_jenisbarang    
-    WHERE 
-       p.id = :id
-    GROUP BY 
-        p.id
-    ORDER BY 
-        p.id  
-        `, {
-            replacements: { id },
-            type: QueryTypes.SELECT
-        })
 
-        console.log(data, 'datanya')
-        const datanya = data[0];
-        // const htmlContent = fs.readFileSync("./views/purchasing.html", datanya, 'utf8')
+export const Print = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const data = await db.query(`
+            SELECT  
+            *
+            FROM 
+                barang   
+        `, {
+            type: QueryTypes.SELECT
+        });
+
+        // if (data.length === 0) {
+        //     return res.status(404).send('Data not found');
+        // }
+
+        const datanya = data ?? [];
+        console.log(datanya, 'dtanya')
         const htmlContent = `
         <!DOCTYPE html>
         <html lang="en">
@@ -124,15 +101,24 @@ export const Print = async (req, res) => {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Report Barang</title>
             <style>
+            @media print {
+                @page {
+                    margin: 20mm;
+                }
+                body {
+                    margin: 0;
+                    padding: 10mm;
+                }
+            }
                 body {
                     font-family: Arial, sans-serif;
                 }
                 .container {
                     max-width: 800px;
                     margin: 0 auto;
-                    padding: 20px;
+                    padding: 10px 10px 10px;
                 }
-                h1, h3{
+                h3 {
                     text-align: center;
                 }
                 table {
@@ -144,7 +130,7 @@ export const Print = async (req, res) => {
                     border: 1px solid #ddd;
                 }
                 th, td {
-                    padding: 10px;
+                    padding: 5px;
                     text-align: left;
                 }
                 .footer {
@@ -154,156 +140,62 @@ export const Print = async (req, res) => {
             </style>
         </head>
         <body>
-        <img src="/logo_app.png"
-        style='
-          width: 20%
-        '
-      />
+            <img src="/logo_app.png" style="width: 20%;" />
             <div class="container">
                 <h3>Laporan Barang Keseluruhan</h3>
                 <hr />
-                <p><strong>Vendor:</strong> ${datanya.nama_distributor}</p>
-                <p><strong>PO Number:</strong> ${datanya.no_faktur ? datanya.no_faktur : 'PO-12.19812.012'}</p>
-                <p><strong>Date:</strong> May 8, 2024</p> 
                 <table>
                     <thead>
                         <tr>
-                            <th>Item</th>
-                            <th>Description</th>
-                            <th>Quantity</th>
-                            <th>Unit Price</th>
-                            <th>Total</th>
+                            <th>#</th>
+                            <th>Kode</th>                            
+                            <th>Kode</th>
+                            <th>Stok Awal</th>
+                            <th>Stock Akhir</th>
+                            <th>Stok Keluar</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Product A</td>
-                            <td>Lorem ipsum dolor sit amet</td>
-                            <td>2</td>
-                            <td>$50.00</td>
-                            <td>$100.00</td>
-                        </tr>
-                        <tr>
-                            <td>Product B</td>
-                            <td>Consectetur adipiscing elit</td>
-                            <td>3</td>
-                            <td>$30.00</td>
-                            <td>$90.00</td>
-                        </tr>
+                        ${datanya.map((item, i) => `
+                            <tr>
+                                <td>${i + 1}</td>
+                                <td>${item.kd_barang}</td>
+                                <td>${item.nama_barang}</td> 
+                                <td>${item.stok_awal}</td>
+                                <td>${item.stok_akhir}</td>
+                                <td>${item.stok_keluar}</td>
+                            </tr>
+                        `).join('')}
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="4" style="text-align: right;"><strong>Total:</strong></td>
-                            <td>$190.00</td>
-                        </tr>
-                    </tfoot>
                 </table>
-                        <div class="footer">
-                    <p><strong>Jakarta,</strong> ${currentDate.toUTCString()}</p>
+                <div class="footer">
+                    <p><strong>Jakarta,</strong> ${new Date().toUTCString()}</p>
                     <p>Tanda tangan: ___________________</p>
                 </div>
             </div>
         </body>
-        </html>        
-        `
-        const options = { format: 'A4', orientation: 'landscape', };
-        pdf.create(htmlContent.toString(), options).toStream((err, stream) => {
+        </html>
+        `;
+
+        const options = { format: 'A4', orientation: 'landscape' };
+        pdf.create(htmlContent, options).toStream((err, stream) => {
             if (err) {
                 console.error('Error generating PDF:', err);
-                res.status(500).send('Error generating PDF');
-                return;
+                return res.status(500).send('Error generating PDF');
             }
-            // Set HTTP headers for PDF response
+
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', 'attachment; filename="generated.pdf"');
-
-            // Pipe PDF stream to HTTP response
             stream.pipe(res);
         });
-        // const doc = new PDFDocument();
-        // // Buat sebuah write stream untuk menulis PDF ke file
-        // const writeStream = fs.createWriteStream('output.pdf');
-
-        // // Tambahkan konten ke PDF
-        // doc.text('Hello, World!');
-
-        // // Akhiri pembuatan PDF
-        // doc.end();
-
-        // // Pipe PDF ke write stream
-        // doc.pipe(writeStream);
-        // doc.end();
-        // Tampilkan pesan setelah selesai menulis PDF
-        // return writeStream.on('finish', () => {
-        //     console.log('PDF telah berhasil dibuat!');
-        // });
-
-        // var myDoc = new PDFDocument({ bufferPages: true });
-        // let buffers = [];
-        // myDoc.on('data', buffers.push.bind(buffers));
-        // myDoc.on('end', () => {
-
-        //     let pdfData = Buffer.concat(buffers);
-        //     res.writeHead(200, {
-        //         'Content-Length': Buffer.byteLength(pdfData),
-        //         'Content-Type': 'application/pdf',
-        //         'Content-disposition': 'attachment;filename=test.pdf',
-        //     })
-        //         .end(pdfData);
-
-        // });
-
-
-
-        //         myDoc.font('Times-Roman')
-        //             .fontSize(12)
-        //             .text(`<h3>this is a test text</h3>`);
-        //         myDoc.end();
-
-
-        //         const htmlContent = `
-        // <!DOCTYPE html>
-        // <html>
-        // <head>
-        //   <title>HTML to PDF</title>
-        // </head>
-        // <body>
-        //   <h1>Hello, World!</h1>
-        //   <p>This is an HTML to PDF conversion example.</p>
-        // </body>
-        // </html>
-        // `;
-
-        //         // Options for PDF generation
-        //         const options = { format: 'Letter' };
-        //         // Generate PDF from HTML content
-        //         myDoc.create(htmlContent, options).toStream((err, stream) => {
-        //             if (err) {
-        //                 console.error('Error generating PDF:', err);
-        //                 return;
-        //             }
-
-        //             // Create a write stream to save the PDF
-        //             const writeStream = fs.createWriteStream('output.pdf');
-
-        //             // Pipe PDF stream to write stream
-        //             stream.pipe(writeStream);
-
-        //             // Show message after PDF generation
-        //             writeStream.on('finish', () => {
-        //                 console.log('PDF generated successfully!');
-        //             });
-        //         });
-
 
     } catch (error) {
         res.status(400).json({
-            msg: `can\t create file report ${error}`
-        })
+            msg: `  ${error}`
+        });
     }
+};
 
-
-}
 
 const BarangList = async (req, res) => {
     try {
@@ -328,11 +220,12 @@ const BarangList = async (req, res) => {
                 nama_barang: {
                     [Op.like]: `%${q}%`
                 },
-                id_jenisbarang: {
-                    [Op.like]: `${req?.idkategori}`
-                }
+                id_jenisbarang: `${req?.query.idkategori}`
+
             };
         }
+
+        console.log(whereClause, 'whereClause')
         // Hitung total data berdasarkan kriteria pencarian
         const totalCount = await Barang.count({ where: whereClause });
         const data = await Barang.findAll({

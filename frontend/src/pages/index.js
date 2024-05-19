@@ -1,6 +1,7 @@
 // ** MUI Import
 import Grid from '@mui/material/Grid'
-
+import { QueryTypes } from 'sequelize';
+import db from 'src/configs/database';
 // ** Demo Component Imports
 import CrmSessions from 'src/views/dashboards/crm/CrmSessions'
 import CrmRevenueGrowth from 'src/views/dashboards/crm/CrmRevenueGrowth'
@@ -19,7 +20,7 @@ import ApexChartWrapper from 'src/@core/styles/libs/react-apexcharts'
 import CardStatsVertical from 'src/@core/components/card-statistics/card-stats-vertical'
 import { Card, CardContent, Typography } from '@mui/material'
 
-const CrmDashboard = () => {
+const CrmDashboard = (props) => {
   return (
     <>
       <ApexChartWrapper>
@@ -44,7 +45,7 @@ const CrmDashboard = () => {
           <Grid item xs={6} sm={4} lg={3}>
             <CardStatsVertical
               stats='4'
-              chipText='-12.2%'
+              chipText=''
               chipColor='default'
               avatarColor='error'
               title='Total Clustering'
@@ -75,4 +76,105 @@ const CrmDashboard = () => {
   )
 }
 
+
+import { QueryTypes } from 'sequelize'; // Assuming you're using Sequelize for database queries
+
+export async function getServerSideProps(context) {
+  try {
+    // Fetch data for the first table
+    const barang = await db.query(`SELECT count(id) as jl FROM barang`, {
+      type: QueryTypes.SELECT
+    });
+
+
+    // Fetch data for the second table
+    const transaksi = await db.query(`SELECT count(id) as jl FROM transaksi`, {
+      type: QueryTypes.SELECT
+    });
+
+    // Combine the fetched data
+    const combinedData = {
+      centeroidData: JSON.parse(JSON.stringify(barang)),
+      otherTableData: JSON.parse(JSON.stringify(transaksi))
+    };
+    return {
+      props: {
+        combinedData
+      }
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      props: {
+        combinedData: { centeroidData: [], otherTableData: [] } // Return empty arrays for both tables if there's an error
+      }
+    };
+  }
+} import { QueryTypes } from 'sequelize'; // Assuming you're using Sequelize for database queries
+
+export async function getServerSideProps(context) {
+  try {
+    // Fetch data for the first table
+    const barang = await db.query(`SELECT count(id) as jl FROM barang`, {
+      type: QueryTypes.SELECT
+    });
+
+
+    // Fetch data for the second table
+    const transaksi = await db.query(`SELECT count(id) as jl FROM transaksi`, {
+      type: QueryTypes.SELECT
+    });
+
+    // Combine the fetched data
+    const combinedData = {
+      centeroidData: JSON.parse(JSON.stringify(barang)),
+      otherTableData: JSON.parse(JSON.stringify(transaksi))
+    };
+    return {
+      props: {
+        combinedData
+      }
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      props: {
+        combinedData: { centeroidData: [], otherTableData: [] } // Return empty arrays for both tables if there's an error
+      }
+    };
+  }
+} // Assuming you're using Sequelize for database queries
+
+export async function getServerSideProps(context) {
+  try {
+    // Fetch data for the first table
+    const barang = await db.query(`SELECT count(id) as jl FROM barang`, {
+      type: QueryTypes.SELECT
+    });
+
+
+    // Fetch data for the second table
+    const transaksi = await db.query(`SELECT count(id) as jl FROM transaksi`, {
+      type: QueryTypes.SELECT
+    });
+
+    // Combine the fetched data
+    const combinedData = {
+      centeroidData: JSON.parse(JSON.stringify(barang)),
+      otherTableData: JSON.parse(JSON.stringify(transaksi))
+    };
+    return {
+      props: {
+        combinedData
+      }
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      props: {
+        combinedData: { centeroidData: [], otherTableData: [] } // Return empty arrays for both tables if there's an error
+      }
+    };
+  }
+}
 export default CrmDashboard

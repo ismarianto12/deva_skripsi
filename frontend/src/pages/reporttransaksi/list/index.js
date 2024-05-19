@@ -30,6 +30,7 @@ import Comheader from 'src/@core/components/Comheader';
 import { getparamPend } from 'src/@core/utils/encp';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
+import { StyledDataGridTable } from 'src/layouts/StyledDataGridTable';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -286,7 +287,7 @@ const List = () => {
     <div data-aos="slide-left">
 
       <Head>
-        <title>Master - Barang</title>
+        <title>Master - Transaksi</title>
       </Head>
 
       <br /><br />
@@ -379,14 +380,30 @@ const List = () => {
           </Box> */}
           <Typography variant='h5' sx={{ mb: 0.5 }}>
             <Icon icon='tabler:cube' fontSize='1.125rem' />
-            Report Barang
+            Report Transaksi
           </Typography>
           <br />
           <Grid container xs={12}>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={4} pr={10}>
               <CustomTextField
                 sx={{ width: '100%' }}
                 placeholder='Search Data'
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <CustomTextField
+                sx={{ width: '80%' }}
+                placeholder='Dari'
+                type={'date'}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <CustomTextField
+                sx={{ width: '80%' }}
+                placeholder='Sampai'
+                type={'date'}
                 onChange={(e) => handleSearch(e.target.value)}
               />
             </Grid>
@@ -394,7 +411,7 @@ const List = () => {
 
 
         </CardContent>
-        <DataGrid
+        <StyledDataGridTable
           autoHeight
           pagination
           rows={rows}

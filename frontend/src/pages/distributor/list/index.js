@@ -29,6 +29,7 @@ import CustomTextField from 'src/@core/components/mui/text-field';
 import Comheader from 'src/@core/components/Comheader';
 import { getparamPend } from 'src/@core/utils/encp';
 import Swal from 'sweetalert2';
+import { StyledDataGridTable } from 'src/layouts/StyledDataGridTable';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -489,7 +490,7 @@ const List = () => {
 
 
         </CardContent>
-        <DataGrid
+        <StyledDataGridTable
           autoHeight
           pagination
           rows={rows}

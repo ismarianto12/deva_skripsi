@@ -32,6 +32,7 @@ import { getparamPend } from 'src/@core/utils/encp';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 import { Search } from 'react-feather'
+import { StyledDataGridTable } from 'src/layouts/StyledDataGridTable';
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -436,7 +437,7 @@ const List = () => {
           </Box>
         </CardContent>
 
-        <DataGrid
+        <StyledDataGridTable
           autoHeight
           pagination
           // rows={rows}
