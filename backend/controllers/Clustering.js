@@ -435,7 +435,8 @@ FROM
     barang.stok_awal, 
     barang.stok_akhir, 
     barang.stok_keluar,
-    clustering_result.hasil_cluster
+    clustering_result.hasil_cluster,
+    clustering_result.keterangan
 
   FROM
     barang
