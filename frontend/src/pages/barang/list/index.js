@@ -43,10 +43,10 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 const StyledDataGrid = styled(DataGrid)({
   '& .MuiDataGrid-columnHeaders': {
-    backgroundColor: '#d3d3d3', // Grey background for headers
-    color: '#000', // Black text color for headers
+    backgroundColor: '#18a6db', // Grey background for headers
+    color: '#fff', // Black text color for headers
     fontSize: '12px', // Smaller font size for compact appearance
-    padding: '2px 5px', // Compact padding for header cells
+    // padding: '2px 5px', // Compact padding for header cells
     borderLeft: '1px solid #d3d3d3'
   },
   '& .MuiDataGrid-cell': {
@@ -349,52 +349,7 @@ const List = () => {
       <Head>
         <title>Master - Barang</title>
       </Head>
-      <Grid container spacing={6}>
-        <Grid item xs={6} sm={3} lg={3}>
-          <CardStatsVertical
-            stats={rows.length}
-            chipText='-12.2%'
-            chipColor='default'
-            avatarColor='info'
-            title='Total Barang'
-            subtitle='Last week'
-            avatarIcon='tabler:currency-dollar'
-          />
-        </Grid>
-        <Grid item xs={6} sm={3} lg={3}>
-          <CardStatsVertical
-            stats={rows.length}
-            chipText='-12.2%'
-            chipColor='default'
-            avatarColor='error'
-            title='Total List'
-            subtitle='Last week'
-            avatarIcon='tabler:currency-dollar'
-          />
-        </Grid>
-        <Grid item xs={6} sm={3} lg={3}>
-          <CardStatsVertical
-            stats='1.28k'
-            chipText='-12.2%'
-            chipColor='default'
-            avatarColor='error'
-            title='Total List'
-            subtitle='Last week'
-            avatarIcon='tabler:currency-dollar'
-          />
-        </Grid>
-        <Grid item xs={6} sm={3} lg={3}>
-          <CardStatsVertical
-            stats='24.67k'
-            chipText='+25.2%'
-            avatarColor='info'
-            chipColor='default'
-            title='Total Sales'
-            subtitle='Last week'
-            avatarIcon='tabler:chart-bar'
-          />
-        </Grid>
-      </Grid>
+
       <br /><br />
       <Card>
 

@@ -1,7 +1,7 @@
 const path = require('path')
 module.exports = {
   webpack5: true,
-  output: 'standalone',
+  // output: 'standalone',
   // output: 'export,
   trailingSlash: true,
   reactStrictMode: false,
