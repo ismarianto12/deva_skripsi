@@ -17,6 +17,12 @@ const navigation = () => {
       path: '/home'
     },
     {
+      title: 'Dashboard',
+      icon: 'tabler:smart-home',
+      badgeColor: 'error',
+      path: '/home'
+    },
+    {
       title: 'Hightligt',
       icon: 'tabler:list',
       children: [

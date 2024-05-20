@@ -14,6 +14,16 @@ const navigation = () => {
       auth: false,
     },
     {
+      title: 'Data Master',
+      // icon: 'tabler:smart-home',
+      label: true,
+      badgeColor: 'white',
+      background: 'white',
+      active: true,
+      // path: '/home',
+      auth: false,
+    },
+    {
       title: 'Master Data',
       icon: 'tabler:files',
       auth: false,
@@ -36,9 +46,16 @@ const navigation = () => {
         }
       ]
     },
-
     {
-      title: 'K-MEANS Process',
+      title: 'Clustering Logic',
+      label: true,
+      badgeColor: 'white',
+      background: 'white',
+      active: true,
+      auth: false,
+    },
+    {
+      title: 'K-MEAN Process',
       icon: 'tabler:files',
       auth: false,
 
@@ -65,6 +82,17 @@ const navigation = () => {
         // },
 
       ]
+    },
+    {
+      title: 'Transaksi',
+      // icon: 'tabler:smart-home',
+      label: true,
+
+      badgeColor: 'white',
+      background: 'white',
+      active: true,
+      // path: '/home',
+      auth: false,
     },
     {
       title: 'Transaksi',

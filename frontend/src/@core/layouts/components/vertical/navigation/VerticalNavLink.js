@@ -92,14 +92,26 @@ const VerticalNavLink = ({
     <CanViewNavLink navLink={item}>
       <ListItem
         disablePadding
-        className='nav-link'
+        className={'nav-link'}
         disabled={item.disabled || false}
-        sx={{
-          mt: 1,
-          px: '0 !important',
-          background: item.background ? '#18a6db' : '',
-          // margin: item.background ? '0px 25px 10px' : ''
-        }}
+        sx={
+          item?.label ?
+            {
+              mt: 1,
+              px: '0 !important',
+              color: '#000 !important',
+              background: '#fff',
+              // margin: item.background ? '0px 25px 10px' : ''
+              // background: item.background ? '#ddd' : '',
+
+            }
+            :
+            {
+              mt: 1,
+              px: '0 !important',
+              background: item.background ? '#18a6db' : '',
+              // margin: item.background ? '0px 25px 10px' : ''
+            }}
       >
         <MenuNavLink
           component={Link}
@@ -116,14 +128,27 @@ const VerticalNavLink = ({
               toggleNavVisibility()
             }
           }}
-          sx={{
-            py: 2,
-            ...(item.disabled ? { pointerEvents: 'none' } : { cursor: 'pointer' }),
-            px: navCollapsed && !navHover ? (collapsedNavWidth - navigationBorderWidth - 22 - 28) / 8 : 4,
-            '& .MuiTypography-root, & svg': {
-              color: '#fff',
-            }
-          }}
+          sx={
+            item?.label ?
+
+              {
+                py: 2,
+                ...(item.disabled ? { pointerEvents: 'none' } : { cursor: 'pointer' }),
+                px: navCollapsed && !navHover ? (collapsedNavWidth - navigationBorderWidth - 22 - 28) / 8 : 4,
+                '& .MuiTypography-root, & svg': {
+                  color: '#9d9d9d',
+                }
+              }
+              :
+              {
+                py: 2,
+                ...(item.disabled ? { pointerEvents: 'none' } : { cursor: 'pointer' }),
+                px: navCollapsed && !navHover ? (collapsedNavWidth - navigationBorderWidth - 22 - 28) / 8 : 4,
+                '& .MuiTypography-root, & svg': {
+                  color: '#fff',
+                }
+
+              }}
         >
           <ListItemIcon
             sx={{
@@ -141,17 +166,37 @@ const VerticalNavLink = ({
           </ListItemIcon>
 
           <MenuItemTextMetaWrapper
-            sx={{
-              ...(isSubToSub ? { ml: 2 } : {}),
-              ...(navCollapsed && !navHover ? { opacity: 0 } : { opacity: 1 })
-            }}
+            sx={
+              item?.label ? {
+                marginLeft: '-30px',
+                ...(isSubToSub ? { ml: 2 } : {}),
+                ...(navCollapsed && !navHover ? { opacity: 0 } : { opacity: 1 })
+              } : {
+                ...(isSubToSub ? { ml: 2 } : {}),
+                ...(navCollapsed && !navHover ? { opacity: 0 } : { opacity: 1 })
+              }}
           >
             <Typography
               {...((themeConfig.menuTextTruncate || (!themeConfig.menuTextTruncate && navCollapsed && !navHover)) && {
                 noWrap: true
               })}
             >
-              <Translations text={item.title} />
+              {item?.label ?
+                <>
+                  <p style={{
+                    'display': 'flex', padding: 'unset', marginBottom: 'unset'
+                  }}> <UserIcon icon="tabler:dots" />&nbsp;&nbsp;<Translations text={item.title} style={{ 'color': '#000 !important' }} /></p>
+                </>
+                :
+                <>
+                  <Translations text={item.title} />
+                </>
+
+
+
+
+              }
+
             </Typography>
             {item.badgeContent ? (
               <Chip
