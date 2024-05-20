@@ -3,7 +3,7 @@ import db from '../db/database.js'
 import multer from 'multer'
 import Barang from '../models/Barang.js';
 import pdf from 'html-pdf'
-import fs from 'fs' 
+import fs from 'fs'
 
 // const currentDate = new Date();
 const currentDate = new Date();
@@ -305,7 +305,7 @@ const Edit = async (req, res) => {
                 id,
             ],
             type: Sequelize.SELECT
-        }) 
+        })
 
         res.status(200).json({
             data: data[0],
@@ -317,7 +317,7 @@ const Edit = async (req, res) => {
         })
     }
 }
- 
+
 const Delete = async (req, res) => {
     try {
         const id = req.params.id
@@ -340,47 +340,50 @@ const Delete = async (req, res) => {
 }
 
 export const Print = async (req, res) => {
-    const id = req.params.id
+    const id = req.params.id;
     try {
-        const data = await db.query(` SELECT 
-        p.id, 
-        p.id_barang, 
-        b.nama_barang,
-        b.harga,
-        b.jumlah_stok as jumlah_barang,
-        p.jumlah as jumlah_purchase,
-        p.tanggal_purchasing,
-        p.no_faktur,
-        p.id_distributor,
-        p.created_at,
-        p.updated_at,
-        d.nama_distributor,
-        d.telepon,
-        d.alamat,
-        p.total_biaya,
-        j.jenis_barang
-    FROM 
-        purchasing p 
-    LEFT OUTER JOIN 
-        barang b ON p.id_barang = b.id
-    LEFT OUTER JOIN 
-        distributor d ON d.id = p.id_distributor
-    LEFT OUTER JOIN 
-       jenis_barang j ON d.id = b.id_jenisbarang    
-    WHERE 
-       p.id = :id
-    GROUP BY 
-        p.id
-    ORDER BY 
-        p.id  
+        const data = await db.query(`
+        SELECT 
+        purchasing.id_purchasing, 
+        purchasing.id_barang, 
+        purchasing.no_faktur,  
+        purchasing.id_distributor,
+        purchasing.jumlah, 
+        barang.id_barang, 
+        barang.kd_barang,
+        barang.nama_barang,
+        distributor.nama_distributor
+    FROM
+        purchasing
+    JOIN 
+        barang ON FIND_IN_SET(barang.id, purchasing.id_barang) > 0
+    JOIN 
+        distributor ON distributor.id = purchasing.id_distributor
+    WHERE
+        purchasing.id = ?    
         `, {
-            replacements: { id },
+            replacements: [id],
             type: QueryTypes.SELECT
-        })
+        });
 
-        console.log(data, 'datanya')
+        console.log(data, 'datanya');
+        const currentDate = new Date();
         const datanya = data[0];
-        // const htmlContent = fs.readFileSync("./views/purchasing.html", datanya, 'utf8')
+
+
+        let itemsHTML = '';
+
+        data.forEach(item => {
+            itemsHTML += `
+            <tr>
+            <td>${item.kd_barang}</td>
+            <td>${item.nama_barang}</td>
+            <td>${item.jumlah}</td>
+            <td>Rp.50.00</td>
+            <td>Rp.${parseFloat(item.jumlah) * 50}.00</td>
+        </tr>
+            `;
+        });
 
 
         const htmlContent = `
@@ -393,12 +396,16 @@ export const Print = async (req, res) => {
             <style>
                 body {
                     font-family: Arial, sans-serif;
-                }
+                 }
                 .container {
                     max-width: 800px;
                     margin: 0 auto;
                     padding: 20px;
                 }
+
+                p{
+                 font-size:12px;
+               }
                 h1, h3{
                     text-align: center;
                 }
@@ -408,6 +415,7 @@ export const Print = async (req, res) => {
                     margin-top: 20px;
                 }
                 table, th, td {
+                    font-size:11px;
                     border: 1px solid #ddd;
                 }
                 th, td {
@@ -429,54 +437,51 @@ export const Print = async (req, res) => {
             <div class="container">
                 <h3>Purchase Order</h3>
                 <hr />
-                <p><strong>Vendor:</strong> ${datanya.nama_distributor}</p>
-                <p><strong>PO Number:</strong> ${datanya.no_faktur ?? 'PO-12.0912.1292'}</p>
-                <p><strong>Date:</strong> ${currentDate.toUTCString()}</p> 
+                <table>
+                <tr>
+                    <td><strong>Vendor:</strong></td>
+                    <td> ${datanya.nama_distributor}</td>
+                </tr>
+                <tr>
+                    <td><strong>PO Number:</strong></td>
+                    <td>${datanya.no_faktur ?? 'PO-12.0912.1292'}</td>
+                </tr>
+                <tr>
+                    <td><strong>Date:</strong></td>
+                    <td>${currentDate.toUTCString()}</td>
+                </tr>
+             </table>
                 <table>
                     <thead>
                         <tr>
-                            <th>Item</th>
-                            <th>Description</th>
+                            <th>Kode</th>
+                            <th>Nama Barang</th>
                             <th>Quantity</th>
                             <th>Unit Price</th>
                             <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Product A</td>
-                            <td>Lorem ipsum dolor sit amet</td>
-                            <td>2</td>
-                            <td>Rp.50.00</td>
-                            <td>Rp.100.00</td>
-                        </tr>
-                        <tr>
-                            <td>Product B</td>
-                            <td>Consectetur adipiscing elit</td>
-                            <td>3</td>
-                            <td>Rp.30.00</td>
-                            <td>Rp.90.00</td>
-                        </tr>
+                         ${itemsHTML}
                     </tbody>
                     <tfoot>
                         <tr>
                             <td colspan="4" style="text-align: right;"><strong>Total:</strong></td>
-                            <td>Rp.190.00</td>
+                            <td>Rp.${parseFloat(datanya.jumlah) * 50}.00</td>
                         </tr>
                     </tfoot>
                 </table>
-                        <div class="footer">
+                <div class="footer">
                     <p><strong>Jakarta,</strong> ${currentDate.toUTCString()}</p>
                     <p>Tanda tangan: ___________________</p>
                 </div>
             </div>
         </body>
         </html>        
-        `
-
+        `;
 
         const options = { format: 'A4' };
-        pdf.create(htmlContent.toString(), options).toStream((err, stream) => {
+        pdf.create(htmlContent, options).toStream((err, stream) => {
             if (err) {
                 console.error('Error generating PDF:', err);
                 res.status(500).send('Error generating PDF');
@@ -489,88 +494,13 @@ export const Print = async (req, res) => {
             // Pipe PDF stream to HTTP response
             stream.pipe(res);
         });
-        // const doc = new PDFDocument();
-        // // Buat sebuah write stream untuk menulis PDF ke file
-        // const writeStream = fs.createWriteStream('output.pdf');
-
-        // // Tambahkan konten ke PDF
-        // doc.text('Hello, World!');
-        // // Akhiri pembuatan PDF
-        // doc.end();
-
-        // // Pipe PDF ke write stream
-        // doc.pipe(writeStream);
-        // doc.end();
-        // Tampilkan pesan setelah selesai menulis PDF
-        // return writeStream.on('finish', () => {
-        //     console.log('PDF telah berhasil dibuat!');
-        // });
-
-        // var myDoc = new PDFDocument({ bufferPages: true });
-        // let buffers = [];
-        // myDoc.on('data', buffers.push.bind(buffers));
-        // myDoc.on('end', () => {
-
-        //     let pdfData = Buffer.concat(buffers);
-        //     res.writeHead(200, {
-        //         'Content-Length': Buffer.byteLength(pdfData),
-        //         'Content-Type': 'application/pdf',
-        //         'Content-disposition': 'attachment;filename=test.pdf',
-        //     })
-        //         .end(pdfData);
-
-        // });
-
-
-
-        //         myDoc.font('Times-Roman')
-        //             .fontSize(12)
-        //             .text(`<h3>this is a test text</h3>`);
-        //         myDoc.end();
-
-
-        //         const htmlContent = `
-        // <!DOCTYPE html>
-        // <html>
-        // <head>
-        //   <title>HTML to PDF</title>
-        // </head>
-        // <body>
-        //   <h1>Hello, World!</h1>
-        //   <p>This is an HTML to PDF conversion example.</p>
-        // </body>
-        // </html>
-        // `;
-
-        //         // Options for PDF generation
-        //         const options = { format: 'Letter' };
-        //         // Generate PDF from HTML content
-        //         myDoc.create(htmlContent, options).toStream((err, stream) => {
-        //             if (err) {
-        //                 console.error('Error generating PDF:', err);
-        //                 return;
-        //             }
-
-        //             // Create a write stream to save the PDF
-        //             const writeStream = fs.createWriteStream('output.pdf');
-
-        //             // Pipe PDF stream to write stream
-        //             stream.pipe(writeStream);
-
-        //             // Show message after PDF generation
-        //             writeStream.on('finish', () => {
-        //                 console.log('PDF generated successfully!');
-        //             });
-        //         });
-
-
     } catch (error) {
-        res.status(400).json({
-            msg: `can\t create file report ${error}`
-        })
+        console.error('Error creating PDF:', error);
+        res.status(500).json({
+            msg: `Can't create file report: ${error}`
+        });
     }
+};
 
-
-}
 export { Create, Edit, Delete, ListArtikel, Index }
 
