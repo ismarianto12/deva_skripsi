@@ -55,8 +55,8 @@ const Header = styled(Box)(({ theme }) => ({
 }))
 
 const schema = yup.object().shape({
-  id_barang: yup.string().required("Wajib diisi"),
-  jumlah: yup.string().required('Wajib diisi'),
+  // id_barang: yup.string().required("Wajib diisi"),
+  // jumlah: yup.string().required('Wajib diisi'),
   // tanggal_purchasing: yup.string().required('Wajib diisi'),
   // lokasi: yup.string().required('Lokasi Wajib diisi'),
   // tahun: yup.string().required('Tahun Wajib di isi'),
@@ -78,7 +78,7 @@ const defaultValues = {
 const Index = props => {
   // ** Props
   const route = useRouter();
-  const { open, toggle } = props
+  const { id } = props
   // ** State
   const [plan, setPlan] = useState('basic')
   const [role, setRole] = useState('subscriber')
@@ -88,28 +88,11 @@ const Index = props => {
   const [loading, setLoading] = useState(false)
   const [masterbarang, setMasterBarang] = useState([])
   const [masterdistributor, setMasterDistributor] = useState([])
+  const [initialValues, setInitialValues] = useState([]);
   // ** Hooks
   const dispatch = useDispatch()
   const store = useSelector(state => state.user)
-  useEffect(() => {
-    barangfetch().then((data) => {
-      const filteredData = data.data.data.map((f) => ({
-        label: `${f.nama_barang}`,
-        stock: `${f.jumlah_stok}`,
-        value: f.id
-      }))
-      console.log(filteredData, 'filteredData')
-      setMasterBarang(filteredData)
-    })
-    distributorfetch().then((data) => {
-      const filteredDistributot = data.data.data.map((r) => ({
-        label: r.nama_distributor,
-        value: r.id,
-      }))
-      console.log(filteredDistributot, 'filteredDistributot')
-      setMasterDistributor(filteredDistributot)
-    })
-  }, [])
+
   const {
     reset,
     control,
@@ -122,11 +105,119 @@ const Index = props => {
     mode: 'onChange',
     resolver: yupResolver(schema)
   })
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const masterBarangData = await barangfetch()
+        const masterDistributorData = await distributorfetch()
+
+        const filteredBarangData = masterBarangData.data.data.map(f => ({
+          label: f.nama_barang,
+          stock: f.jumlah_stok,
+          value: f.id
+        }))
+        setMasterBarang(filteredBarangData)
+
+        const filteredDistributorData = masterDistributorData.data.data.map(r => ({
+          label: r.nama_distributor,
+          value: r.id
+        }))
+        setMasterDistributor(filteredDistributorData)
+
+        const purchasingData = await axios.get(`${process.env.APP_API}master/purchasing/show/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+          }
+        })
+
+        const barangdata = purchasingData.data.data[0]
+        const barangIds = barangdata.id_barang.split(',').map(id => parseInt(id, 10))
+        const initialBarangValues = filteredBarangData.filter(barang => barangIds.includes(barang.value))
+        setInitialValues(initialBarangValues)
+        reset(barangdata)
+      } catch (error) {
+        Swal.fire('info', `Gagal mendapatkan data ${error}`, 'info')
+      }
+    }
+
+    fetchData()
+  }, [id, reset])
+
+  useEffect(() => {
+    if (initialValues.length > 0) {
+      setValue('id_barang', initialValues)
+    }
+  }, [initialValues, setValue])
+
+  // useEffect(() => {
+  //   barangfetch().then((data) => {
+  //     const filteredData = data.data.data.map((f) => ({
+  //       label: `${f.nama_barang}`,
+  //       stock: `${f.jumlah_stok}`,
+  //       value: f.id
+  //     }))
+  //     console.log(filteredData, 'filteredData')
+  //     setMasterBarang(filteredData)
+  //   })
+  //   const callEdit = async () => {
+  //     await axios.get(`${process.env.APP_API}master/purchasing/show/${props.id}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+  //       }
+  //     }).then((data) => {
+  //       // console.log(data.data.data[0], 'data get]')
+
+  //       // const barangdata = data.data.data[0]
+  //       // const barangIds = barangdata.id_barang.split(',').map(id => parseInt(id, 10));
+  //       // // Find corresponding barang from masterbarang
+  //       // console.log(barangIds, 'masterbarang')
+
+
+
+  //       // const dd = masterbarang.filter(barang => barangIds.includes(barang.value));
+  //       // console.log(dd, 'initialBarangValuesss')
+  //       // // Set initial values for the form
+  //       // setInitialValues(dd);
+  //       // reset(data.data.data[0])
+
+  //       const barangdata = data.data.data[0]
+  //       const barangIds = barangdata.id_barang.split(',').map(id => parseInt(id, 10))
+  //       const initialBarangValues = filteredBarangData.filter(barang => barangIds.includes(barang.value))
+  //       setInitialValues(initialBarangValues)
+  //       reset(barangdata)
+
+
+  //     }).catch((errors) => {
+  //       Swal.fire('info', `Gagal mendapatkan data ${errors}`, 'info')
+  //     })
+  //   }
+
+  //   callEdit()
+
+  //   distributorfetch().then((data) => {
+  //     const filteredDistributot = data.data.data.map((r) => ({
+  //       label: r.nama_distributor,
+  //       value: r.id,
+  //     }))
+  //     console.log(filteredDistributot, 'filteredDistributot')
+  //     setMasterDistributor(filteredDistributot)
+  //   })
+  // }, [])
+
+  // useEffect(() => {
+  //   // Set initial value for the form field when initialValues is populated
+  //   if (initialValues.length > 0) {
+  //     setValue('id_barang', initialValues);
+  //   }
+  // }, [initialValues, setValue]);
+
+
   const onSubmit = async (data) => {
     setLoading(true)
     console.log(data, 'data')
     try {
-      await axios.post(`${process.env.APP_API}master/purchasing/insert`, data, {
+      await axios.post(`${process.env.APP_API}master/purchasing/update/${props.id}`, data, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
@@ -209,6 +300,7 @@ const Index = props => {
                       <Autocomplete
                         multiple
                         id="tags-outlined"
+                        value={masterbarang[value]}
                         options={masterbarang}
                         getOptionLabel={(option) => option.label}
                         filterSelectedOptions
@@ -396,6 +488,14 @@ const Index = props => {
 
     </>
   )
+}
+export async function getServerSideProps(context) {
+  const id = context.query.edit;
+  return {
+    props: {
+      id
+    },
+  };
 }
 
 export default Index

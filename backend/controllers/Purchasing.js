@@ -3,8 +3,19 @@ import db from '../db/database.js'
 import multer from 'multer'
 import Barang from '../models/Barang.js';
 import pdf from 'html-pdf'
-import fs from 'fs'
+import fs from 'fs' 
+
+// const currentDate = new Date();
 const currentDate = new Date();
+
+// Get the year, month, and day
+const year = currentDate.getFullYear();
+const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Add 1 to the month because it's zero-based
+const day = String(currentDate.getDate()).padStart(2, '0');
+
+// Format the date as "YYYY-MM-DD"
+const formattedDate = `${year}-${month}-${day}`;
+
 
 const Index = async (req, res) => {
     try {
@@ -39,6 +50,8 @@ const Index = async (req, res) => {
             p.jumlah as jumlah_purchase,
             p.tanggal_purchasing,
             p.id_distributor,
+            p.no_faktur,
+            b.stok_awal,
             p.created_at,
             p.updated_at,
             d.nama_distributor,
@@ -180,6 +193,62 @@ const Create = async (req, res) => {
     }
 }
 
+export const Update = async (req, res) => {
+    const {
+        id,
+        id_barang,
+        jumlah,
+        tanggal_purchasing,
+        total_biaya,
+        id_distributor,
+        updated_at,
+        no_faktur,
+    } = req.body;
+
+    const idBarangArray = id_barang.map(item => item.value);
+
+    try {
+        await db.query(`
+            UPDATE purchasing 
+            SET 
+                id_barang = ?,
+                jumlah = ?,
+                tanggal_purchasing = ?,
+                total_biaya = ?,
+                id_distributor = ?,
+                updated_at = ?,
+                no_faktur = ?
+            WHERE
+                id = ?
+        `, {
+            replacements: [
+                "" + idBarangArray,
+                jumlah,
+                tanggal_purchasing,
+                total_biaya ? total_biaya : 0,
+                id_distributor,
+                updated_at ? formattedDate : formattedDate,
+                no_faktur,
+                id
+            ],
+            type: Sequelize.QueryTypes.UPDATE
+        });
+
+        res.status(200).json({
+            msg: 'Data berhasil diupdate',
+            status: 'ok',
+        });
+
+    } catch (error) {
+        console.error("Error updating data:", error);
+        res.status(500).json({
+            msg: 'Terjadi kesalahan saat memproses data',
+            status: 'error',
+        });
+    }
+}
+
+
 export const Insert = async (req, res) => {
     const {
         id_barang,
@@ -231,12 +300,15 @@ export const Insert = async (req, res) => {
 const Edit = async (req, res) => {
     try {
         const id = req.params.id
-        const data = await Post.findOne({
-            where: { id: id },
-            rejectOnEmpty: false,
-        })
+        const data = await db.query(`SELECT * from purchasing where id =?`, {
+            replacements: [
+                id,
+            ],
+            type: Sequelize.SELECT
+        }) 
+
         res.status(200).json({
-            data: data,
+            data: data[0],
             msg: 'detail data',
         })
     } catch (error) {
@@ -245,57 +317,7 @@ const Edit = async (req, res) => {
         })
     }
 }
-const Update = async (req, res) => {
-    const idtransaksi = req.params.id
-    const {
-        id_barang,
-        jumlah,
-        tanggal_purchasing,
-        total_biaya,
-        id_distributor,
-        created_at,
-        updated_at,
-        no_faktur,
-    } = req.body
-    try {
-        const data = await db.query(`
-        update purchasing set    
-        id_barang=?
-        jumlah=?
-        tanggal_purchasing=?
-        total_biaya=?
-        id_distributor=?
-        created_at=?
-        updated_at=?
-        no_faktur=?   
-        where
-        id =?   
-        `, {
-            replacements: [
-                id_barang,
-                jumlah,
-                tanggal_purchasing,
-                total_biaya,
-                id_distributor,
-                created_at,
-                updated_at,
-                no_faktur,
-                idtransaksi
-            ],
-            type: QueryTypes.UPDATE
-        });
-        res.status(200).json({
-            msg: 'data berhasil di update',
-            status: 'ok',
-        })
-
-    } catch (error) {
-        res.status(200).json({
-            msg: 'data berhasil di update',
-            status: 'ok',
-        })
-    }
-}
+ 
 const Delete = async (req, res) => {
     try {
         const id = req.params.id
@@ -550,5 +572,5 @@ export const Print = async (req, res) => {
 
 
 }
-export { Create, Edit, Update, Delete, ListArtikel, Index }
+export { Create, Edit, Delete, ListArtikel, Index }
 

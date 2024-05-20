@@ -49,11 +49,12 @@ router.post('/report/distributor/print/:id', verifyToken, DistributorController.
 router.get('/master/purcashing', verifyToken, PurhcasingController.Index)
 router.post('/master/purchasing/insert', verifyToken, PurhcasingController.Insert)
 router.post('/master/purchasing/print/:id', verifyToken, PurhcasingController.Print)
+router.post('/master/purchasing/update/:id', verifyToken, PurhcasingController.Update)
 
 router.post('/master/transaction/print/:id', verifyToken, TransaksiController.PrintData)
 
 
-router.post('/master/purchasing/show/:id', verifyToken, PurhcasingController.Edit)
+router.get('/master/purchasing/show/:id', verifyToken, PurhcasingController.Edit)
 router.delete('/master/purchasing/delete/:id', verifyToken, PurhcasingController.Delete)
 
 router.post('/createcenteroid',verifyToken,ClusterController.createcenteroid)

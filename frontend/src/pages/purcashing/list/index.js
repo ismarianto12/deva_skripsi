@@ -97,6 +97,37 @@ const Jenjang = [
 
   },
 ]
+
+const StyledDataGrid = styled(DataGrid)({
+  '& .MuiDataGrid-columnHeaders': {
+    backgroundColor: '#18a6db', // Grey background for headers
+    color: '#fff', // Black text color for headers
+    fontSize: '12px', // Smaller font size for compact appearance
+    // padding: '2px 5px', // Compact padding for header cells
+    borderLeft: '1px solid #d3d3d3'
+  },
+  '& .MuiDataGrid-cell': {
+    // borderRadius: '10px 10px 10px',
+    fontSize: '12px', // Smaller font size for cells
+    padding: '2px 5px', // Compact padding for cells
+    borderBottom: 'none', // Remove border-bottom from cells
+
+  },
+  '& .MuiDataGrid-row': {
+    boxShadow: '0px 4px #ddd',
+    borderTopLeftRadius: '10px', // Border radius for left edge
+    borderTopRightRadius: '10px', // Border radius for right edge
+    // borderRadius: '0px 10px 10px 10px',
+    // padding: '10px 10px 10px',
+    maxHeight: '40px !important', // Compact row height
+    minHeight: '40px !important', // Compact row height
+    border: 'none !importatant'
+  },
+  '& .MuiDataGrid-iconSeparator': {
+    display: 'none', // Hide the column separator icon for a cleaner look
+  },
+});
+
 const RowOptions = ({ id, status }) => {
   // ** Hooks
   // const dispatch = useDispatch()
@@ -313,6 +344,10 @@ const List = () => {
     // setSearchValue(value)
     fetchTableData(sort, value, sortColumn)
   }
+  const defaultColumnOptions = {
+    resizable: true,
+    width: '100%'
+  };
   return (
     <div data-aos="slide-left">
 
@@ -464,12 +499,13 @@ const List = () => {
           />
 
         </CardContent>
-        <DataGrid
+        <StyledDataGrid
           autoHeight
           pagination
           rows={rows}
           rowCount={total}
           columns={
+            defaultColumnOptions,
             [
               {
                 flex: 1,
@@ -479,45 +515,27 @@ const List = () => {
                   <Typography href={`/apps/invoice/preview/${row.id}`}>{`#${row.id}`}</Typography>
                 )
               },
+
               {
                 flex: 1,
                 minWidth: 180,
-                field: 'created_at',
-                headerName: 'Tgl & Jam'
-              },
-              {
-                flex: 1,
-                minWidth: 180,
-                field: 'nama_barang',
-                headerName: 'Nama Barang'
-              },
-              {
-                flex: 1,
-                minWidth: 180,
-                field: 'harga',
-                headerName: 'Harga Satuan'
-              },
-              {
-                flex: 1,
-                minWidth: 180,
-                field: 'jumlah_barang',
-                headerName: 'Stoct Readi',
-                renderCell: ({ row }) => {
-                  if (row.jumlah_stok) {
-                    return row.jumlah_stok + '/Pcs'
-                  } else {
-                    return (<b>Kosong</b>)
-                  }
-                }
+                field: 'no_faktur',
+                headerName: 'No Faktur'
               },
               {
                 flex: 1,
                 minWidth: 180,
                 field: 'jumlah_purchase',
-                headerName: 'Stock Purchase',
+                headerName: 'Total Item'
+              },
+              {
+                flex: 1,
+                minWidth: 180,
+                field: 'stok_awal',
+                headerName: 'Stoct Readi',
                 renderCell: ({ row }) => {
-                  if (row.jumlah_stok) {
-                    return row.jumlah_stok + '/Pcs'
+                  if (row.stok_awal) {
+                    return row.stok_awal + '/Pcs'
                   } else {
                     return (<b>Kosong</b>)
                   }
@@ -526,11 +544,11 @@ const List = () => {
               {
                 flex: 1,
                 minWidth: 180,
-                field: 'jenis_barang',
-                headerName: 'Jenis Barang',
+                field: 'nama_distributor',
+                headerName: 'Distributor',
                 renderCell: ({ row }) => {
-                  if (row.jenis_barang) {
-                    return row.jenis_barang
+                  if (row.nama_distributor) {
+                    return row.nama_distributor
                   } else {
                     return (<b>Kosong</b>)
                   }
