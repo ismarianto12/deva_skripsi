@@ -1,4 +1,4 @@
-import { QueryTypes, Op, NOW } from 'sequelize';
+import { QueryTypes, Op, NOW, Sequelize } from 'sequelize';
 import db from '../db/database.js'
 import multer from 'multer'
 import Barang from '../models/Barang.js';
@@ -190,44 +190,43 @@ export const Insert = async (req, res) => {
         created_at,
         updated_at,
         no_faktur,
-    } = req.body
+    } = req.body;
+
+    const idBarangArray = id_barang.map(item => item.value);
+
     try {
-        await db.query(`insert into purchasing set   
-        id_barang=?,
-        jumlah=?,
-        tanggal_purchasing=?,
-        total_biaya=?,
-        id_distributor=?,
-        created_at=?,
-        updated_at=?,
-        no_faktur=?,      
+        await db.query(`
+            INSERT INTO purchasing 
+            (id_barang, jumlah, tanggal_purchasing, total_biaya, id_distributor, created_at, updated_at, no_faktur)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `, {
             replacements: [
-                id_barang,
+                "" + idBarangArray,
                 jumlah,
                 tanggal_purchasing,
                 total_biaya ? total_biaya : 0,
                 id_distributor,
-                created_at ? created_at : currentDate,
-                updated_at ? updated_at : currentDate,
+                created_at ? created_at : new Date(),
+                updated_at ? updated_at : new Date(),
                 no_faktur
-            ]
-            ,
-            type: db.QueryTypes.INSERT
-        }
-        );
+            ],
+            type: Sequelize.QueryTypes.INSERT
+        });
+
         res.status(200).json({
-            msg: 'data berhasil di update',
+            msg: 'Data berhasil diinsert',
             status: 'ok',
-        })
+        });
 
     } catch (error) {
-        res.status(200).json({
-            msg: 'data berhasil di update',
-            status: 'ok',
-        })
+        console.error("Error inserting data:", error);
+        res.status(500).json({
+            msg: 'Terjadi kesalahan saat memproses data',
+            status: 'error',
+        });
     }
 }
+
 
 const Edit = async (req, res) => {
     try {
@@ -271,8 +270,8 @@ const Update = async (req, res) => {
         no_faktur=?   
         where
         id =?   
-        `,{
-            replacements : [
+        `, {
+            replacements: [
                 id_barang,
                 jumlah,
                 tanggal_purchasing,
@@ -300,8 +299,8 @@ const Update = async (req, res) => {
 const Delete = async (req, res) => {
     try {
         const id = req.params.id
-        await db.query(`Delete purchasing where id=?`,{
-            replacements : [
+        await db.query(`Delete purchasing where id=?`, {
+            replacements: [
                 id
             ],
             type: QueryTypes.DELETE

@@ -165,7 +165,7 @@ const datastatus = [
   }
 ]
 const Index = (props) => {
- // ** States
+  // ** States
   const [total, setTotal] = useState(0)
   const [action, setAction] = useState('tambah')
   const [iterasi, setIterasi] = useState('');
@@ -348,8 +348,11 @@ const Index = (props) => {
 
     console.log(fdata, 'fdata')
     const allCentroids = kmeans(fdata, manualCentroid, 6)
-    console.log(allCentroids)
+    console.log(allCentroids, 'allCentroids')
+    // console.log(allCentroids)
     setIterations(iterasi);
+    setClusters(allCentroids);
+    // setData(allce)
 
     // if (!iterasi || !periodeCluster) {
     //   setError(true); // Menampilkan pesan kesalahan jika input kosong
@@ -631,7 +634,7 @@ const Index = (props) => {
     }
   ]
 
-  const jsonData = clusters.clusters
+  const jsonData = clusters
   const pantek = JSON.parse(JSON.stringify(iterations));
 
   console.log(manualCentroid[0].C1, 'manualCentroid')
@@ -850,7 +853,6 @@ const Index = (props) => {
 
         } */}
 
-
       <div>
         {/* {JSON.stringify(clusters)} */}
         {
@@ -859,7 +861,7 @@ const Index = (props) => {
 
               <CardContent>
                 <div style={{ 'overflow': 'auto', 'marginBottom': '30px' }}>
-                  <BarangTable data={jsonData} iterations={iterations} plotdata={plotdata} />
+                  <BarangTable data={clusters} iterations={iterations} plotdata={plotdata} />
                 </div>
                 {
                   Array.from({ length: iterations }, (_, index) => {
@@ -997,7 +999,7 @@ const Index = (props) => {
                                   {
                                     manualCentroid?.map((manualCentroids, j) =>
                                     (<tr>
-                                      <td>{'C' + j}</td>
+                                      <td>{'C' + parseInt(j + 1)}</td>
                                       <td>{manualCentroids.C1 ?? 0}</td>
                                       <td>{manualCentroids.C2 ?? 0}</td>
                                       <td>{manualCentroids.C3 ?? 0}</td>

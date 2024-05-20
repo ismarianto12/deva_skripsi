@@ -16,7 +16,8 @@ export const PrintData = async (req, res) => {
 
         purchasing.jumlah, 
         barang.id_barang, 
-        barang.kd_barang
+        barang.kd_barang,
+        barang.nama_barang
     FROM
         purchasing,
         barang 
@@ -87,7 +88,8 @@ export const PrintData = async (req, res) => {
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Kode Barang</th>                            
+                            <th>Kode Barang</th>         
+                            <th>Barang</th>                            
                             <th>No. Faktur</th>
                             <th>Jumlah</th>
                         </tr>
@@ -97,6 +99,7 @@ export const PrintData = async (req, res) => {
                             <tr>
                                 <td>${i + 1}</td>
                                 <td>${item.kd_barang}</td>
+                                <td>${item.nama_barang}</td>
                                 <td>${item.no_faktur}</td> 
                                 <td>${item.jumlah}</td>
                             </tr>

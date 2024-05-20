@@ -231,13 +231,10 @@ const Index = props => {
                         id="tags-outlined"
                         options={masterbarang}
                         getOptionLabel={(option) => option.label}
-                        // defaultValue={[]}
-                        // value={[]}
                         filterSelectedOptions
                         onChange={(event, newValue) => {
-                          console.log(newValue, 'data onchange');
-                          onChange(newValue ? newValue.value : null);
-                          setStockavaild(newValue?.stock)
+                          onChange(newValue); // Memanggil fungsi onChange dengan nilai newValue
+                          setStockavaild(newValue ? newValue.stock : null);
                         }}
                         renderInput={(params) => (
                           <TextField

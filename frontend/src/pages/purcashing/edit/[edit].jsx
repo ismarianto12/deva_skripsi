@@ -207,22 +207,25 @@ const Index = props => {
                     rules={{ required: true }}
                     render={({ field: { value, onChange } }) => (
                       <Autocomplete
-                        value={masterbarang.find(option => option.value === value) || null}
-                        disablePortal
+                        multiple
+                        id="tags-outlined"
+                        options={masterbarang}
+                        getOptionLabel={(option) => option.label}
+                        filterSelectedOptions
                         onChange={(event, newValue) => {
-                          console.log(newValue, 'data onchange');
-                          onChange(newValue ? newValue.value : null);
-                          setStockavaild(newValue?.stock)
+                          onChange(newValue); // Memanggil fungsi onChange dengan nilai newValue
+                          setStockavaild(newValue ? newValue.stock : null);
                         }}
-                        id="combo-box-demo"
-                        options={masterbarang ? masterbarang : []}
-                        sx={{ width: '100%', 'height': '40px' }}
-                        renderInput={(params) =>
-                          <TextField {...params} label="Barang" size="small" />
-                        }
-                        {...(errors.id_barang && { helperText: errors.id_barang.message })}
-
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Pilih data barang"
+                            placeholder="Favorites"
+                            size="small"
+                          />
+                        )}
                       />
+
 
                     )}
                   />
