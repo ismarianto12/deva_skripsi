@@ -4,6 +4,7 @@ import multer from 'multer'
 import Barang from '../models/Barang.js';
 import pdf from 'html-pdf'
 import fs from 'fs'
+import { generateKopSurat } from '../views/header.js';
 
 // const currentDate = new Date();
 const currentDate = new Date();
@@ -435,9 +436,10 @@ export const Print = async (req, res) => {
         '
       />
             <div class="container">
+            ${generateKopSurat()}
+
                 <h3>Purchase Order</h3>
-                <hr />
-                <table>
+                 <table>
                 <tr>
                     <td><strong>Vendor:</strong></td>
                     <td> ${datanya.nama_distributor}</td>

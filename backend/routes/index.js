@@ -9,8 +9,9 @@ import * as LoginController from '../controllers/Users.js'
 import { verifyToken } from "../middleware/Auth.js";
 import * as ClusterController from '../controllers/Clustering.js'
 import crypto from 'crypto';
-// import crypto
+ // import crypto
 const router = express.Router();
+ 
 router.get('/v1', async (req, res) => {
     const generateAccessTokenSecret = () => {
         return crypto.randomBytes(64).toString('hex');
@@ -57,7 +58,7 @@ router.post('/master/transaction/print/:id', verifyToken, TransaksiController.Pr
 router.get('/master/purchasing/show/:id', verifyToken, PurhcasingController.Edit)
 router.delete('/master/purchasing/delete/:id', verifyToken, PurhcasingController.Delete)
 
-router.post('/createcenteroid',verifyToken,ClusterController.createcenteroid)
+router.post('/createcenteroid', verifyToken, ClusterController.createcenteroid)
 //action crud users
 router.get('/master/kelompokcluster/list', verifyToken, ClusterController.listClustering)
 
@@ -65,6 +66,8 @@ router.get('/logic/clustering/list', verifyToken, ClusterController.List)
 router.get('/logic/clustering/clusteresult', verifyToken, ClusterController.ClusterResult)
 
 router.get('/logic/clustering/hitung', verifyToken, ClusterController.hitungClustering)
+router.post('/clustering/printall', verifyToken, ClusterController.PrintDetail)
+
 
 router.post('/master/purchasing/delete/:id', verifyToken, PurhcasingController.Delete)
 router.get('/master/purchasing/delete/:id', verifyToken, PurhcasingController.Delete)

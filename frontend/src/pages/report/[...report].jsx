@@ -58,6 +58,15 @@ const Report = (props) => {
           const base64String = Buffer.from(response.data, 'binary').toString('base64');
           setPdfData(base64String);
           setLoading(false)
+        } else if (props.id[1] == 'clustering') {
+          document.title = "Laporan Data Ditributor"
+          const response = await axios.post(`${process.env.APP_API}clustering/printall`, {}, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+            responseType: 'arraybuffer', // Important for PDF files
+          });
+          const base64String = Buffer.from(response.data, 'binary').toString('base64');
+          setPdfData(base64String);
+          setLoading(false)
 
         } else {
           setError('Error fetching PDF');

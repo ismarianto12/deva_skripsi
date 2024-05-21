@@ -5,6 +5,7 @@ import Barang from '../models/Barang.js';
 import JenisBarang from '../models/Jenis_barang.js';
 import pdf from 'html-pdf'
 import KMeans from 'kmeans-js';
+import { generateKopSurat } from '../views/header.js';
 
 const currentDate = new Date();
 
@@ -143,7 +144,7 @@ export const Print = async (req, res) => {
       type: QueryTypes.SELECT
     })
 
-    console.log(data, 'datanya')
+
     const datanya = data[0];
     // const htmlContent = fs.readFileSync("./views/purchasing.html", datanya, 'utf8')
     const htmlContent = `
@@ -162,6 +163,9 @@ export const Print = async (req, res) => {
                     margin: 0 auto;
                     padding: 20px;
                 }
+                hr{
+                  border:0.1px solid #ddd;
+                }
                 h1, h3{
                     text-align: center;
                 }
@@ -171,10 +175,12 @@ export const Print = async (req, res) => {
                     margin-top: 20px;
                 }
                 table, th, td {
+                    font-size:12px;
                     border: 1px solid #ddd;
                 }
                 th, td {
                     padding: 10px;
+                    font-size:12px;
                     text-align: left;
                 }
                 .footer {
@@ -236,8 +242,7 @@ export const Print = async (req, res) => {
         </body>
         </html>        
         `
-
-    const options = { format: 'A4', orientation: 'landscape', };
+    const options = { format: 'A4', orientation: 'potrait', };
     pdf.create(htmlContent.toString(), options).toStream((err, stream) => {
       if (err) {
         console.error('Error generating PDF:', err);
@@ -251,80 +256,6 @@ export const Print = async (req, res) => {
       // Pipe PDF stream to HTTP response
       stream.pipe(res);
     });
-    // const doc = new PDFDocument();
-    // // Buat sebuah write stream untuk menulis PDF ke file
-    // const writeStream = fs.createWriteStream('output.pdf');
-
-    // // Tambahkan konten ke PDF
-    // doc.text('Hello, World!');
-
-    // // Akhiri pembuatan PDF
-    // doc.end();
-
-    // // Pipe PDF ke write stream
-    // doc.pipe(writeStream);
-    // doc.end();
-    // Tampilkan pesan setelah selesai menulis PDF
-    // return writeStream.on('finish', () => {
-    //     console.log('PDF telah berhasil dibuat!');
-    // });
-
-    // var myDoc = new PDFDocument({ bufferPages: true });
-    // let buffers = [];
-    // myDoc.on('data', buffers.push.bind(buffers));
-    // myDoc.on('end', () => {
-
-    //     let pdfData = Buffer.concat(buffers);
-    //     res.writeHead(200, {
-    //         'Content-Length': Buffer.byteLength(pdfData),
-    //         'Content-Type': 'application/pdf',
-    //         'Content-disposition': 'attachment;filename=test.pdf',
-    //     })
-    //         .end(pdfData);
-
-    // });
-
-
-
-    //         myDoc.font('Times-Roman')
-    //             .fontSize(12)
-    //             .text(`<h3>this is a test text</h3>`);
-    //         myDoc.end();
-
-
-    //         const htmlContent = `
-    // <!DOCTYPE html>
-    // <html>
-    // <head>
-    //   <title>HTML to PDF</title>
-    // </head>
-    // <body>
-    //   <h1>Hello, World!</h1>
-    //   <p>This is an HTML to PDF conversion example.</p>
-    // </body>
-    // </html>
-    // `;
-
-    //         // Options for PDF generation
-    //         const options = { format: 'Letter' };
-    //         // Generate PDF from HTML content
-    //         myDoc.create(htmlContent, options).toStream((err, stream) => {
-    //             if (err) {
-    //                 console.error('Error generating PDF:', err);
-    //                 return;
-    //             }
-
-    //             // Create a write stream to save the PDF
-    //             const writeStream = fs.createWriteStream('output.pdf');
-
-    //             // Pipe PDF stream to write stream
-    //             stream.pipe(writeStream);
-
-    //             // Show message after PDF generation
-    //             writeStream.on('finish', () => {
-    //                 console.log('PDF generated successfully!');
-    //             });
-    //         });
 
 
   } catch (error) {
@@ -427,8 +358,8 @@ export const ClusterResult = async (req, res) => {
     } else {
       pageSize = parseInt(req.query.pageSize) || 10;
     }
-    console.log(isNaN(req.query.pageSize),'Page SIze');
-    console.log(pageSize,'pageSize')
+    console.log(isNaN(req.query.pageSize), 'Page SIze');
+    console.log(pageSize, 'pageSize')
     const offset = (page - 1) * pageSize;
 
     const dataQuery = `
@@ -479,6 +410,129 @@ export const ClusterResult = async (req, res) => {
     });
   }
 };
+
+
+export const PrintDetail = async (req, res) => {
+  try {
+
+    const dataQuery = `
+     SELECT 
+       clustering_result.id,  
+       clustering_result.hasil_cluster, 
+       barang.kd_barang,  
+       barang.nama_barang, 
+       clustering_result.keterangan
+     FROM
+       clustering_result
+     INNER JOIN
+       barang ON clustering_result.id_barang = barang.id
+      ORDER BY  clustering_result.hasil_cluster  ASC 
+    `;
+    const sql = await db.query(dataQuery, {
+      type: QueryTypes.SELECT
+    });
+
+    const data = sql
+    console.log(sql[0], 'return response data barang')
+    // Create HTML content for PDF
+    let htmlContent = `
+     <!DOCTYPE html>
+     <html lang="en">
+     <head>
+         <meta charset="UTF-8">
+         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+         <title>Report Barang</title>
+         <style>
+             body {
+                 font-family: Arial, sans-serif;
+             }
+             .container {
+                 max-width: 800px;
+                 margin: 0 auto;
+                 padding: 20px;
+             }
+             h1, h3{
+                 text-align: center;
+             }
+             table {
+                 width: 100%;
+                 border-collapse: collapse;
+                 margin-top: 20px;
+             }
+             table, th, td {
+                 border: 1px solid #ddd;
+             }
+             th, td {
+                 padding: 10px;
+                 text-align: left;
+             }
+             .footer {
+                 margin-top: 20px;
+                 text-align: center;
+             }
+         </style>
+     </head>
+     <body>
+     <img src="/logo_app.png"
+     style='
+       width: 20%
+     '
+     />
+         <div class="container">
+
+         ${generateKopSurat()}
+             <h4>Report Hasil Cluster</h4>
+                           <table>
+                 <thead>
+                     <tr>
+                         <th>No.</th>
+                         <th>Hasil Cluster</th>
+                         <th>Kode Barang</th>
+                         <th>Nama Barang</th>
+                         <th>Keterangan</th>
+                     </tr>
+                 </thead>
+                 <tbody>`;
+
+    data.forEach((item, index) => {
+      htmlContent += `
+       <tr>
+           <td>${index + 1}</td>
+           <td>${item.hasil_cluster}</td>
+           <td>${item.kd_barang}</td>
+           <td>${item.nama_barang}</td>
+           <td>${item.keterangan}</td>
+       </tr>`;
+    });
+
+    htmlContent += `
+                 </tbody>
+             </table> 
+         </div>
+     </body>
+     </html>`;
+
+    const options = { format: 'A4', orientation: 'landscape' };
+    pdf.create(htmlContent, options).toStream((err, stream) => {
+      if (err) {
+        console.error('Error generating PDF:', err);
+        return res.status(500).send('Error generating PDF');
+      }
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename="generated.pdf"');
+      stream.pipe(res);
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({
+      data: 'error request',
+      msg: error.message
+    });
+  }
+};
+
 
 
 export const ClusterResultList = async (req, res) => {

@@ -9,6 +9,8 @@ import Typography from '@mui/material/Typography'
 import CardHeader from '@mui/material/CardHeader'
 import { DataGrid, GridToolbar } from '@mui/x-data-grid'
 import IconButton from '@mui/material/IconButton'
+import ButtonGroup from '@mui/material/ButtonGroup';
+
 import Menu from '@mui/material/Menu'
 import axios from 'axios'
 import Link from 'next/link'
@@ -396,7 +398,7 @@ const List = () => {
             </Grid>
 
             {/* Middle side with lg=4 */}
-            <Grid item xs={12} lg={4}>
+            <Grid item xs={12} lg={3}>
               <Select
                 value={month}
                 size='small'
@@ -414,22 +416,44 @@ const List = () => {
             </Grid>
 
             {/* Right side with lg=4 */}
-            <Grid item xs={12} lg={4} sx={{ display: 'flex', alignItems: 'flex-end' }}>
+            {/* <Grid container spacing={3} xs={6}> */}
+            <Grid item xs={4}>
               <CustomTextField
-                sx={{ marginLeft: 'auto', minWidth: 250 }} // Adjust margin and width as needed
+                sx={{ minWidth: 250 }} // Adjust width as needed
                 placeholder='Search Data'
                 onChange={(e) => handleSearch(e.target.value)} // Assuming handleSearch is defined
               />
-              &nbsp;
-              <Button
+            </Grid>
+            <Grid item xs={2} spacing={2}>
+              {/* <Button
                 variant='contained'
-                sx={{ '& svg': { mr: 2 } }}
+                fullWidth
                 onClick={() => Refresh()}
               >
                 <Icon fontSize='1.125rem' icon='tabler:plus' />
                 Refresh
-              </Button>
+              </Button> */}
+              <ButtonGroup variant="contained" aria-label="Basic button group" sx={{ marginLeft: '-40px' }}>
+                <Button variant='contained'
+                  onClick={() => {
+                    setLoading(true),
+                      Refresh()
+                  }}>   <Icon fontSize='1.125rem' icon='tabler:reload' />
+                  Refresh</Button>
+                <Button
+
+                  onClick={() => {
+                    const url = `/report/all/clustering`
+                    window.open(url, '_blank');
+                  }}
+                ><Icon fontSize='1.125rem' icon='tabler:printer' />Print</Button>
+                &nbsp;
+              </ButtonGroup>
+              &nbsp;
             </Grid>
+
+            {/* </Grid> */}
+
 
           </Grid>
 
@@ -441,6 +465,7 @@ const List = () => {
           // rows={rows}
           rows={rows.map((item, index) => ({ id: index + 1, ...item }))}
           rowCount={total}
+          loading={loading}
           columns={
             [
               {

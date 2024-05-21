@@ -4,6 +4,7 @@ import multer from 'multer'
 import Barang from '../models/Barang.js';
 import JenisBarang from '../models/Jenis_barang.js';
 import pdf from 'html-pdf'
+import { generateKopSurat } from '../views/header.js';
 
 const currentDate = new Date();
 
@@ -142,8 +143,9 @@ export const Print = async (req, res) => {
         <body>
             <img src="/logo_app.png" style="width: 20%;" />
             <div class="container">
+            ${generateKopSurat()}
                 <h3>Laporan Barang Keseluruhan</h3>
-                <hr />
+              
                 <table>
                     <thead>
                         <tr>
@@ -220,7 +222,7 @@ const BarangList = async (req, res) => {
                 nama_barang: {
                     [Op.like]: `%${q}%`
                 },
- 
+
             };
         }
 

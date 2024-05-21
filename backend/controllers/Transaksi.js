@@ -4,6 +4,7 @@ import multer from 'multer'
 import Posts from '../models/post.js'
 import Post from '../models/post.js';
 import pdf from 'html-pdf';
+import { generateKopSurat } from '../views/header.js';
 
 export const PrintData = async (req, res) => {
     const id = req.params.id;
@@ -82,9 +83,9 @@ export const PrintData = async (req, res) => {
         <body>
             <img src="/logo_app.png" style="width: 20%;" />
             <div class="container">
+            ${generateKopSurat()}
                 <h3>Laporan Transaksi</h3>
-                <hr />
-                <table>
+                 <table>
                     <thead>
                         <tr>
                             <th>#</th>
