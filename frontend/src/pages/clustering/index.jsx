@@ -1337,6 +1337,9 @@ const BarangTable = ({ data, iterations, plotdata }) => {
       data: [44, 55, 41, 64, 22, 43, 21]
     }, {
       data: [53, 32, 33, 52, 13, 44, 32]
+    },
+    {
+      data: [53, 32, 33, 52, 13, 12, 32]
     }],
     options: {
       chart: {
@@ -1358,6 +1361,12 @@ const BarangTable = ({ data, iterations, plotdata }) => {
           fontSize: '12px',
           colors: ['#fff']
         }
+      },
+      xaxis: {
+        categories: ['A', 'B', 'C'], // Custom labels
+      },
+      yaxis: {
+        categories: ['A', 'B', 'C'], // Custom labels
       },
       stroke: {
         show: true,

@@ -286,8 +286,8 @@ const List = () => {
     const level = e.target.value
 
   }
-  const caridata = () => {
-    // setSearchValue(value)
+  const Refresh = () => {
+    setPaginationModel({ page: 1, pageSize: 7 })
     fetchTableData(sort, value, sortColumn)
   }
 
@@ -420,7 +420,17 @@ const List = () => {
                 placeholder='Search Data'
                 onChange={(e) => handleSearch(e.target.value)} // Assuming handleSearch is defined
               />
+              &nbsp;
+              <Button
+                variant='contained'
+                sx={{ '& svg': { mr: 2 } }}
+                onClick={() => Refresh()}
+              >
+                <Icon fontSize='1.125rem' icon='tabler:plus' />
+                Refresh
+              </Button>
             </Grid>
+
           </Grid>
 
         </Box>

@@ -410,20 +410,25 @@ export const ClusterResult = async (req, res) => {
       JOIN clustering_result ON barang.id_barang = clustering_result.id_barang 
       ${whereClause}
     `;
-    const totalData = await db.query(totalDataQuery, {
+    const totalData = await db.query(' SELECT COUNT(*) as total FROM barang', {
+      replacements: { search: `%${search}%`, month: monthFilter },
+      type: Sequelize.QueryTypes.SELECT
+    });
+
+    const totalDls = await db.query(totalDataQuery, {
       replacements: { search: `%${search}%`, month: monthFilter },
       type: Sequelize.QueryTypes.SELECT
     });
 
     const total = totalData[0].total;
-
     let pageSize = 10;
-    if (req.query.pageSize === 'All' || req.query.pageSize === 'NaN') {
-      pageSize = total;
+    if (req.query.pageSize === 'All' || isNaN(req.query.pageSize)) {
+      pageSize = 300;// totalDls[0].total;;
     } else {
       pageSize = parseInt(req.query.pageSize) || 10;
     }
-
+    console.log(isNaN(req.query.pageSize),'Page SIze');
+    console.log(pageSize,'pageSize')
     const offset = (page - 1) * pageSize;
 
     const dataQuery = `
