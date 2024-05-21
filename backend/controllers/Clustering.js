@@ -427,20 +427,30 @@ export const ClusterResult = async (req, res) => {
     const offset = (page - 1) * pageSize;
 
     const dataQuery = `
-      SELECT 
-        barang.id_barang, 
-        barang.kd_barang, 
-        barang.nama_barang, 
-        barang.harga, 
-        barang.jumlah_stok, 
-        barang.id_jenisbarang, 
-        barang.created_at, 
-        clustering_result.keterangan, 
-        clustering_result.hasil_cluster, 
-        clustering_result.created_at, 
-        clustering_result.updated_at 
-      FROM barang 
-      JOIN clustering_result ON barang.id_barang = clustering_result.id_barang 
+    SELECT 
+    clustering_result.id,  
+    clustering_result.hasil_cluster, 
+    clustering_result.id_barang, 
+    clustering_result.keterangan, 
+    clustering_result.updated_at, 
+    clustering_result.created_at, 
+    clustering_result.user_id, 
+    barang.kd_barang,  
+    barang.nama_barang, 
+    barang.harga, 
+    barang.jumlah_stok, 
+    barang.id_jenisbarang, 
+    barang.created_at, 
+    barang.updated_at, 
+    barang.stok_awal, 
+    barang.stok_akhir, 
+    barang.stok_keluar
+    FROM
+    clustering_result
+     INNER JOIN
+    barang
+    ON 
+      clustering_result.id_barang = barang.id
       ${whereClause}
       ORDER BY barang.id_barang ASC 
       LIMIT :offset, :pageSize

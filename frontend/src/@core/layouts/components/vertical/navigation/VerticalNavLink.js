@@ -184,8 +184,12 @@ const VerticalNavLink = ({
               {item?.label ?
                 <>
                   <p style={{
-                    'display': 'flex', padding: 'unset', marginBottom: 'unset'
-                  }}> <UserIcon icon="tabler:dots" />&nbsp;&nbsp;<Translations text={item.title} style={{ 'color': '#000 !important' }} /></p>
+                    'display': 'inline'
+                  }}>
+                    <svg width="10%" height={2}>
+                      <line x1={0} y1={5} x2="100%" y2={5} stroke="#ddd" strokeWidth={10} />
+                    </svg>
+                    &nbsp;&nbsp;<Translations text={item.title} style={{ 'color': '#000 !important' }} /></p>
                 </>
                 :
                 <>

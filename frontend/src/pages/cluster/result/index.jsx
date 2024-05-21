@@ -116,6 +116,7 @@ const List = () => {
   const [role, setRole] = useState('')
   const [plan, setPlan] = useState('')
   const [value, setValue] = useState('')
+  const [month, setMonth] = useState('')
   const [loading, setLoading] = useState(true)
 
   const [takademik, setTakademik] = useState('')
@@ -144,6 +145,7 @@ const List = () => {
             q: q,
             sort: sort,
             column: column,
+            month: month
           }
         })
         .then(res => {
@@ -186,9 +188,9 @@ const List = () => {
     setValue(val)
   }, [])
 
-  const filterByjenjang = (e) => {
-    console.log('filter bya je' + e.target.value)
-    setJenjang(e.target.value)
+  const filterByMonth = (e) => {
+    console.log(e.target.value)
+    setMonth(e.target.value)
     fetchTableData(sort, searchValue, sortColumn)
   }
   const RowOptions = ({ id, status }) => {
@@ -396,14 +398,13 @@ const List = () => {
             {/* Middle side with lg=4 */}
             <Grid item xs={12} lg={4}>
               <Select
-                value={1}
+                value={month}
                 size='small'
                 sx={{
                   minWidth: '100%',
                 }}
-                onChange={(e) => null}
+                onChange={(e) => filterByMonth(e)}
               >
-                {/* Render months data */}
                 {months.map((monthsdata, i) => (
                   <MenuItem key={`Y-${i}`} value={i + 1}>
                     {monthsdata.name}
