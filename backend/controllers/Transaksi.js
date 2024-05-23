@@ -378,6 +378,7 @@ export const Print = async (req, res) => {
         <body>
             <img src="/logo_app.png" style="width: 20%;" />
             <div class="container">
+            ${generateKopSurat()}
                 <h3>Laporan Barang Keseluruhan</h3>
                 <hr />
                 <table>

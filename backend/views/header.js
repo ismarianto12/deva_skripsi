@@ -26,9 +26,9 @@ export function generateKopSurat() {
     
         <div class="kop-surat">
             <img src="http://localhost:8080/files/logo_app.png" alt="Logo">
-            <div class="alamat">
+            <div class="alamat"> 
                 Jl. Taman Margasatwa Raya No. 34 Rt. 01 Rw. 01 Ragunan,<br>
-                RT.1/RW.1, Ragunan, Ps. Minggu,<br>
+                RT.1/RW.1, Ragunan, Ps. Minggu,<br />
                 Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12550
             </div>
         </div> 

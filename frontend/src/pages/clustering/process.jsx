@@ -115,7 +115,6 @@ const Index = props => {
       if (error.response) {
         console.error('Server responded with:', error.response.status);
         console.error('Response data:', error.response.data);
-      } else if (error.request) {
         console.error('No response received');
       } else {
         console.error('Error:', error.message);

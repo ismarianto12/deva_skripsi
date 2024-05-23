@@ -70,6 +70,7 @@ export const Print = async (req, res) => {
             '
         />
                 <div class="container">
+                ${generateKopSurat()}
                     <h3>Laporan Distributor</h3>
                     <hr />
                       <p><strong>Print Date:</strong> ${formattedDate}</p> 

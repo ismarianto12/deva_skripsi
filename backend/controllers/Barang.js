@@ -91,7 +91,6 @@ export const Print = async (req, res) => {
         // if (data.length === 0) {
         //     return res.status(404).send('Data not found');
         // }
-
         const datanya = data ?? [];
         console.log(datanya, 'dtanya')
         const htmlContent = `

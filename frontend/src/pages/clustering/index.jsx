@@ -1,6 +1,6 @@
 
 // ** React Imports
-import { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 
 // ** MUI Imports
 import dynamic from 'next/dynamic'
@@ -85,10 +85,7 @@ const Jenjang = [
   },
 ]
 const RowOptions = ({ id, status }) => {
-  // ** Hooks
-  // const dispatch = useDispatch()
-  // ** State
-  // console.log(status, 'status ppdb')
+
   const [anchorEl, setAnchorEl] = useState(null)
   const rowOptionsOpen = Boolean(anchorEl)
   const handleRowOptionsClick = event => {
@@ -188,19 +185,90 @@ const Index = (props) => {
       { "C1": 80, "C2": 15, "C3": 12 }
     ]
   )
-
   const [plotdata, setPlotdata] = useState([{
     options: {},
-    series: [17, 55, 77],
-    labels: ['PALING BANYAK TERJUAL', 'SEDIKIT TERJUAL', 'TIDAK LARIS TERJUAL'],
-    dataLabels: {
-      enabled: true,
-      formatter: function (val, opts) {
-        return opts.w.config.options.labels[opts.seriesIndex] + ': ' + val;
+    chart: {
+      height: 480,
+      type: 'pie',
+    },
+    labels: ["series_1", "series_2", "series_3", "series_4"],
+    colors: ["#ff0000", "#c758d0", "#d6d6d6", "#007ed6"],
+    legend: {
+      show: true,
+      showForSingleSeries: false,
+      showForNullSeries: true,
+      showForZeroSeries: true,
+      position: 'bottom',
+      horizontalAlign: 'center',
+      fontSize: '18px',
+      fontFamily: 'Helvetica, Arial',
+      fontWeight: 400,
+      itemMargin: {
+        horizontal: 15,
+        vertical: 0
       },
     },
-  }
-  ])
+    responsive: [{
+      breakpoint: 480,
+      options: {
+        chart: {
+          width: 200
+        },
+      }
+    }]
+  }])
+
+  // const [plotdata, setPlotdata] = useState([
+
+  //   //   {
+  //   //   options: {},
+  //   //   series: [17, 55, 77],
+  //   //   labels: ["series_1", "series_2", "series_3", "series_4"],
+  //   //   legend: {
+  //   //     position: 'bottom',
+  //   //     fontSize: '24px',
+  //   //     fontWeight: 600,
+  //   //   },
+  //   //   responsive: [{
+  //   //     breakpoint: 480,
+  //   //     options: {
+  //   //       chart: {
+  //   //         width: 200
+  //   //       },
+  //   //     }
+  //   //   }],
+  //   //   dataLabels: {
+  //   //     enabled: true,
+  //   //     formatter: function (val, opts) {
+  //   //       return opts.w.config.options.labels[opts.seriesIndex] + ': ' + val;
+  //   //     },
+  //   //   },
+  //   // }
+
+  //   // {
+  //   //   series: [10, 20, 30, 50],
+  //   //   chart: {
+  //   //     height: 480,
+  //   //     type: 'pie',
+  //   //   },
+  //   //   labels: ["series_1", "series_2", "series_3", "series_4"],
+  //   //   legend: {
+  //   //     position: 'bottom',
+  //   //     fontSize: '24px',
+  //   //     fontWeight: 600,
+  //   //   },
+  //   //   colors: ["#ff0000", "#c758d0", "#d6d6d6", "#007ed6"],
+  //   //   responsive: [{
+  //   //     breakpoint: 480,
+  //   //     options: {
+  //   //       chart: {
+  //   //         width: 200
+  //   //       },
+  //   //     }
+  //   //   }]
+  //   // }
+
+  // ])
   //
   const [iterations, setIterations] = useState(0);
   const [clusters, setClusters] = useState([]);
@@ -315,43 +383,50 @@ const Index = (props) => {
       [415, 400, 15],
       [212, 200, 12]
     ];
-    const fdata = [
-      [755, 500, 255], [600, 500, 100], [730, 500, 230], [623, 500, 123], [1000, 500, 500],
-      [420, 400, 20], [760, 400, 360], [515, 500, 15], [1000, 500, 500], [750, 600, 150],
-      [580, 500, 80], [590, 500, 90], [700, 500, 200], [560, 500, 60], [1030, 500, 530],
-      [535, 500, 35], [900, 600, 300], [1100, 700, 400], [420, 300, 120], [560, 500, 60],
-      [720, 400, 320], [580, 500, 80], [219, 200, 19], [335, 300, 35], [512, 500, 12],
-      [415, 400, 15], [330, 300, 30], [600, 500, 100], [490, 400, 90], [712, 700, 12],
-      [500, 200, 300], [760, 700, 60], [390, 300, 90], [530, 500, 30], [411, 400, 11],
-      [270, 200, 70], [630, 500, 130], [505, 500, 5], [1035, 800, 235], [450, 400, 50],
-      [734, 500, 234], [367, 300, 67], [823, 400, 423], [1061, 300, 761], [113, 100, 13],
-      [108, 100, 8], [110, 100, 10], [135, 100, 35], [124, 100, 24], [290, 200, 90],
-      [157, 100, 57], [307, 300, 7], [546, 500, 46], [500, 200, 300], [309, 300, 9],
-      [319, 300, 19], [304, 300, 4], [306, 300, 6], [278, 200, 78], [390, 300, 90],
-      [322, 200, 122], [290, 200, 90], [167, 100, 67], [287, 200, 87], [345, 300, 45],
-      [542, 200, 342], [123, 100, 23], [108, 100, 8], [109, 100, 9], [276, 200, 76],
-      [389, 300, 89], [243, 200, 43], [150, 100, 50], [104, 100, 4], [209, 200, 9],
-      [134, 100, 34], [154, 100, 54], [201, 200, 1], [134, 100, 34], [153, 100, 53],
-      [222, 200, 22], [212, 200, 12], [311, 300, 11], [310, 300, 10], [436, 400, 36],
-      [410, 400, 10], [325, 300, 25], [112, 100, 12], [179, 100, 79], [130, 100, 30],
-      [256, 200, 56], [214, 200, 14], [225, 100, 125], [600, 300, 300], [570, 500, 70],
-      [189, 100, 89], [165, 100, 65], [150, 100, 50], [104, 100, 4], [218, 200, 18],
-      [280, 200, 80], [107, 100, 7], [105, 100, 5], [114, 100, 14], [129, 100, 29],
-      [205, 200, 5], [260, 200, 60], [106, 100, 6], [102, 100, 2], [128, 50, 78],
-      [59, 50, 9], [72, 70, 2], [64, 60, 4], [100, 50, 50], [140, 50, 90], [104, 70, 34],
-      [106, 80, 26], [171, 90, 81], [118, 100, 18], [101, 60, 41], [85, 70, 15], [121, 100, 21],
-      [86, 50, 36], [74, 40, 34], [123, 100, 23], [550, 50, 500], [48, 40, 8], [196, 30, 166],
-      [104, 100, 4], [127, 100, 27], [152, 150, 2], [216, 200, 16], [74, 50, 24], [175, 100, 75],
-      [67, 60, 7], [123, 80, 43], [82, 60, 22], [85, 80, 5], [107, 90, 17]
-    ];
 
+    const fdata = rows.map(item => [
+      parseInt(item.stok_awal),
+      parseInt(item.stok_akhir),
+      parseInt(item.stok_keluar)
+    ]);
+    // console.log(jdata, 'jdata')
+    // const fdata = [
+    //   [755, 500, 255], [600, 500, 100], [730, 500, 230], [623, 500, 123], [1000, 500, 500],
+    //   [420, 400, 20], [760, 400, 360], [515, 500, 15], [1000, 500, 500], [750, 600, 150],
+    //   [580, 500, 80], [590, 500, 90], [700, 500, 200], [560, 500, 60], [1030, 500, 530],
+    //   [535, 500, 35], [900, 600, 300], [1100, 700, 400], [420, 300, 120], [560, 500, 60],
+    //   [720, 400, 320], [580, 500, 80], [219, 200, 19], [335, 300, 35], [512, 500, 12],
+    //   [415, 400, 15], [330, 300, 30], [600, 500, 100], [490, 400, 90], [712, 700, 12],
+    //   [500, 200, 300], [760, 700, 60], [390, 300, 90], [530, 500, 30], [411, 400, 11],
+    //   [270, 200, 70], [630, 500, 130], [505, 500, 5], [1035, 800, 235], [450, 400, 50],
+    //   [734, 500, 234], [367, 300, 67], [823, 400, 423], [1061, 300, 761], [113, 100, 13],
+    //   [108, 100, 8], [110, 100, 10], [135, 100, 35], [124, 100, 24], [290, 200, 90],
+    //   [157, 100, 57], [307, 300, 7], [546, 500, 46], [500, 200, 300], [309, 300, 9],
+    //   [319, 300, 19], [304, 300, 4], [306, 300, 6], [278, 200, 78], [390, 300, 90],
+    //   [322, 200, 122], [290, 200, 90], [167, 100, 67], [287, 200, 87], [345, 300, 45],
+    //   [542, 200, 342], [123, 100, 23], [108, 100, 8], [109, 100, 9], [276, 200, 76],
+    //   [389, 300, 89], [243, 200, 43], [150, 100, 50], [104, 100, 4], [209, 200, 9],
+    //   [134, 100, 34], [154, 100, 54], [201, 200, 1], [134, 100, 34], [153, 100, 53],
+    //   [222, 200, 22], [212, 200, 12], [311, 300, 11], [310, 300, 10], [436, 400, 36],
+    //   [410, 400, 10], [325, 300, 25], [112, 100, 12], [179, 100, 79], [130, 100, 30],
+    //   [256, 200, 56], [214, 200, 14], [225, 100, 125], [600, 300, 300], [570, 500, 70],
+    //   [189, 100, 89], [165, 100, 65], [150, 100, 50], [104, 100, 4], [218, 200, 18],
+    //   [280, 200, 80], [107, 100, 7], [105, 100, 5], [114, 100, 14], [129, 100, 29],
+    //   [205, 200, 5], [260, 200, 60], [106, 100, 6], [102, 100, 2], [128, 50, 78],
+    //   [59, 50, 9], [72, 70, 2], [64, 60, 4], [100, 50, 50], [140, 50, 90], [104, 70, 34],
+    //   [106, 80, 26], [171, 90, 81], [118, 100, 18], [101, 60, 41], [85, 70, 15], [121, 100, 21],
+    //   [86, 50, 36], [74, 40, 34], [123, 100, 23], [550, 50, 500], [48, 40, 8], [196, 30, 166],
+    //   [104, 100, 4], [127, 100, 27], [152, 150, 2], [216, 200, 16], [74, 50, 24], [175, 100, 75],
+    //   [67, 60, 7], [123, 80, 43], [82, 60, 22], [85, 80, 5], [107, 90, 17]
+    // ];
 
     console.log(fdata, 'fdata')
     const allCentroids = kmeans(fdata, manualCentroid, 6)
     console.log(allCentroids, 'allCentroids')
-    // console.log(allCentroids)
+    console.log(allCentroids, 'allCentroids')
     setIterations(iterasi);
     setClusters(allCentroids);
+    setManualCentroid(allCentroids)
     // setData(allce)
 
     // if (!iterasi || !periodeCluster) {
@@ -864,6 +939,9 @@ const Index = (props) => {
                   <BarangTable data={clusters} iterations={iterations} plotdata={plotdata} />
                 </div>
                 {
+
+
+                  // allCentroids.j
                   Array.from({ length: iterations }, (_, index) => {
                     let updateclustering = '';
                     const clusterdata = [JSON.stringify(iterations[index])]
@@ -926,88 +1004,31 @@ const Index = (props) => {
                           </div>
                         </Grid>
                         {
-                          console.log(index, 'iterations')
-                        }
-                        {
                           console.log(manualCentroid)
                         }
                         <Grid item xs={12} lg={12} sx={{ 'marginBottom': '30px' }}>
                           {
-                            index === 0 ?
-                              <table className='childcls'>
-                                <tr style={{ 'background': '#ddd' }}>
-                                  <th>Centroid</th>
-                                  <th>SA</th>
-                                  <th>SAK</th>
-                                  <th>SEKL</th>
-                                </tr>
-                                <tbody>
-                                  <tr>
-                                    <td>
-                                      C1
-                                    </td>
-                                    <td>
-                                      580
-                                    </td>
-                                    <td>
-                                      500
-                                    </td>
-                                    <td>
-                                      80
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td>
-                                      C2
-                                    </td>
-                                    <td>
-                                      415
-                                    </td>
-                                    <td>
-                                      400
-                                    </td>
-                                    <td>
-                                      15
-                                    </td>
 
-                                  </tr>
-                                  <tr>
-                                    <td>
-                                      C3
-                                    </td>
-                                    <td>
-                                      212
-                                    </td>
-                                    <td>
-                                      200
-                                    </td>
-                                    <td>
-                                      12
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                              :
-                              <table className='childcls'>
-                                <tr style={{ 'background': '#ddd' }}>
-                                  <th>Centroid</th>
-                                  <th>SA</th>
-                                  <th>SAK</th>
-                                  <th>SEKL</th>
-                                </tr>
-                                <tbody>
-                                  {
-                                    manualCentroid?.map((manualCentroids, j) =>
-                                    (<tr>
-                                      <td>{'C' + parseInt(j + 1)}</td>
-                                      <td>{manualCentroids.C1 ?? 0}</td>
-                                      <td>{manualCentroids.C2 ?? 0}</td>
-                                      <td>{manualCentroids.C3 ?? 0}</td>
-                                    </tr>),
-                                    )
-                                  }
-                                </tbody>
-                              </table>
+                            <table className='childcls'>
+                              <tr style={{ 'background': '#ddd' }}>
+                                <th>Centroid</th>
+                                <th>SA</th>
+                                <th>SAK</th>
+                                <th>SEKL</th>
+                              </tr>
+                              <tbody>
+                                {
+                                  manualCentroid?.map((manualCentroids, j) =>
+                                  (<tr>
+                                    <td>{'C' + parseInt(j + 1)}</td>
+                                    <td>{manualCentroids.C1 ?? 0}</td>
+                                    <td>{manualCentroids.C2 ?? 0}</td>
+                                    <td>{manualCentroids.C3 ?? 0}</td>
+                                  </tr>),
+                                  )
+                                }
+                              </tbody>
+                            </table>
 
                           }
                         </Grid>
@@ -1294,6 +1315,48 @@ export async function getServerSideProps(context) {
     };
   }
 }
+export function PieAphexChart() {
+  const data = [
+    {
+      name: "PALING BANYAK TERJUAL",
+      quantity: 45
+    },
+    {
+      name: "SEDIKIT TERJUAL",
+      quantity: 26
+    },
+    {
+      name: "TIDAK LARIS TERJUAL",
+      quantity: 2
+    },
+
+  ];
+  let names = [];
+  let quantities = [];
+  data.forEach(function (n) {
+    names.push(n.name);
+    quantities.push(n.quantity);
+  });
+
+  return React.createElement(ReactApexcharts, {
+    type: "pie",
+    series: quantities,
+    labels: {
+      show: false,
+      name: {
+        show: true
+      }
+    },
+    options: {
+      labels: names,
+      legend: {
+        show: true,
+        position: "bottom"
+      },
+      colors: ["#00AB55", "#2D99FF", "#FFE700", "#826AF9"]
+    }
+  });
+}
 
 const BarangTable = ({ data, iterations, plotdata }) => {
   const param = {
@@ -1334,12 +1397,15 @@ const BarangTable = ({ data, iterations, plotdata }) => {
 
   const clusterchart = {
     series: [{
-      data: [44, 55, 41, 64, 22, 43, 21]
+      name: "BANYAK TERJUAL (C1)",
+      data: [44]
     }, {
-      data: [53, 32, 33, 52, 13, 44, 32]
+      name: "SEDIKIT TERJUAL (C2)",
+      data: [53]
     },
     {
-      data: [53, 32, 33, 52, 13, 12, 32]
+      name: "TIDAK LARIS TERJUAL (C3)",
+      data: [53]
     }],
     options: {
       chart: {
@@ -1363,10 +1429,7 @@ const BarangTable = ({ data, iterations, plotdata }) => {
         }
       },
       xaxis: {
-        categories: ['A', 'B', 'C'], // Custom labels
-      },
-      yaxis: {
-        categories: ['A', 'B', 'C'], // Custom labels
+        categories: ['PALING BANYAK TERJUAL', 'SEDIKIT TERJUAL', 'TIDAK LARIS TERJUAL'],
       },
       stroke: {
         show: true,
@@ -1378,7 +1441,7 @@ const BarangTable = ({ data, iterations, plotdata }) => {
         intersect: false
       },
       xaxis: {
-        categories: [2001, 2002, 2003, 2004, 2005, 2006, 2007],
+        categories: [2024],
       },
     },
   }
@@ -1421,7 +1484,7 @@ const BarangTable = ({ data, iterations, plotdata }) => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <ReactApexcharts options={param.options} series={param.series} type="line" width="100%" style={{ 'marginLeft': '10px' }} />
-              <ReactApexcharts options={plotdata[0].options} series={plotdata[0].series} type="donut" width="80%" style={{ 'marginLeft': '30px' }} />
+              <PieAphexChart />
             </Grid>
           </Grid>
         </>

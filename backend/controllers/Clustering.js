@@ -155,6 +155,11 @@ export const Print = async (req, res) => {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Report Barang</title>
             <style>
+            table { page-break-inside:auto }
+            tr    { page-break-inside:avoid; page-break-after:auto }
+            thead { display:table-header-group }
+            tfoot { display:tenter code hereable-footer-group }
+
                 body {
                     font-family: Arial, sans-serif;
                 }
@@ -175,10 +180,12 @@ export const Print = async (req, res) => {
                     margin-top: 20px;
                 }
                 table, th, td {
+                    page-break-inside: avoid;
                     font-size:12px;
                     border: 1px solid #ddd;
                 }
                 th, td {
+                    page-break-inside: avoid;
                     padding: 10px;
                     font-size:12px;
                     text-align: left;
@@ -414,7 +421,6 @@ export const ClusterResult = async (req, res) => {
 
 export const PrintDetail = async (req, res) => {
   try {
-
     const dataQuery = `
      SELECT 
        clustering_result.id,  
@@ -432,8 +438,9 @@ export const PrintDetail = async (req, res) => {
       type: QueryTypes.SELECT
     });
 
-    const data = sql
-    console.log(sql[0], 'return response data barang')
+    const data = sql;
+    console.log(sql[0], 'return response data barang');
+
     // Create HTML content for PDF
     let htmlContent = `
      <!DOCTYPE html>
@@ -443,46 +450,50 @@ export const PrintDetail = async (req, res) => {
          <meta name="viewport" content="width=device-width, initial-scale=1.0">
          <title>Report Barang</title>
          <style>
-             body {
-                 font-family: Arial, sans-serif;
-             }
-             .container {
-                 max-width: 800px;
-                 margin: 0 auto;
-                 padding: 20px;
-             }
-             h1, h3{
-                 text-align: center;
-             }
-             table {
-                 width: 100%;
-                 border-collapse: collapse;
-                 margin-top: 20px;
-             }
-             table, th, td {
-                 border: 1px solid #ddd;
-             }
-             th, td {
-                 padding: 10px;
-                 text-align: left;
-             }
-             .footer {
-                 margin-top: 20px;
-                 text-align: center;
-             }
+         @media print {
+          @page {
+              size: A4 portrait;
+           }
+          body {
+              margin: 0;
+           }
+         }
+         body {
+             font-family: Arial, sans-serif;
+         }
+         .container {
+          width: 100%;
+           }
+         h1, h3 {
+             text-align: center;
+         }
+         table {
+             width: 100%;
+             border-collapse: collapse;
+  
+         }
+         table, th, td {
+             border: 1px solid #ddd;
+             font-size: 11px;
+           
+         }
+         th, td {
+             text-align: left;
+         }
+         .footer {
+          
+             text-align: center;
+         }
+         table.print-friendly tr td, table.print-friendly tr th {
+             page-break-inside: avoid;
+         }
          </style>
      </head>
      <body>
-     <img src="/logo_app.png"
-     style='
-       width: 20%
-     '
-     />
-         <div class="container">
-
-         ${generateKopSurat()}
-             <h4>Report Hasil Cluster</h4>
-                           <table>
+     <img src="/logo_app.png" style="width: 20%;" />
+                  ${generateKopSurat()}
+             <h4>Report Hasil Clusters</h4>
+             <table>
                  <thead>
                      <tr>
                          <th>No.</th>
@@ -508,11 +519,21 @@ export const PrintDetail = async (req, res) => {
     htmlContent += `
                  </tbody>
              </table> 
-         </div>
+          
      </body>
      </html>`;
 
-    const options = { format: 'A4', orientation: 'landscape' };
+    const options = {
+      format: 'A4',
+      orientation: 'portrait',
+      border: {
+        top: '30mm',
+        right: '30mm',
+        bottom: '30mm',
+        left: '30mm'
+      }
+    };
+
     pdf.create(htmlContent, options).toStream((err, stream) => {
       if (err) {
         console.error('Error generating PDF:', err);
@@ -532,6 +553,7 @@ export const PrintDetail = async (req, res) => {
     });
   }
 };
+
 
 
 
